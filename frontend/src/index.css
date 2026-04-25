@@ -1,0 +1,474 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap");
+
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --luxury-gold-gradient: linear-gradient(to right,
+      #f5e6a8 0%,
+      #ebc76a 50%,
+      #bfa24a 100%);
+
+  --pinky: linear-gradient(to right, #e91e8c 0%, #d81b8a 40%, #ff6ec7 100%);
+
+  --luxury-gold-gradi: linear-gradient(to right,
+      #534304 0%,
+      #ebc76a 50%,
+      #534304 100%);
+
+  --luxury-gold-solid: #e6c76a;
+  --luxury-gold-glow: rgba(230, 199, 106, 0.55);
+  --pink-glow: rgba(233, 30, 140, 0.45);
+}
+
+@theme {
+  /* primary colors */
+  --color-primary-black: #000;
+  --color-primary-soft-black: #151515;
+  --color-primary-charcoal-black: #1c1c1c;
+
+  /* Gold (brand accent) colors*/
+
+  --color-muted-gold: #b89b5e;
+  --color-solid-gold: #e6c76a;
+
+  /* Neutral */
+
+  --color-pure-white: #ffffff;
+  --color-soft-white: #ededed;
+  --color-muted-gray: #9a9a9a;
+
+  /* Optional Accent */
+
+  --color-warm-cream: #f6f1ea;
+
+  /* ✨ UPGRADED: Vivid hot pink for light mode */
+  --color-pink-blush: #e91e8c;
+
+  --color-solid-pink: #c2185b;
+
+  --color-pink-cream: #d81b8a;
+
+  --color--golden: #c9a84c;
+
+  /* FONTS */
+
+  /* Headings */
+
+  --font-cinzel: Cinzel, "sans-serif";
+  --font-playfair: Playfair Display, "sans-serif";
+
+  /* Buttons, prices, dashboard text */
+
+  --font-inter: Inter, "sans-serif";
+}
+
+/* ─────────────────────────────────────────────────────────
+   SCROLL REVEAL — Base state (hidden)
+───────────────────────────────────────────────────────── */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(3.5rem);
+  transition: opacity 0.85s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 0.85s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+[data-reveal-left] {
+  opacity: 0;
+  transform: translateX(-3rem);
+  transition: opacity 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+[data-reveal-right] {
+  opacity: 0;
+  transform: translateX(3rem);
+  transition: opacity 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+[data-reveal-scale] {
+  opacity: 0;
+  transform: scale(0.88);
+  transition: opacity 0.8s cubic-bezier(0.34, 1.56, 0.64, 1),
+    transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Stagger delays */
+[data-reveal="1"],
+[data-reveal-left="1"],
+[data-reveal-right="1"],
+[data-reveal-scale="1"] {
+  transition-delay: 0.05s;
+}
+
+[data-reveal="2"],
+[data-reveal-left="2"],
+[data-reveal-right="2"],
+[data-reveal-scale="2"] {
+  transition-delay: 0.15s;
+}
+
+[data-reveal="3"],
+[data-reveal-left="3"],
+[data-reveal-right="3"],
+[data-reveal-scale="3"] {
+  transition-delay: 0.25s;
+}
+
+[data-reveal="4"],
+[data-reveal-left="4"],
+[data-reveal-right="4"],
+[data-reveal-scale="4"] {
+  transition-delay: 0.35s;
+}
+
+[data-reveal="5"],
+[data-reveal-left="5"],
+[data-reveal-right="5"],
+[data-reveal-scale="5"] {
+  transition-delay: 0.45s;
+}
+
+[data-reveal="6"],
+[data-reveal-left="6"],
+[data-reveal-right="6"],
+[data-reveal-scale="6"] {
+  transition-delay: 0.55s;
+}
+
+/* ✅ ACTIVATED — added by IntersectionObserver */
+[data-reveal].reveal-active,
+[data-reveal-left].reveal-active,
+[data-reveal-right].reveal-active,
+[data-reveal-scale].reveal-active {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* ─────────────────────────────────────────────────────────
+   PAGE LOAD ANIMATION
+───────────────────────────────────────────────────────── */
+@keyframes fadeInPage {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-fadeInPage {
+  animation: fadeInPage 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+/* ─────────────────────────────────────────────────────────
+   FLOATING ANIMATION (hero orbs & bottle)
+───────────────────────────────────────────────────────── */
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-18px);
+  }
+}
+
+@keyframes float-slow {
+
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+
+  33% {
+    transform: translateY(-12px) rotate(1deg);
+  }
+
+  66% {
+    transform: translateY(-6px) rotate(-1deg);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 9s ease-in-out infinite;
+}
+
+/* ─────────────────────────────────────────────────────────
+   GLOW PULSE (light mode CTA button)
+───────────────────────────────────────────────────────── */
+@keyframes pink-pulse-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 10px var(--pink-glow), 0 4px 24px var(--pink-glow);
+  }
+
+  50% {
+    box-shadow: 0 0 28px var(--pink-glow), 0 8px 40px var(--pink-glow);
+  }
+}
+
+.animate-pink-glow {
+  animation: pink-pulse-glow 2.4s ease-in-out infinite;
+}
+
+/* ─────────────────────────────────────────────────────────
+   SHIMMER SWEEP (card hover)
+───────────────────────────────────────────────────────── */
+@keyframes shimmer-sweep {
+  0% {
+    left: -100%;
+  }
+
+  100% {
+    left: 150%;
+  }
+}
+
+.shimmer-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(to right,
+      transparent 0%,
+      rgba(233, 30, 140, 0.08) 50%,
+      transparent 100%);
+  transition: none;
+  pointer-events: none;
+}
+
+.shimmer-card:hover::after {
+  animation: shimmer-sweep 0.6s ease-in-out;
+}
+
+/* ─────────────────────────────────────────────────────────
+   HERO ORB DRIFT
+───────────────────────────────────────────────────────── */
+@keyframes orb-drift {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  33% {
+    transform: translate(20px, -15px) scale(1.05);
+  }
+
+  66% {
+    transform: translate(-10px, 10px) scale(0.97);
+  }
+}
+
+.animate-orb-drift {
+  animation: orb-drift 12s ease-in-out infinite;
+}
+
+.animate-orb-drift-reverse {
+  animation: orb-drift 15s ease-in-out infinite reverse;
+}
+
+/* SMOOTH SCROLL */
+html {
+  scroll-behavior: smooth;
+}
+
+/* HOVER EFFECTS */
+.group:hover .group-hover\:scale-110 {
+  transform: scale(1.1);
+}
+
+.gold-text {
+  background: var(--luxury-gold-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.pinky-text {
+  background: var(--pinky);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.gold-border {
+  position: relative;
+}
+
+.gold-border::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  background: var(--luxury-gold-gradient);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+.gold-hover {
+  transition: all 0.4s ease;
+}
+
+.gold-hover-black {
+  transition: all 0.4s ease;
+}
+
+.gold-hover:hover {
+  background: var(--luxury-gold-gradient);
+  box-shadow: 0 0 15px var(--luxury-gold-glow);
+}
+
+.gold-hover-black:hover {
+  background: var(--luxury-gold-gradi);
+  box-shadow: 0 0 15px var(--luxury-gold-glow);
+}
+
+/* ─────────────────────────────────────────────────────────
+   PRICE SLIDER
+───────────────────────────────────────────────────────── */
+.price-slider {
+  position: relative;
+  height: 6px;
+  background: linear-gradient(to right,
+      rgba(230, 199, 106, 0.2),
+      #e6c76a,
+      rgba(230, 199, 106, 0.2));
+  border-radius: 999px;
+}
+
+.price-slider input[type="range"] {
+  position: absolute;
+  inset: 0;
+  appearance: none;
+  background: transparent;
+  pointer-events: none;
+}
+
+.price-slider input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  pointer-events: auto;
+
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+
+  background: radial-gradient(circle at 30% 30%, #fff3c4, #e6c76a, #bfa24a);
+
+  box-shadow:
+    0 0 6px rgba(230, 199, 106, 0.9),
+    0 0 14px rgba(230, 199, 106, 0.6);
+
+  cursor: pointer;
+}
+
+.price-slider::before,
+.price-slider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #e6c76a;
+  box-shadow: 0 0 8px rgba(230, 199, 106, 0.6);
+}
+
+.price-slider::before {
+  left: -4px;
+}
+
+.price-slider::after {
+  right: -4px;
+}
+
+.price-slider .range-fill {
+  position: absolute;
+  height: 100%;
+  background: linear-gradient(to right, #f5e6a8, #e6c76a, #bfa24a);
+  box-shadow: 0 0 12px rgba(230, 199, 106, 0.5);
+  border-radius: 999px;
+}
+
+/* smooth mobile scrolling */
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* hide scrollbar but keep scroll */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+}
+
+.custom-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(#f5e6a8, #bfa24a);
+  border-radius: 999px;
+}
+
+/* ── Marquee Strip Animation ───────────────────────────────────────────────── */
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 28s linear infinite;
+  width: max-content;
+  will-change: transform;
+}
+
+/* -------- toast slideup */
+
+@keyframes slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility animate-slide-up {
+  animation: slide-up 0.3s ease-out forwards;
+}
