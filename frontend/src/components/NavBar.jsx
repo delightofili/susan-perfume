@@ -57,7 +57,7 @@ function NavBar() {
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-10 h-17 bg-white/90 dark:bg-[#0a0f1a]/95 backdrop-blur-md shadow-sm border-b border-[#e91e8c]/15 dark:border-[#c9a84c]/10">
         <LogoMark />
 
-        {/* Desktop Links */}
+        {/* Desktop Links - Middle */}
         <ul className="hidden md:flex items-center gap-10 absolute left-1/2 -translate-x-1/2">
           {navLinks.map(({ label, to }) => (
             <li key={label}>
@@ -75,28 +75,32 @@ function NavBar() {
           ))}
         </ul>
 
-        {/* Desktop Right */}
-        <div className="hidden md:flex items-center gap-5">
-          {/* Cart icon with badge */}
-          <Link to="/cart" className="relative group">
-            <ShoppingCart className="h-5 w-5 text-[#e91e8c] dark:text-[#c9a84c] group-hover:scale-110 transition-transform duration-200" />
+        {/* Right Side - Cart + Toggle + Hamburger */}
+        <div className="flex items-center gap-4 md:gap-6">
+          {/* Theme Toggle - Visible on md+, or keep visible on mobile too */}
+          <div className="hidden sm:block">
+            <ThemeToggle />
+          </div>
+
+          {/* Cart Icon - NOW ALWAYS VISIBLE beside hamburger */}
+          <Link to="/cart" className="relative group p-1">
+            <ShoppingCart className="h-5.5 w-5.5 text-[#e91e8c] dark:text-[#c9a84c] group-hover:scale-110 transition-transform duration-200" />
             {totalItems > 0 && (
-              <span className="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 rounded-full bg-[#e91e8c] dark:bg-[#c9a84c] text-white dark:text-[#0a0f1a] text-[10px] font-bold font-inter flex items-center justify-center leading-none">
+              <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#e91e8c] dark:bg-[#c9a84c] text-white dark:text-[#0a0f1a] text-[10px] font-bold font-inter flex items-center justify-center leading-none">
                 {totalItems > 99 ? "99+" : totalItems}
               </span>
             )}
           </Link>
-          <ThemeToggle />
-        </div>
 
-        {/* Mobile Hamburger */}
-        <button
-          className="md:hidden p-1 rounded-md transition-colors text-[#e91e8c] dark:text-[#c9a84c] hover:bg-[#e91e8c]/10 dark:hover:bg-[#c9a84c]/10"
-          onClick={() => setIsOpen(true)}
-          aria-label="Open menu"
-        >
-          <Menu className="h-7 w-7" />
-        </button>
+          {/* Hamburger Menu - Only Mobile */}
+          <button
+            className="md:hidden p-1 rounded-md transition-colors text-[#e91e8c] dark:text-[#c9a84c] hover:bg-[#e91e8c]/10 dark:hover:bg-[#c9a84c]/10"
+            onClick={() => setIsOpen(true)}
+            aria-label="Open menu"
+          >
+            <Menu className="h-7 w-7" />
+          </button>
+        </div>
       </nav>
 
       <div className="h-17" />
@@ -122,23 +126,13 @@ function NavBar() {
           className="flex items-center justify-between px-6 py-5"
           style={{ borderBottom: "1px solid rgba(233, 30, 140, 0.12)" }}
         >
-          <span
-            style={{
-              fontFamily: "Cinzel, serif",
-              fontSize: "18px",
-              letterSpacing: "3px",
-              fontWeight: "bold",
-              textTransform: "uppercase",
-              color: "#e91e8c",
-              opacity: 0.7,
-            }}
-          >
+          <span className="font-cinzel text-[18px] tracking-[3px] font-bold uppercase text-[#e91e8c]/70">
             Menu
           </span>
           <button
             onClick={() => setIsOpen(false)}
             aria-label="Close menu"
-            style={{ color: "#e91e8c", padding: "4px", cursor: "pointer" }}
+            className="text-[#e91e8c] p-1 cursor-pointer"
           >
             <X size={22} />
           </button>
@@ -150,89 +144,17 @@ function NavBar() {
               <Link
                 to={to}
                 onClick={() => setIsOpen(false)}
-                style={{
-                  display: "block",
-                  fontFamily: "Cinzel, serif",
-                  fontSize: "13px",
-                  letterSpacing: "2.5px",
-                  textTransform: "uppercase",
-                  color: "#e91e8c",
-                  padding: "12px",
-                  borderRadius: "6px",
-                  borderBottom: "1px solid rgba(233,30,140,0.08)",
-                  transition: "all 0.2s",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "#e91e8c";
-                  e.currentTarget.style.color = "#fff";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "transparent";
-                  e.currentTarget.style.color = "#e91e8c";
-                }}
+                className="block font-cinzel text-[13px] tracking-[2.5px] uppercase text-[#e91e8c] p-3 rounded-md border-b border-[#e91e8c]/10 transition-all hover:bg-[#e91e8c] hover:text-white"
               >
                 {label}
               </Link>
             </li>
           ))}
-
-          {/* Cart with badge */}
-          <li className="mt-3">
-            <Link
-              to="/cart"
-              onClick={() => setIsOpen(false)}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                fontFamily: "Cinzel, serif",
-                fontSize: "13px",
-                letterSpacing: "2.5px",
-                textTransform: "uppercase",
-                color: "#e91e8c",
-                padding: "12px",
-                borderRadius: "6px",
-                borderBottom: "1px solid rgba(233,30,140,0.08)",
-                transition: "all 0.2s",
-                position: "relative",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "#e91e8c";
-                e.currentTarget.style.color = "#fff";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "transparent";
-                e.currentTarget.style.color = "#e91e8c";
-              }}
-            >
-              <ShoppingCart size={15} />
-              Cart
-              {totalItems > 0 && (
-                <span className="ml-auto min-w-[20px] h-[20px] px-1 rounded-full bg-[#e91e8c] text-white text-[10px] font-bold font-inter flex items-center justify-center">
-                  {totalItems}
-                </span>
-              )}
-            </Link>
-          </li>
         </ul>
 
-        <div
-          style={{
-            padding: "20px 24px",
-            borderTop: "1px solid rgba(233,30,140,0.12)",
-          }}
-        >
-          <p
-            style={{
-              fontFamily: "Cinzel, serif",
-              fontSize: "9px",
-              letterSpacing: "2px",
-              textTransform: "uppercase",
-              color: "#e91e8c",
-              opacity: 0.5,
-              marginBottom: "10px",
-            }}
-          >
+        {/* Mobile Appearance Settings */}
+        <div className="p-5 border-t border-[#e91e8c]/12 sm:hidden">
+          <p className="font-cinzel text-[9px] tracking-[2px] uppercase text-[#e91e8c]/50 mb-3">
             Appearance
           </p>
           <ThemeToggle />
