@@ -8,6 +8,7 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
     name: "",
     price: "",
     category: "",
+    size: "",
     stock: "",
     description: "",
     image: "",
@@ -25,6 +26,7 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
       setForm({
         name: "",
         price: "",
+        size: "",
         category: "",
         stock: "",
         description: "",
@@ -48,6 +50,11 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
       return;
     }
 
+    if (isNaN(form.size)) {
+      setError("Size must be a number!");
+      return;
+    }
+
     if (!form.image) {
       setError("Please upload an image");
       return;
@@ -63,6 +70,7 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
         ...form,
         price: Number(form.price),
         stock: Number(form.stock),
+        size: Number(form.size),
       };
 
       if (editingProduct) {
@@ -185,6 +193,20 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
                 placeholder="20"
                 className="bg-black/30 border border-[#c9a84c]/15 rounded-xl px-4 py-2.5 text-sm text-[#f5e6a8]"
               />
+            </div>
+
+            {/* size */}
+
+            <div className="flex gap-4 w-full">
+              <input
+                name="size"
+                value={form.size}
+                onChange={handleChange}
+                type="number"
+                placeholder="50ml"
+                className="bg-black/30 border border-[#c9a84c]/15 rounded-xl px-4 py-2.5 text-sm text-[#f5e6a8]"
+              />
+              <span>Ml</span>
             </div>
 
             {/* Category */}

@@ -2,7 +2,17 @@ import { useNavigate } from "react-router";
 import { useCart } from "../hook/useCart";
 import { useToast } from "../hook/useToast";
 
-function PerfumeCard({ imageUrl, image, name, price, discount, category, id, onClick }) {
+function PerfumeCard({
+  imageUrl,
+  image,
+  name,
+  price,
+  discount,
+  size,
+  category,
+  id,
+  onClick,
+}) {
   const navigate = useNavigate();
   const { cart, addItem, updateQuantity, removeItem } = useCart();
   const { showToast } = useToast();
@@ -22,6 +32,7 @@ function PerfumeCard({ imageUrl, image, name, price, discount, category, id, onC
       price: Number(String(price).replace(/[₦,]/g, "")),
       image: imageUrl || null,
       category,
+      size,
     });
     showToast({ message: `${name} added to cart`, type: "success" });
   };
@@ -80,7 +91,9 @@ function PerfumeCard({ imageUrl, image, name, price, discount, category, id, onC
           </span>
         )}
 
-        <div className="w-full h-full transition-transform duration-500 group-hover:scale-105">{image}</div>
+        <div className="w-full h-full transition-transform duration-500 group-hover:scale-105">
+          {image}
+        </div>
       </div>
 
       {/* ── Info ── */}
@@ -88,11 +101,18 @@ function PerfumeCard({ imageUrl, image, name, price, discount, category, id, onC
         className="flex flex-col flex-1 p-4 gap-2"
         onClick={(e) => e.stopPropagation()}
       >
-        {category && (
-          <p className="font-inter text-[#e91e8c]/60 dark:text-white/40 text-[10px] tracking-[1.5px] uppercase">
-            {category}
-          </p>
-        )}
+        <div>
+          {category && (
+            <p className="font-inter text-[#e91e8c]/60 dark:text-white/40 text-[10px] tracking-[1.5px] uppercase">
+              {category} .
+            </p>
+          )}{" "}
+          {size && (
+            <span className="font-inter text-[#e91e8c]/60 dark:text-white/40 text-[10px] tracking-[1.5px] uppercase">
+              {size}Ml
+            </span>
+          )}
+        </div>
 
         <p className="font-playfair text-[#1a0a10] dark:text-white text-base font-medium leading-tight">
           {name}

@@ -57,7 +57,7 @@ function ProductCard({ product, onDelete, onEdit }) {
           {product.name}
         </h3>
         <p className="text-[9px] text-[#f5e6a8]/30 uppercase tracking-wider mb-3">
-          {product.category} · {product.size}
+          {product.category} · {product.size}Ml
         </p>
         <div className="flex items-end justify-between">
           <div>

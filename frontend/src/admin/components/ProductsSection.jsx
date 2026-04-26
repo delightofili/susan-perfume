@@ -46,7 +46,7 @@ function ProductsSection() {
     setProducts((prev) => prev.filter((p) => p.id !== id));
   };
 
-  // ── Add + Edit (FIXED) ──
+  //add or edit product in the list
   const handleAddOrEdit = (product) => {
     setProducts((prev) => {
       const exists = prev.find((p) => p.id === product.id);

@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useProduct } from "../hook/useProduct";
 import PerfumeCard from "./PerfumeCard";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
@@ -7,6 +7,8 @@ import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 function Bestseller() {
   const { products, loading } = useProduct();
   const scrollRef = useRef(null);
+
+  const navigate = useNavigate();
 
   console.log("Bestseller mounted");
   console.log("Products:", products);
@@ -151,8 +153,10 @@ function Bestseller() {
                     )
                   }
                   price={`₦${product.price.toLocaleString()}`}
+                  size={product.size}
                   discount={product.discount}
                   category={product.category}
+                  onClick={() => navigate(`/shop/${product.id}`)}
                 />
               </div>
             ))
