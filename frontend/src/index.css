@@ -5,17 +5,21 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --luxury-gold-gradient: linear-gradient(to right,
-      #f5e6a8 0%,
-      #ebc76a 50%,
-      #bfa24a 100%);
+  --luxury-gold-gradient: linear-gradient(
+    to right,
+    #f5e6a8 0%,
+    #ebc76a 50%,
+    #bfa24a 100%
+  );
 
   --pinky: linear-gradient(to right, #e91e8c 0%, #d81b8a 40%, #ff6ec7 100%);
 
-  --luxury-gold-gradi: linear-gradient(to right,
-      #534304 0%,
-      #ebc76a 50%,
-      #534304 100%);
+  --luxury-gold-gradi: linear-gradient(
+    to right,
+    #534304 0%,
+    #ebc76a 50%,
+    #534304 100%
+  );
 
   --luxury-gold-solid: #e6c76a;
   --luxury-gold-glow: rgba(230, 199, 106, 0.55);
@@ -68,30 +72,34 @@
    SCROLL REVEAL — Base state (hidden)
 ───────────────────────────────────────────────────────── */
 [data-reveal] {
-  opacity: 0;
-  transform: translateY(3.5rem);
-  transition: opacity 0.85s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.85s cubic-bezier(0.25, 0.46, 0.45, 0.94),
     transform 0.85s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 [data-reveal-left] {
   opacity: 0;
   transform: translateX(-3rem);
-  transition: opacity 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+  transition:
+    opacity 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94),
     transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 [data-reveal-right] {
   opacity: 0;
   transform: translateX(3rem);
-  transition: opacity 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+  transition:
+    opacity 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94),
     transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 [data-reveal-scale] {
   opacity: 0;
   transform: scale(0.88);
-  transition: opacity 0.8s cubic-bezier(0.34, 1.56, 0.64, 1),
+  transition:
+    opacity 0.8s cubic-bezier(0.34, 1.56, 0.64, 1),
     transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -170,7 +178,6 @@
    FLOATING ANIMATION (hero orbs & bottle)
 ───────────────────────────────────────────────────────── */
 @keyframes float {
-
   0%,
   100% {
     transform: translateY(0px);
@@ -182,7 +189,6 @@
 }
 
 @keyframes float-slow {
-
   0%,
   100% {
     transform: translateY(0px) rotate(0deg);
@@ -209,14 +215,17 @@
    GLOW PULSE (light mode CTA button)
 ───────────────────────────────────────────────────────── */
 @keyframes pink-pulse-glow {
-
   0%,
   100% {
-    box-shadow: 0 0 10px var(--pink-glow), 0 4px 24px var(--pink-glow);
+    box-shadow:
+      0 0 10px var(--pink-glow),
+      0 4px 24px var(--pink-glow);
   }
 
   50% {
-    box-shadow: 0 0 28px var(--pink-glow), 0 8px 40px var(--pink-glow);
+    box-shadow:
+      0 0 28px var(--pink-glow),
+      0 8px 40px var(--pink-glow);
   }
 }
 
@@ -249,10 +258,12 @@
   left: -100%;
   width: 60%;
   height: 100%;
-  background: linear-gradient(to right,
-      transparent 0%,
-      rgba(233, 30, 140, 0.08) 50%,
-      transparent 100%);
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgba(233, 30, 140, 0.08) 50%,
+    transparent 100%
+  );
   transition: none;
   pointer-events: none;
 }
@@ -265,7 +276,6 @@
    HERO ORB DRIFT
 ───────────────────────────────────────────────────────── */
 @keyframes orb-drift {
-
   0%,
   100% {
     transform: translate(0, 0) scale(1);
@@ -353,10 +363,12 @@ html {
 .price-slider {
   position: relative;
   height: 6px;
-  background: linear-gradient(to right,
-      rgba(230, 199, 106, 0.2),
-      #e6c76a,
-      rgba(230, 199, 106, 0.2));
+  background: linear-gradient(
+    to right,
+    rgba(230, 199, 106, 0.2),
+    #e6c76a,
+    rgba(230, 199, 106, 0.2)
+  );
   border-radius: 999px;
 }
 

@@ -20,57 +20,62 @@ import OrderConfirmation from "./pages/Orderconfirmation";
 import Checkout from "./pages/Checkout";
 import TrackOrder from "./pages/TrackOrder";
 
+import ScrollToTop from "../utils/ScrollToTop";
+
 function App() {
   useEffect(() => {
     getOrCreateCartId();
   }, []);
-  return ( 
-    <AuthProvider>
-      <Routes>
-        {/* CLIENT ROUTES */}
-        <Route element={<ClientLayout />}>
+  return (
+    <>
+      <ScrollToTop />
+      <AuthProvider>
+        <Routes>
+          {/* CLIENT ROUTES */}
+          <Route element={<ClientLayout />}>
+            <Route
+              path="/"
+              element={
+                <>
+                  <Hero />
+                  <Bestseller />
+                  <About />
+                  <NewArrivals />
+                </>
+              }
+            />
+            <Route path="/shop" element={<Shop />} />
+            <Route path="/shop/:id" element={<Shop />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/about" element={<About />} />
+
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/order-confirmation" element={<OrderConfirmation />} />
+            <Route path="/track-order" element={<TrackOrder />} />
+          </Route>
+
+          {/* ADMIN LOGIN — public */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+
+          {/* ADMIN ROUTES — all protected */}
           <Route
-            path="/"
+            path="/admin"
             element={
-              <>
-                <Hero />
-                <Bestseller />
-                <About />
-                <NewArrivals />
-              </>
+              <ProtectedRoute>
+                <AdminLayout />
+              </ProtectedRoute>
             }
-          />
-          <Route path="/shop" element={<Shop />} />
-          <Route path="/shop/:id" element={<Shop />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/about" element={<About />} />
+          >
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/products" element={<AdminDashboard />} />
+            <Route path="/admin/orders" element={<AdminDashboard />} />
+            <Route path="/admin/settings" element={<AdminDashboard />} />
+          </Route>
 
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/order-confirmation" element={<OrderConfirmation />} />
-          <Route path="/track-order" element={<TrackOrder />} />
-        </Route>
-
-        {/* ADMIN LOGIN — public */}
-        <Route path="/admin/login" element={<AdminLogin />} />
-
-        {/* ADMIN ROUTES — all protected */}
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute>
-              <AdminLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/products" element={<AdminDashboard />} />
-          <Route path="/admin/orders" element={<AdminDashboard />} />
-          <Route path="/admin/settings" element={<AdminDashboard />} />
-        </Route>
-
-        <Route path="*" element={<div>404</div>} />
-      </Routes>
-    </AuthProvider>
+          <Route path="*" element={<div>404</div>} />
+        </Routes>
+      </AuthProvider>
+    </>
   );
 }
 

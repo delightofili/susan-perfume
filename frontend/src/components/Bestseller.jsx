@@ -10,10 +10,6 @@ function Bestseller() {
 
   const navigate = useNavigate();
 
-  console.log("Bestseller mounted");
-  console.log("Products:", products);
-  console.log("Loading:", loading);
-
   // Scroll reveal
   useEffect(() => {
     const selectors = [

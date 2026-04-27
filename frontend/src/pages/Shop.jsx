@@ -55,7 +55,7 @@ function Shop() {
   const [navIsOpen, setNavIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("");
-  const [priceRange, setPriceRange] = useState({ min: 5000, max: 500000 });
+  const [priceRange, setPriceRange] = useState({ min: 1000, max: 5000000 });
   const [categories, setCategories] = useState({
     Floral: false,
     Oud: false,
@@ -69,10 +69,23 @@ function Shop() {
     "50ml": false,
     "100ml": false,
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 6;
 
-  const toggleCategory = (cat) =>
-    setCategories((p) => ({ ...p, [cat]: !p[cat] }));
-  const toggleSize = (s) => setSize((p) => ({ ...p, [s]: !p[s] }));
+  const toggleCategory = (cat) => {
+    setCategories((p) => {
+      const updated = { ...p, [cat]: !p[cat] };
+      return updated;
+    });
+    setCurrentPage(1);
+  };
+  const toggleSize = (s) => {
+    setSize((p) => {
+      const updated = { ...p, [s]: !p[s] };
+      return updated;
+    });
+    setCurrentPage(1);
+  };
 
   // Derived state for filters
   const activeCategories = useMemo(
@@ -84,7 +97,7 @@ function Shop() {
     [size],
   );
 
-  // 1. RE-WRITTEN FILTERING LOGIC
+  //  FILTERING LOGIC
   const filteredProducts = useMemo(() => {
     if (!products) return [];
 
@@ -93,13 +106,23 @@ function Shop() {
         const matchesSearch =
           !search.trim() ||
           p.name?.toLowerCase().includes(search.toLowerCase());
+
         const matchesCategory =
           activeCategories.length === 0 ||
-          activeCategories.includes(p.category);
+          (p.category &&
+            activeCategories.some((cat) =>
+              p.category.toLowerCase().includes(cat.toLowerCase()),
+            ));
+
         const matchesSize =
-          activeSizes.length === 0 || activeSizes.includes(p.size);
-        const matchesPrice =
-          p.price >= priceRange.min && p.price <= priceRange.max;
+          activeSizes.length === 0 ||
+          (p.size &&
+            activeSizes.some((s) =>
+              p.size.toLowerCase().includes(s.toLowerCase()),
+            ));
+
+        const price = Number(p.price || 0);
+        const matchesPrice = price >= priceRange.min && price <= priceRange.max;
 
         return matchesSearch && matchesCategory && matchesSize && matchesPrice;
       })
@@ -112,31 +135,14 @@ function Shop() {
       });
   }, [products, search, activeCategories, activeSizes, priceRange, sort]);
 
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+  const paginatedProducts = filteredProducts.slice(
+    (currentPage - 1) * productsPerPage,
+    currentPage * productsPerPage,
+  );
+
   // 2. FIXED SCROLL REVEAL (Re-observes when products change)
-  useEffect(() => {
-    const selectors = [
-      "[data-reveal]",
-      "[data-reveal-left]",
-      "[data-reveal-right]",
-      "[data-reveal-scale]",
-    ];
-    const elements = document.querySelectorAll(selectors.join(", "));
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("reveal-active");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1 },
-    );
-
-    elements.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, [filteredProducts, loading]); // Important: Re-run when list updates
 
   // Body scroll lock
   useEffect(() => {
@@ -180,9 +186,13 @@ function Shop() {
                 min="5000"
                 max="500000"
                 value={priceRange.min}
-                onChange={(e) =>
-                  setPriceRange((p) => ({ ...p, min: Number(e.target.value) }))
-                }
+                onChange={(e) => {
+                  setPriceRange((p) => ({
+                    ...p,
+                    min: Number(e.target.value),
+                  }));
+                  setCurrentPage(1);
+                }}
                 className="absolute inset-0 w-full h-full appearance-none bg-transparent pointer-events-auto z-20"
               />
               <input
@@ -190,9 +200,13 @@ function Shop() {
                 min="5000"
                 max="500000"
                 value={priceRange.max}
-                onChange={(e) =>
-                  setPriceRange((p) => ({ ...p, max: Number(e.target.value) }))
-                }
+                onChange={(e) => {
+                  setPriceRange((p) => ({
+                    ...p,
+                    max: Number(e.target.value),
+                  }));
+                  setCurrentPage(1);
+                }}
                 className="absolute inset-0 w-full h-full appearance-none bg-transparent pointer-events-auto z-30"
               />
             </div>
@@ -241,7 +255,12 @@ function Shop() {
             <h3 className="font-playfair font-bold text-[#e91e8c] dark:text-[#c9a84c] text-lg mb-3">
               Sort By
             </h3>
-            <SortBy onSortChange={(value) => setSort(value)} />
+            <SortBy
+              onSortChange={(value) => {
+                setSort(value);
+                setCurrentPage(1);
+              }}
+            />
           </div>
 
           <button
@@ -315,8 +334,8 @@ function Shop() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4 lg:px-10">
                 {filteredProducts.length > 0 ? (
-                  filteredProducts.map((product, index) => (
-                    <div key={product.id} data-reveal={String((index % 6) + 1)}>
+                  paginatedProducts.map((product) => (
+                    <div key={product.id}>
                       <PerfumeCard
                         id={product.id}
                         name={product.name}
@@ -353,17 +372,31 @@ function Shop() {
             )}
           </section>
 
-          {/* Pagination (Static UI preserved) */}
+          {/* Pagination */}
           <div className="flex items-center justify-center gap-3 m-10">
-            <button className="w-10 h-10 flex items-center justify-center bg-white dark:bg-white/10 border-2 border-[#e91e8c]/40 rounded-lg text-[#e91e8c]">
-              <IoIosArrowBack />
-            </button>
-            <button className="w-10 h-10 bg-[#e91e8c] rounded-lg text-white font-bold">
-              1
-            </button>
-            <button className="w-10 h-10 flex items-center justify-center bg-white dark:bg-white/10 border-2 border-[#e91e8c]/40 rounded-lg text-[#e91e8c]">
-              <IoIosArrowForward />
-            </button>
+            <div className="flex items-center gap-3 justify-center">
+              {/* previous page button */}
+              <button
+                className="w-10 h-10 flex items-center justify-center bg-white dark:bg-white/10 border-2 border-[#e91e8c]/40 rounded-lg text-[#e91e8c]"
+                onClick={() => setCurrentPage((p) => Math.max(p - 1))}
+              >
+                <IoIosArrowBack />
+              </button>
+              <span className="flex items-center justify-center text-center w-10 h-10 bg-[#e91e8c] rounded-lg text-white font-bold">
+                {currentPage}
+              </span>
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(p + 1))}
+                className="w-10 h-10 flex items-center justify-center bg-white dark:bg-white/10 border-2 border-[#e91e8c]/40 rounded-lg text-[#e91e8c]"
+              >
+                <IoIosArrowForward />
+              </button>
+            </div>
+            <div>
+              <p className="text-[#e91e8c]/60 dark:text-[#c9a84c]/60 font-inter text-sm">
+                Page {currentPage} of {totalPages}
+              </p>
+            </div>
           </div>
 
           {id && (
