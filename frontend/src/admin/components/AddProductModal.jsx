@@ -12,16 +12,20 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
     stock: "",
     description: "",
     image: "",
+    isBestSeller: false,
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
 
-  // ✅ FIX: handle edit + reset
+  // Populate form if editing an existing product
   useEffect(() => {
     if (editingProduct) {
-      setForm(editingProduct);
+      setForm({
+        ...editingProduct,
+        isBestSeller: editingProduct.isBestSeller || false,
+      });
     } else {
       setForm({
         name: "",
@@ -31,6 +35,7 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
         stock: "",
         description: "",
         image: "",
+        isBestSeller: false,
       });
     }
   }, [editingProduct]);
@@ -38,7 +43,14 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
   const handleChange = (e) =>
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
-  // ✅ FIXED SUBMIT (numbers + edit/create)
+  const handleToggle = () => {
+    setForm((prev) => ({
+      ...prev,
+      isBestSeller: !prev.isBestSeller,
+    }));
+  };
+
+  // Form validation + submit
   const handleSubmit = async () => {
     if (!form.name || !form.price || !form.category || !form.stock) {
       setError("Please fill in all required fields.");
@@ -71,6 +83,7 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
         price: Number(form.price),
         stock: Number(form.stock),
         size: Number(form.size),
+        isBestSeller: form.isBestSeller,
       };
 
       if (editingProduct) {
@@ -146,6 +159,20 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
               <h2 className="text-lg font-playfair text-[#f5e6a8]">
                 {editingProduct ? "Edit Product" : "Add New Product"}
               </h2>
+              <div className="p-6 flex flex-col gap-4 max-h-[65vh] overflow-y-auto">
+                {/*  BESTSELLER TOGGLE */}
+                <label className="flex items-center gap-3 text-sm text-[#f5e6a8]">
+                  <input
+                    type="checkbox"
+                    checked={form.isBestSeller}
+                    onChange={handleToggle}
+                  />
+                  Mark as Bestseller
+                </label>
+
+                {error && <p className="text-red-400 text-xs">{error}</p>}
+              </div>
+
               <p className="text-xs text-[#f5e6a8]/30 font-inter mt-0.5">
                 Fill in the details below
               </p>

@@ -33,15 +33,20 @@ function ProductCard({ product, onDelete, onEdit }) {
         >
           {label}
         </span>
+        {product.isBestSeller && (
+          <span className="absolute top-2 right-2 text-[10px] font-bold px-2 py-0.5 rounded-full bg-pink-500/20 text-pink-300 border border-pink-500/30">
+            Bestseller
+          </span>
+        )}
 
         {/* Edit/Delete - top RIGHT */}
-        <div className="absolute top-2 right-2 flex flex-col gap-1">
-          <button
+        <div className="absolute top-6 right-2 flex flex-col gap-1">
+          {/* <button
             className="w-7 h-7 rounded-lg bg-black/70 border border-[#c9a84c]/20 flex items-center justify-center text-xs hover:bg-[#c9a84c] transition-all"
             onClick={onEdit}
           >
             ✏️
-          </button>
+          </button> */}
           <button
             className="w-7 h-7 rounded-lg bg-black/70 border border-red-500/20 flex items-center justify-center text-xs hover:bg-red-600 transition-all"
             onClick={onDelete}
