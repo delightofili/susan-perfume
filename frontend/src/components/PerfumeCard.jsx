@@ -8,7 +8,7 @@ function PerfumeCard({
   name,
   price,
   discount,
-  originalPrice, // e.g. "₦22,500" — show struck-through when provided
+  originalPrice, 
   size,
   category,
   id,

@@ -183,14 +183,14 @@ function Shop() {
               <div
                 className="absolute h-1 top-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-[#e91e8c] to-[#ff6ec7] dark:from-[#c9a84c] dark:to-[#f5e6a8]"
                 style={{
-                  left: `${((priceRange.min - 5000) / (500000 - 5000)) * 100}%`,
-                  width: `${((priceRange.max - priceRange.min) / (500000 - 5000)) * 100}%`,
+                  left: `${((priceRange.min - 100) / (5000000 - 100)) * 100}%`,
+                  width: `${((priceRange.max - priceRange.min) / (5000000 - 100)) * 100}%`,
                 }}
               />
               <input
                 type="range"
-                min="5000"
-                max="500000"
+                min="100"
+                max="5000000"
                 value={priceRange.min}
                 onChange={(e) => {
                   setPriceRange((p) => ({
@@ -199,12 +199,12 @@ function Shop() {
                   }));
                   setCurrentPage(1);
                 }}
-                className="absolute inset-0 w-full h-full appearance-none bg-transparent pointer-events-auto z-20"
+                className="absolute inset-x-2 w-auto h-full appearance-none bg-transparent pointer-events-auto z-20"
               />
               <input
                 type="range"
-                min="5000"
-                max="500000"
+                min="100"
+                max="5000000"
                 value={priceRange.max}
                 onChange={(e) => {
                   setPriceRange((p) => ({
@@ -213,7 +213,7 @@ function Shop() {
                   }));
                   setCurrentPage(1);
                 }}
-                className="absolute inset-0 w-full h-full appearance-none bg-transparent pointer-events-auto z-30"
+                className="absolute inset-x-2 w-auto h-full appearance-none bg-transparent pointer-events-auto z-30"
               />
             </div>
             <div className="flex justify-between text-[#e91e8c] dark:text-[#c9a84c] text-sm mt-7 px-2 font-semibold">

@@ -381,7 +381,9 @@ html {
   box-shadow:
     0 0 0 3px rgba(233, 30, 140, 0.18),
     0 2px 8px rgba(233, 30, 140, 0.45);
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
   cursor: pointer;
 }
 
@@ -502,4 +504,13 @@ html {
 
 @utility animate-slide-up {
   animation: slide-up 0.3s ease-out forwards;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  margin-top: -6px;
+}
+
+input[type="range"]::-moz-range-thumb {
+  margin-top: -6px;
 }
