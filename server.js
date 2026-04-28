@@ -44,7 +44,7 @@ app.use("/api/orders", orderRoutes);
 app.use(express.static(distPath));
 
 // React fallback
-app.get("/{*path}", (req, res) => {
+app.get("*", (req, res) => {
   res.sendFile("index.html", { root: distPath });
 });
 
