@@ -126,40 +126,147 @@ function About() {
             </Link>
           </div>
 
-          {/* RIGHT — Bottle + image grid */}
+          {/* RIGHT — Layered Visual Showcase */}
           <div
             data-reveal-right="1"
             className="lg:basis-1/2 w-full flex items-center justify-center"
           >
-            <div className="relative w-full max-w-sm">
-              {/* 2x2 colour block grid */}
-              <div className="grid grid-cols-2 gap-3 h-[380px]">
-                <div className="rounded-lg bg-gradient-to-br from-[#e91e8c]/30 to-[#e91e8c]/10 flex items-end p-4 hover:from-[#e91e8c]/50 hover:to-[#e91e8c]/20 transition-all duration-500">
-                  <span className="font-cinzel text-[#c9a84c]/60 text-[10px] tracking-[2px] uppercase">
-                    Rose Noir
-                  </span>
+            <div className="relative w-[340px] h-[460px] sm:w-[390px] sm:h-[510px] lg:w-[460px] lg:h-[580px]">
+
+              {/* ── Layer 1 — back-most, rotated left, gold zigzag ── */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  transform: "rotate(-9deg) translate(-22px, 18px)",
+                  background: "linear-gradient(140deg, rgba(201,168,76,0.22) 0%, rgba(201,168,76,0.06) 55%, transparent 100%)",
+                  clipPath: "polygon(0% 7%, 7% 0%, 93% 0%, 100% 7%, 100% 87%, 93% 100%, 7% 100%, 0% 87%)",
+                  borderRadius: "2.5rem",
+                }}
+              />
+
+              {/* ── Layer 2 — mid, rotated right, pink ── */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  transform: "rotate(6deg) translate(18px, 12px)",
+                  background: "linear-gradient(220deg, rgba(233,30,140,0.28) 0%, rgba(233,30,140,0.08) 50%, transparent 100%)",
+                  clipPath: "polygon(5% 0%, 100% 0%, 100% 95%, 95% 100%, 0% 100%, 0% 5%)",
+                  borderRadius: "2rem",
+                }}
+              />
+
+              {/* ── Layer 3 — slight tilt, gold border accent ── */}
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  transform: "rotate(-3deg) translate(-8px, 6px) scale(0.96)",
+                  border: "1.5px solid rgba(201,168,76,0.25)",
+                  clipPath: "polygon(3% 0%, 97% 0%, 100% 3%, 100% 97%, 97% 100%, 3% 100%, 0% 97%, 0% 3%)",
+                  borderRadius: "1.8rem",
+                }}
+              />
+
+              {/* ── Main card — top layer ── */}
+              <div
+                className="absolute inset-0 overflow-hidden"
+                style={{
+                  borderRadius: "2rem",
+                  clipPath: "polygon(0% 5%, 5% 0%, 95% 0%, 100% 5%, 100% 95%, 95% 100%, 5% 100%, 0% 95%)",
+                  background: "linear-gradient(160deg, #1a0410 0%, #0d0818 45%, #0a0f1a 100%)",
+                  border: "1px solid rgba(201,168,76,0.15)",
+                }}
+              >
+                {/* Inner grid background — decorative quadrant blocks */}
+                <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-1 p-1 opacity-80">
+                  <div style={{ background: "linear-gradient(135deg, rgba(233,30,140,0.18) 0%, transparent 100%)", borderRadius: "1.4rem 0.4rem 0.4rem 0.4rem" }} />
+                  <div style={{ background: "linear-gradient(225deg, rgba(201,168,76,0.16) 0%, transparent 100%)", borderRadius: "0.4rem 1.4rem 0.4rem 0.4rem" }} />
+                  <div style={{ background: "linear-gradient(45deg, rgba(201,168,76,0.12) 0%, transparent 100%)", borderRadius: "0.4rem 0.4rem 0.4rem 1.4rem" }} />
+                  <div style={{ background: "linear-gradient(315deg, rgba(233,30,140,0.14) 0%, transparent 100%)", borderRadius: "0.4rem 0.4rem 1.4rem 0.4rem" }} />
                 </div>
-                <div className="rounded-lg bg-gradient-to-br from-[#c9a84c]/25 to-[#c9a84c]/08 flex items-end p-4 mt-6 hover:from-[#c9a84c]/40 transition-all duration-500">
-                  <span className="font-cinzel text-[#c9a84c]/60 text-[10px] tracking-[2px] uppercase">
-                    Amber Dusk
-                  </span>
+
+                {/* Diagonal shimmer line */}
+                <div
+                  className="absolute pointer-events-none"
+                  style={{
+                    top: "-20%", left: "-10%",
+                    width: "60%", height: "200%",
+                    transform: "rotate(25deg)",
+                    background: "linear-gradient(90deg, transparent, rgba(201,168,76,0.06), transparent)",
+                  }}
+                />
+
+                {/* ── Corner scent badges ── */}
+                {/* Top-left */}
+                <div className="absolute top-5 left-5 z-20">
+                  <div className="flex flex-col gap-0.5 backdrop-blur-sm bg-white/5 border border-[#c9a84c]/20 rounded-xl px-3 py-2">
+                    <span className="font-cinzel text-[#c9a84c] text-[8px] tracking-[2px] uppercase">Bestseller</span>
+                    <span className="font-playfair text-white text-sm font-semibold">Rose Noir</span>
+                  </div>
                 </div>
-                <div className="rounded-lg bg-gradient-to-br from-[#c9a84c]/15 to-[#e91e8c]/20 flex items-end p-4 -mt-6 hover:to-[#e91e8c]/40 transition-all duration-500">
-                  <span className="font-cinzel text-[#c9a84c]/60 text-[10px] tracking-[2px] uppercase">
-                    Mystic Oud
-                  </span>
+                {/* Top-right */}
+                <div className="absolute top-5 right-5 z-20">
+                  <div className="flex flex-col gap-0.5 backdrop-blur-sm bg-white/5 border border-[#e91e8c]/20 rounded-xl px-3 py-2 items-end">
+                    <span className="font-cinzel text-[#e91e8c]/80 text-[8px] tracking-[2px] uppercase">New Arrival</span>
+                    <span className="font-playfair text-white text-sm font-semibold">Amber Dusk</span>
+                  </div>
                 </div>
-                <div className="rounded-lg bg-gradient-to-br from-[#e91e8c]/20 to-[#c9a84c]/15 flex items-end p-4 hover:from-[#e91e8c]/40 transition-all duration-500">
-                  <span className="font-cinzel text-[#c9a84c]/60 text-[10px] tracking-[2px] uppercase">
-                    Velvet Bloom
-                  </span>
+                {/* Bottom-left */}
+                <div className="absolute bottom-5 left-5 z-20">
+                  <div className="flex flex-col gap-0.5 backdrop-blur-sm bg-white/5 border border-[#e91e8c]/20 rounded-xl px-3 py-2">
+                    <span className="font-cinzel text-[#e91e8c]/80 text-[8px] tracking-[2px] uppercase">Limited</span>
+                    <span className="font-playfair text-white text-sm font-semibold">Mystic Oud</span>
+                  </div>
                 </div>
+                {/* Bottom-right */}
+                <div className="absolute bottom-5 right-5 z-20">
+                  <div className="flex flex-col gap-0.5 backdrop-blur-sm bg-white/5 border border-[#c9a84c]/20 rounded-xl px-3 py-2 items-end">
+                    <span className="font-cinzel text-[#c9a84c] text-[8px] tracking-[2px] uppercase">Signature</span>
+                    <span className="font-playfair text-white text-sm font-semibold">Velvet Bloom</span>
+                  </div>
+                </div>
+
+                {/* Centre glow ring behind bottle */}
+                <div
+                  className="absolute inset-0 flex items-center justify-center pointer-events-none z-10"
+                >
+                  <div
+                    className="w-52 h-52 rounded-full"
+                    style={{
+                      background: "radial-gradient(circle, rgba(201,168,76,0.18) 0%, rgba(233,30,140,0.10) 45%, transparent 72%)",
+                      filter: "blur(8px)",
+                    }}
+                  />
+                </div>
+
+                {/* Outer shimmer ring */}
+                <div
+                  className="absolute inset-0 pointer-events-none z-10"
+                  style={{
+                    background: "radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(201,168,76,0.07) 80%, transparent 100%)",
+                  }}
+                />
               </div>
 
-              {/* Bottle overlaid in center */}
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none animate-float">
-                <PerfumeBottle className="w-[160px] drop-shadow-2xl" />
+              {/* ── Bottle — floats on top of everything ── */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-30 animate-float">
+                <PerfumeBottle className="w-[180px] lg:w-[210px] drop-shadow-2xl" />
               </div>
+
+              {/* ── Floating glow accents outside the card ── */}
+              <div
+                className="absolute -bottom-8 -right-8 w-36 h-36 rounded-full pointer-events-none animate-orb-drift-reverse"
+                style={{ background: "radial-gradient(circle, rgba(233,30,140,0.30) 0%, transparent 70%)" }}
+              />
+              <div
+                className="absolute -top-6 -left-6 w-24 h-24 rounded-full pointer-events-none animate-float-slow"
+                style={{ background: "radial-gradient(circle, rgba(201,168,76,0.28) 0%, transparent 70%)" }}
+              />
+
+              {/* ── Gold divider line accent top ── */}
+              <div
+                className="absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-[2px] rounded-full pointer-events-none"
+                style={{ background: "linear-gradient(to right, transparent, #c9a84c, transparent)" }}
+              />
             </div>
           </div>
         </div>

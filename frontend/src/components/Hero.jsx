@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 import { useEffect, useState, useCallback } from "react";
 
-// ─── Scroll Reveal ─────────────────────────────────────────────────────────────
+//scroll reveal...
 function useScrollReveal() {
   useEffect(() => {
     const selectors = [
@@ -29,7 +29,7 @@ function useScrollReveal() {
   }, []);
 }
 
-// ─── Slide data — replace src with real image paths when ready ─────────────────
+
 const slides = [
   {
     id: 1,
@@ -45,7 +45,7 @@ const slides = [
   },
 ];
 
-// ─── Hero Image Slider ──────────────────────────────────────────────────────────
+// ─── Hero Image Slider
 function HeroImageSlider() {
   const [active, setActive] = useState(0);
   const [fading, setFading] = useState(false);

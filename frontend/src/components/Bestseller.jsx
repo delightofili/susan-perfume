@@ -151,6 +151,7 @@ function Bestseller() {
                     )
                   }
                   price={`₦${product.price.toLocaleString()}`}
+                  originalPrice={product.original_price ? `₦${Number(product.original_price).toLocaleString()}` : null}
                   size={product.size}
                   discount={product.discount}
                   category={product.category}
