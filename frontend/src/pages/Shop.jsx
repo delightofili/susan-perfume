@@ -378,7 +378,7 @@ function Shop() {
               {/* previous page button */}
               <button
                 className="w-10 h-10 flex items-center justify-center bg-white dark:bg-white/10 border-2 border-[#e91e8c]/40 rounded-lg text-[#e91e8c]"
-                onClick={() => setCurrentPage((p) => Math.max(p - 1))}
+                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
               >
                 <IoIosArrowBack />
               </button>
@@ -386,7 +386,9 @@ function Shop() {
                 {currentPage}
               </span>
               <button
-                onClick={() => setCurrentPage((p) => Math.min(p + 1))}
+                onClick={() =>
+                  setCurrentPage((p) => Math.min(p + 1, totalPages))
+                }
                 className="w-10 h-10 flex items-center justify-center bg-white dark:bg-white/10 border-2 border-[#e91e8c]/40 rounded-lg text-[#e91e8c]"
               >
                 <IoIosArrowForward />
