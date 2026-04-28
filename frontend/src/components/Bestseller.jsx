@@ -87,7 +87,7 @@ function Bestseller() {
       </div>
 
       {/* ── Carousel Wrapper ── */}
-      <div className="relative group max-w-[1400px] mx-auto">
+      <div className="relative max-w-[1400px] mx-auto">
         {/* Navigation Arrows */}
         <button
           onClick={() => scroll("left")}

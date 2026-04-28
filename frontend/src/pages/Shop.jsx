@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import SortBy from "../components/SortBy";
 import { MdFilterList, MdFilterListOff } from "react-icons/md";
 import { useNavigate, useParams } from "react-router";
@@ -71,6 +71,12 @@ function Shop() {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 6;
+  const productsRef = useRef(null);
+
+  // Smooth scroll to product grid top on page change
+  const scrollToProducts = () => {
+    productsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   const toggleCategory = (cat) => {
     setCategories((p) => {
@@ -172,7 +178,7 @@ function Shop() {
             <h3 className="font-playfair font-bold text-[#e91e8c] dark:text-[#c9a84c] text-lg py-3 px-2">
               Price
             </h3>
-            <div className="relative w-full mt-3 px-2">
+            <div className="shop-range-wrap relative w-full mt-3 px-2">
               <div className="absolute inset-x-2 h-1 top-1/2 -translate-y-1/2 bg-[#e91e8c]/15 dark:bg-[#c9a84c]/15 rounded-full" />
               <div
                 className="absolute h-1 top-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-[#e91e8c] to-[#ff6ec7] dark:from-[#c9a84c] dark:to-[#f5e6a8]"
@@ -326,7 +332,7 @@ function Shop() {
             />
           </div>
 
-          <section className="min-h-[400px]">
+          <section className="min-h-[400px]" ref={productsRef}>
             {loading ? (
               <div className="flex flex-col items-center justify-center py-20">
                 <div className="w-16 h-16 border-4 border-[#e91e8c]/30 border-t-[#e91e8c] rounded-full animate-spin" />
@@ -377,8 +383,12 @@ function Shop() {
             <div className="flex items-center gap-3 justify-center">
               {/* previous page button */}
               <button
-                className="w-10 h-10 flex items-center justify-center bg-white dark:bg-white/10 border-2 border-[#e91e8c]/40 rounded-lg text-[#e91e8c]"
-                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                className="w-10 h-10 flex items-center justify-center bg-white dark:bg-white/10 border-2 border-[#e91e8c]/40 rounded-lg text-[#e91e8c] disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+                disabled={currentPage === 1}
+                onClick={() => {
+                  setCurrentPage((p) => Math.max(p - 1, 1));
+                  scrollToProducts();
+                }}
               >
                 <IoIosArrowBack />
               </button>
@@ -386,10 +396,12 @@ function Shop() {
                 {currentPage}
               </span>
               <button
-                onClick={() =>
-                  setCurrentPage((p) => Math.min(p + 1, totalPages))
-                }
-                className="w-10 h-10 flex items-center justify-center bg-white dark:bg-white/10 border-2 border-[#e91e8c]/40 rounded-lg text-[#e91e8c]"
+                disabled={currentPage === totalPages}
+                onClick={() => {
+                  setCurrentPage((p) => Math.min(p + 1, totalPages));
+                  scrollToProducts();
+                }}
+                className="w-10 h-10 flex items-center justify-center bg-white dark:bg-white/10 border-2 border-[#e91e8c]/40 rounded-lg text-[#e91e8c] disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
               >
                 <IoIosArrowForward />
               </button>

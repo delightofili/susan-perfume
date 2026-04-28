@@ -358,72 +358,91 @@ html {
 }
 
 /* ─────────────────────────────────────────────────────────
-   PRICE SLIDER
+   PRICE SLIDER — themed thumbs (pink light / gold dark)
 ───────────────────────────────────────────────────────── */
-.price-slider {
-  position: relative;
-  height: 6px;
-  background: linear-gradient(
-    to right,
-    rgba(230, 199, 106, 0.2),
-    #e6c76a,
-    rgba(230, 199, 106, 0.2)
-  );
-  border-radius: 999px;
-}
 
-.price-slider input[type="range"] {
-  position: absolute;
-  inset: 0;
+/* The two stacked range inputs share the same wrapper */
+.shop-range-wrap input[type="range"] {
   appearance: none;
+  -webkit-appearance: none;
   background: transparent;
-  pointer-events: none;
-}
-
-.price-slider input[type="range"]::-webkit-slider-thumb {
-  appearance: none;
-  pointer-events: auto;
-
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-
-  background: radial-gradient(circle at 30% 30%, #fff3c4, #e6c76a, #bfa24a);
-
-  box-shadow:
-    0 0 6px rgba(230, 199, 106, 0.9),
-    0 0 14px rgba(230, 199, 106, 0.6);
-
   cursor: pointer;
 }
 
-.price-slider::before,
-.price-slider::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 10px;
-  height: 10px;
+/* ── Webkit thumb — light mode (pink) ── */
+.shop-range-wrap input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  background: #e6c76a;
-  box-shadow: 0 0 8px rgba(230, 199, 106, 0.6);
+  border: 2px solid #fff;
+  background: radial-gradient(circle at 35% 35%, #ff6ec7, #e91e8c, #c2185b);
+  box-shadow:
+    0 0 0 3px rgba(233, 30, 140, 0.18),
+    0 2px 8px rgba(233, 30, 140, 0.45);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
 }
 
-.price-slider::before {
-  left: -4px;
+.shop-range-wrap input[type="range"]::-webkit-slider-thumb:hover,
+.shop-range-wrap input[type="range"]:focus::-webkit-slider-thumb {
+  box-shadow:
+    0 0 0 5px rgba(233, 30, 140, 0.22),
+    0 4px 16px rgba(233, 30, 140, 0.6);
+  transform: scale(1.15);
 }
 
-.price-slider::after {
-  right: -4px;
+/* ── Firefox thumb — light mode (pink) ── */
+.shop-range-wrap input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background: radial-gradient(circle at 35% 35%, #ff6ec7, #e91e8c, #c2185b);
+  box-shadow:
+    0 0 0 3px rgba(233, 30, 140, 0.18),
+    0 2px 8px rgba(233, 30, 140, 0.45);
+  cursor: pointer;
+  transition: box-shadow 0.2s ease;
 }
 
-.price-slider .range-fill {
-  position: absolute;
-  height: 100%;
-  background: linear-gradient(to right, #f5e6a8, #e6c76a, #bfa24a);
-  box-shadow: 0 0 12px rgba(230, 199, 106, 0.5);
-  border-radius: 999px;
+/* ── Dark mode thumbs (gold) — applied via .dark on a parent ── */
+.dark .shop-range-wrap input[type="range"]::-webkit-slider-thumb {
+  background: radial-gradient(circle at 35% 35%, #f5e6a8, #c9a84c, #a0832a);
+  box-shadow:
+    0 0 0 3px rgba(201, 168, 76, 0.22),
+    0 2px 8px rgba(201, 168, 76, 0.55);
+}
+
+.dark .shop-range-wrap input[type="range"]::-webkit-slider-thumb:hover,
+.dark .shop-range-wrap input[type="range"]:focus::-webkit-slider-thumb {
+  box-shadow:
+    0 0 0 5px rgba(201, 168, 76, 0.28),
+    0 4px 16px rgba(201, 168, 76, 0.7);
+}
+
+.dark .shop-range-wrap input[type="range"]::-moz-range-thumb {
+  background: radial-gradient(circle at 35% 35%, #f5e6a8, #c9a84c, #a0832a);
+  box-shadow:
+    0 0 0 3px rgba(201, 168, 76, 0.22),
+    0 2px 8px rgba(201, 168, 76, 0.55);
+}
+
+/* Remove default track styling so our custom track div shows through */
+.shop-range-wrap input[type="range"]::-webkit-slider-runnable-track {
+  background: transparent;
+  height: 4px;
+}
+
+.shop-range-wrap input[type="range"]::-moz-range-track {
+  background: transparent;
+  height: 4px;
+}
+
+/* Focus ring for accessibility */
+.shop-range-wrap input[type="range"]:focus {
+  outline: none;
 }
 
 /* smooth mobile scrolling */

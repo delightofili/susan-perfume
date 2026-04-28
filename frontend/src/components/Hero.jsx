@@ -1,8 +1,7 @@
 import { Link } from "react-router";
-import PerfumeBottle from "./PerfumeBottle";
-import { useEffect } from "react";
+import { useEffect, useState, useCallback } from "react";
 
-// Reusable IntersectionObserver hook for scroll reveals
+// ─── Scroll Reveal ─────────────────────────────────────────────────────────────
 function useScrollReveal() {
   useEffect(() => {
     const selectors = [
@@ -22,7 +21,7 @@ function useScrollReveal() {
           }
         });
       },
-      { threshold: 0.12 }
+      { threshold: 0.12 },
     );
 
     elements.forEach((el) => observer.observe(el));
@@ -30,6 +29,282 @@ function useScrollReveal() {
   }, []);
 }
 
+// ─── Slide data — replace src with real image paths when ready ─────────────────
+const slides = [
+  {
+    id: 1,
+    src: "/images/RosePerf.png",
+    label: "Rose Noir",
+    tag: "Bestseller",
+  },
+  {
+    id: 2,
+    src: "/images/OudPerf.png",
+    label: "Mystique Oud",
+    tag: "New Arrival",
+  },
+];
+
+// ─── Hero Image Slider ──────────────────────────────────────────────────────────
+function HeroImageSlider() {
+  const [active, setActive] = useState(0);
+  const [fading, setFading] = useState(false);
+
+  const goTo = useCallback(
+    (idx) => {
+      if (idx === active) return;
+      setFading(true);
+      setTimeout(() => {
+        setActive(idx);
+        setFading(false);
+      }, 350);
+    },
+    [active],
+  );
+
+  // Auto-slide every 4 seconds
+  useEffect(() => {
+    const t = setInterval(() => {
+      goTo((active + 1) % slides.length);
+    }, 4000);
+    return () => clearInterval(t);
+  }, [active, goTo]);
+
+  const slide = slides[active];
+
+  return (
+    <div
+      data-reveal-right="1"
+      className="relative flex-shrink-0 w-full lg:w-auto flex justify-center lg:justify-end"
+    >
+      {/* ── Outer wrapper — controls overall size ── */}
+      <div className="relative w-[300px] h-[400px] sm:w-[340px] sm:h-[450px] lg:w-[400px] lg:h-[520px] xl:w-[440px] xl:h-[570px]">
+        {/* ── Decorative Layer 1 — back-most, rotated left ── */}
+        <div
+          className="absolute inset-0 rounded-[2.5rem] pointer-events-none"
+          style={{
+            transform: "rotate(-8deg) translate(-18px, 14px)",
+            background:
+              "linear-gradient(135deg, rgba(233,30,140,0.22) 0%, rgba(233,30,140,0.08) 60%, transparent 100%)",
+            clipPath:
+              "polygon(0% 8%, 6% 0%, 94% 0%, 100% 6%, 100% 88%, 94% 100%, 6% 100%, 0% 92%)",
+          }}
+        >
+          {/* dark mode overlay */}
+          <div
+            className="absolute inset-0 opacity-0 dark:opacity-100 rounded-[2.5rem]"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(201,168,76,0.22) 0%, rgba(201,168,76,0.07) 60%, transparent 100%)",
+              clipPath:
+                "polygon(0% 8%, 6% 0%, 94% 0%, 100% 6%, 100% 88%, 94% 100%, 6% 100%, 0% 92%)",
+            }}
+          />
+        </div>
+
+        {/* ── Decorative Layer 2 — middle, rotated right ── */}
+        <div
+          className="absolute inset-0 rounded-[2rem] pointer-events-none"
+          style={{
+            transform: "rotate(5deg) translate(14px, 10px)",
+            background:
+              "linear-gradient(225deg, rgba(233,30,140,0.30) 0%, rgba(255,110,199,0.12) 55%, transparent 100%)",
+            clipPath:
+              "polygon(4% 0%, 100% 0%, 100% 96%, 96% 100%, 0% 100%, 0% 4%)",
+          }}
+        >
+          {/* dark mode overlay */}
+          <div
+            className="absolute inset-0 opacity-0 dark:opacity-100 rounded-[2rem]"
+            style={{
+              background:
+                "linear-gradient(225deg, rgba(201,168,76,0.28) 0%, rgba(230,199,106,0.10) 55%, transparent 100%)",
+              clipPath:
+                "polygon(4% 0%, 100% 0%, 100% 96%, 96% 100%, 0% 100%, 0% 4%)",
+            }}
+          />
+        </div>
+
+        {/* ── Main image card — top layer ── */}
+        <div
+          className="absolute inset-0 overflow-hidden shadow-2xl border border-white/20 dark:border-[#c9a84c]/20"
+          style={{
+            borderRadius: "2rem",
+            clipPath:
+              "polygon(0% 5%, 5% 0%, 95% 0%, 100% 5%, 100% 95%, 95% 100%, 5% 100%, 0% 95%)",
+          }}
+        >
+          {/* Gradient backdrop (always visible, image sits on top) */}
+          <div
+            className="absolute inset-0 opacity-100 dark:opacity-0 transition-opacity duration-500"
+            style={{
+              background:
+                "linear-gradient(160deg, #fcd6eb 0%, #fdf2f8 40%, #ffe4f5 100%)",
+            }}
+          />
+          <div
+            className="absolute inset-0 opacity-0 dark:opacity-100 transition-opacity duration-500"
+            style={{
+              background:
+                "linear-gradient(160deg, #1a0410 0%, #0d0a1a 50%, #0a0f1a 100%)",
+            }}
+          />
+
+          {/* ── Slide image / placeholder ── */}
+          <div
+            className="absolute inset-0 transition-all duration-350"
+            style={{
+              opacity: fading ? 0 : 1,
+              transform: fading ? "scale(1.04)" : "scale(1)",
+              transition: "opacity 0.35s ease, transform 0.35s ease",
+            }}
+          >
+            {slide.src ? (
+              <img
+                src={slide.src}
+                alt={slide.label}
+                className="w-full h-full object-cover object-top"
+              />
+            ) : (
+              /* ── Placeholder shown until real image is added ── */
+              <div className="w-full h-full flex flex-col items-center justify-center gap-4 px-8">
+                {/* Silhouette SVG placeholder */}
+                <svg
+                  viewBox="0 0 200 280"
+                  className="w-40 h-auto opacity-20 dark:opacity-10"
+                  fill="currentColor"
+                >
+                  {/* Head */}
+                  <ellipse
+                    cx="100"
+                    cy="45"
+                    rx="30"
+                    ry="34"
+                    className="text-pink-blush dark:text-[#c9a84c]"
+                  />
+                  {/* Shoulders / body */}
+                  <path
+                    d="M40 130 Q50 90 100 85 Q150 90 160 130 L165 200 Q140 210 100 212 Q60 210 35 200 Z"
+                    className="text-pink-blush dark:text-[#c9a84c]"
+                  />
+                  {/* Arm left */}
+                  <path
+                    d="M40 130 Q20 150 25 190 Q30 195 38 185 Q35 155 55 138 Z"
+                    className="text-pink-blush dark:text-[#c9a84c]"
+                  />
+                  {/* Arm right holding bottle */}
+                  <path
+                    d="M160 130 Q178 148 174 185 Q168 192 162 183 Q164 155 145 138 Z"
+                    className="text-pink-blush dark:text-[#c9a84c]"
+                  />
+                  {/* Perfume bottle in hand */}
+                  <rect
+                    x="158"
+                    y="155"
+                    width="18"
+                    height="34"
+                    rx="4"
+                    className="text-[#c9a84c]"
+                    fill="#c9a84c"
+                    opacity="0.7"
+                  />
+                  <rect
+                    x="163"
+                    y="147"
+                    width="8"
+                    height="10"
+                    rx="2"
+                    fill="#c9a84c"
+                    opacity="0.5"
+                  />
+                </svg>
+                <p className="font-cinzel text-[10px] tracking-[3px] uppercase text-pink-blush/50 dark:text-[#c9a84c]/40 text-center">
+                  Image coming soon
+                </p>
+                <p className="font-playfair text-lg font-semibold text-[#1a0a10]/40 dark:text-white/20 text-center">
+                  {slide.label}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* ── Tag badge top-left ── */}
+          <div className="absolute top-4 left-4 z-10">
+            <span
+              className="font-cinzel text-[9px] tracking-[2.5px] uppercase px-3 py-1.5 rounded-full
+              bg-[#e91e8c] dark:bg-[#c9a84c] text-white dark:text-[#0a0f1a] shadow-lg"
+            >
+              {slide.tag}
+            </span>
+          </div>
+
+          {/* ── Bottom label bar ── */}
+          <div
+            className="absolute bottom-0 inset-x-0 z-10 px-5 pb-4 pt-10"
+            style={{
+              background:
+                "linear-gradient(to top, rgba(10,5,15,0.70) 0%, transparent 100%)",
+            }}
+          >
+            <p className="font-playfair text-white text-lg font-semibold leading-tight">
+              {slide.label}
+            </p>
+            <p className="font-inter text-white/55 text-[11px] tracking-wide mt-0.5">
+              Susan Perfume Collection
+            </p>
+          </div>
+
+          {/* ── Shimmer overlay on hover ── */}
+          <div
+            className="absolute inset-0 pointer-events-none opacity-0 hover:opacity-100 transition-opacity duration-500"
+            style={{
+              background:
+                "linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.06) 50%, transparent 70%)",
+            }}
+          />
+        </div>
+
+        {/* ── Dot indicators ── */}
+        <div className="absolute -bottom-7 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+          {slides.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => goTo(i)}
+              aria-label={`Slide ${i + 1}`}
+              className="transition-all duration-300 rounded-full focus:outline-none"
+              style={{
+                width: i === active ? "24px" : "8px",
+                height: "8px",
+                background:
+                  i === active
+                    ? "var(--pinky, #e91e8c)"
+                    : "rgba(233,30,140,0.28)",
+              }}
+            />
+          ))}
+        </div>
+
+        {/* ── Floating accent glow ── */}
+        <div
+          className="absolute -bottom-6 -right-6 w-28 h-28 rounded-full pointer-events-none animate-orb-drift-reverse opacity-60"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(233,30,140,0.35) 0%, transparent 70%)",
+          }}
+        />
+        <div
+          className="absolute -top-4 -left-4 w-20 h-20 rounded-full pointer-events-none animate-float-slow opacity-0 dark:opacity-50"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(201,168,76,0.4) 0%, transparent 70%)",
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ─── Hero ───────────────────────────────────────────────────────────────────────
 function Hero() {
   useScrollReveal();
 
@@ -49,13 +324,13 @@ function Hero() {
         bg-[radial-gradient(ellipse_at_top_right,#fcd6eb_0%,#fdf2f8_45%,#fff8f0_100%)]"
       />
 
-      {/* gold orb top-right — animated drift */}
+      {/* gold orb top-right */}
       <div
         className="absolute -top-20 -right-20 w-[450px] h-[450px] rounded-full pointer-events-none animate-orb-drift
         bg-[radial-gradient(circle,rgba(201,168,76,0.20)_0%,transparent_70%)]"
       />
 
-      {/* pink orb bottom-left — animated drift reverse */}
+      {/* pink orb bottom-left */}
       <div
         className="absolute bottom-0 left-1/4 w-[340px] h-[340px] rounded-full pointer-events-none animate-orb-drift-reverse
         bg-[radial-gradient(circle,rgba(233,30,140,0.18)_0%,transparent_70%)]"
@@ -71,7 +346,7 @@ function Hero() {
       <div className="relative z-10 min-h-[90vh] flex items-center">
         <div
           className="px-6 md:px-16 w-full max-w-7xl mx-auto py-20
-          flex flex-col lg:flex-row items-center lg:items-end justify-between gap-10"
+          flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-10"
         >
           {/* ── LEFT: Text ── */}
           <div className="flex flex-col items-center text-center lg:items-start lg:text-left w-full lg:max-w-xl">
@@ -136,98 +411,17 @@ function Hero() {
             </div>
           </div>
 
-          {/* ── CENTER: Bottle — large screens only ── */}
-          <div className="hidden lg:flex items-end justify-center flex-1 self-end animate-float">
-            <PerfumeBottle className="w-[240px] xl:w-[280px] drop-shadow-2xl" />
-          </div>
-
-          {/* ── RIGHT: Floating Cards ── */}
-          <div className="flex flex-row lg:flex-col gap-4 w-full lg:w-auto lg:min-w-[220px]">
-            {/* ⭐ Review Card */}
-            <div
-              data-reveal-right="1"
-              className="flex-1 lg:flex-none backdrop-blur-md rounded-xl p-4 flex flex-col gap-1 shadow-xl
-              bg-white/70 dark:bg-white/10 border border-[#e91e8c]/20 dark:border-[#c9a84c]/30
-              hover:-translate-y-1 transition-transform duration-300"
-            >
-              <div className="flex gap-[3px]">
-                {[...Array(5)].map((_, i) => (
-                  <svg
-                    key={i}
-                    className="w-4 h-4 fill-[#c9a84c]"
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                ))}
-              </div>
-              <p
-                className="font-playfair text-3xl font-bold leading-none
-                text-[#1a0a10] dark:text-white"
-              >
-                4.9
-              </p>
-              <p
-                className="font-inter text-[11px] tracking-wide
-                text-[#7a4a5a] dark:text-white/50"
-              >
-                2,400+ Verified Reviews
-              </p>
-            </div>
-
-            {/* 🏆 Best Seller Card */}
-            <div
-              data-reveal-right="2"
-              className="flex-1 lg:flex-none backdrop-blur-md rounded-xl p-4 shadow-xl
-              bg-white/70 dark:bg-white/10 border border-[#e91e8c]/20 dark:border-[#c9a84c]/30
-              hover:-translate-y-1 transition-transform duration-300"
-            >
-              <p className="font-cinzel text-[#e91e8c]/70 dark:text-[#c9a84c]/70 text-[9px] tracking-[3px] uppercase mb-1">
-                Best Seller
-              </p>
-              <p
-                className="font-playfair text-xl font-semibold
-                text-[#1a0a10] dark:text-white"
-              >
-                Rose Noir
-              </p>
-              <p className="font-inter text-[#c9a84c] text-lg font-bold mt-1">
-                ₦18,000
-              </p>
-              <p
-                className="font-inter text-[10px] mt-1 line-through
-                text-[#7a4a5a] dark:text-white/40"
-              >
-                ₦22,500
-              </p>
-            </div>
-
-            {/* 🔴 Just Dropped — desktop only */}
-            <div
-              data-reveal-right="3"
-              className="hidden lg:flex backdrop-blur-md rounded-xl p-4 items-center gap-3 shadow-xl
-              bg-[#e91e8c]/10 dark:bg-[#c9a84c]/10 border border-[#e91e8c]/25 dark:border-[#c9a84c]/30
-              hover:-translate-y-1 transition-transform duration-300"
-            >
-              <div className="w-2 h-2 rounded-full bg-[#e91e8c] dark:bg-[#c9a84c] animate-pulse shrink-0" />
-              <div>
-                <p className="font-cinzel text-[#e91e8c] dark:text-[#c9a84c] text-[10px] tracking-[2px] uppercase">
-                  Just Dropped
-                </p>
-                <p className="font-playfair text-sm mt-[2px] text-[#1a0a10] dark:text-white">
-                  Mystique Oud · ₦12,000
-                </p>
-              </div>
-            </div>
-          </div>
+          {/* ── RIGHT: Image Slider ── */}
+          <HeroImageSlider />
         </div>
       </div>
+
       <MarqueeStrip />
     </section>
   );
 }
 
-// ─── Marquee Strip ────────────────────────────────────────────────────────────
+// ─── Marquee Strip ─────────────────────────────────────────────────────────────
 const marqueeItems = [
   "Rose Noir",
   "Mystique Oud",
