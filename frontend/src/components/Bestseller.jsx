@@ -8,6 +8,8 @@ function Bestseller() {
   const { products, loading } = useProduct();
   const scrollRef = useRef(null);
 
+  const bestSellers = products?.filter((p) => p.isBestSeller === true);
+
   const navigate = useNavigate();
 
   // Scroll reveal
@@ -125,7 +127,7 @@ function Bestseller() {
               />
             ))
           ) : products?.length > 0 ? (
-            products.map((product, index) => (
+            bestSellers.map((product, index) => (
               <div
                 key={product.id}
                 data-reveal={String((index % 5) + 1)}

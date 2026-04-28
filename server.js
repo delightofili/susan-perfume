@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
-import { dirname, join } from "path";
+import path, { dirname, join } from "path";
 import fs from "fs";
 
 import productRoutes from "./routes/products.js";
@@ -44,8 +44,9 @@ app.use("/api/orders", orderRoutes);
 // Serve frontend
 app.use(express.static(distPath));
 
-// React fallback
-app.get("*", (req, res) => {
+// React catch-all fallback — serves index.html for ALL non-API routes
+// Express v5 requires named wildcards: /{*splat} instead of *
+app.get("/{*splat}", (req, res) => {
   res.sendFile("index.html", { root: distPath });
 });
 

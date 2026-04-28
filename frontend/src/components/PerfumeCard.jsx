@@ -101,7 +101,7 @@ function PerfumeCard({
         className="flex flex-col flex-1 p-4 gap-2"
         onClick={(e) => e.stopPropagation()}
       >
-        <div>
+        <div className="flex items-center gap-2">
           {category && (
             <p className="font-inter text-[#e91e8c]/60 dark:text-white/40 text-[10px] tracking-[1.5px] uppercase">
               {category} .
@@ -109,7 +109,7 @@ function PerfumeCard({
           )}{" "}
           {size && (
             <span className="font-inter text-[#e91e8c]/60 dark:text-white/40 text-[10px] tracking-[1.5px] uppercase">
-              {size}Ml
+              ({size}Ml)
             </span>
           )}
         </div>

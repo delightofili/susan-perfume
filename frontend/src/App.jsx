@@ -3,7 +3,7 @@ import Footer from "./components/Footer";
 import Hero from "./components/Hero";
 import NewArrivals from "./components/NerArrivals";
 import Bestseller from "./components/Bestseller";
-import { Routes, Route } from "react-router";
+import { Routes, Route, Navigate } from "react-router";
 import Shop from "./pages/Shop";
 import Cart from "./pages/Cart";
 import { getOrCreateCartId } from "../utils/cartId";
@@ -66,10 +66,12 @@ function App() {
               </ProtectedRoute>
             }
           >
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/products" element={<AdminDashboard />} />
-            <Route path="/admin/orders" element={<AdminDashboard />} />
-            <Route path="/admin/settings" element={<AdminDashboard />} />
+            {/* Redirect /admin → /admin/dashboard */}
+            <Route index element={<Navigate to="/admin/dashboard" replace />} />
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="products" element={<AdminDashboard />} />
+            <Route path="orders" element={<AdminDashboard />} />
+            <Route path="settings" element={<AdminDashboard />} />
           </Route>
 
           <Route path="*" element={<div>404</div>} />
