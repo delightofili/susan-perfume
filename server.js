@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+import fs from "fs";
 
 import productRoutes from "./routes/products.js";
 import orderRoutes from "./routes/orders.js";
@@ -51,3 +52,8 @@ app.get("*", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+console.log("DIST PATH:", distPath);
+console.log(
+  "FILES:",
+  fs.existsSync(distPath) ? fs.readdirSync(distPath) : "NOT FOUND",
+);
