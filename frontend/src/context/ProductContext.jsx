@@ -5,8 +5,8 @@ import { createContext, useEffect, useReducer } from "react";
 const ProductContext = createContext();
 export default ProductContext;
 
-// ── Put BASE_URL here, outside everything ──
-const BASE_URL = import.meta.env.VITE_API_URL || "";
+// ──  ──
+/* const BASE_URL = import.meta.env.VITE_API_URL || ""; */
 
 const initialState = {
   products: [],
@@ -46,7 +46,8 @@ export const ProductProvider = ({ children }) => {
   const fetchProducts = async () => {
     try {
       dispatch({ type: "SET_LOADING" });
-      const res = await fetch(`${BASE_URL}/products`);
+      /* const res = await fetch(`${BASE_URL}/products`); */
+      const res = await fetch(`/api/products`);
       if (!res.ok) throw new Error("Failed to fetch products");
       const data = await res.json();
       dispatch({ type: "SET_PRODUCTS", payload: data });
@@ -58,7 +59,8 @@ export const ProductProvider = ({ children }) => {
   const fetchCurrentProduct = async (id) => {
     try {
       dispatch({ type: "SET_LOADING" });
-      const res = await fetch(`${BASE_URL}/products/${id}`);
+      const res = await fetch(`/api/products/${id}`);
+      /*  const res = await fetch(`${BASE_URL}/products/${id}`); */
       if (!res.ok) throw new Error("Product not found");
       const data = await res.json();
       dispatch({ type: "SET_CURRENT_PRODUCT", payload: data });
