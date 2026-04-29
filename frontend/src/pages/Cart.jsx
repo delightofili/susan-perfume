@@ -13,10 +13,21 @@ function Cart() {
   const [activeTab, setActiveTab] = useState("cart");
 
   useEffect(() => {
-    const saved = localStorage.getItem("past_orders");
-    if (saved) {
-      setPastOrders(JSON.parse(saved));
-    }
+    const fetchOrders = async () => {
+      try {
+        const res = await fetch(
+          "https://susan-perfume.onrender.com/api/orders",
+        );
+
+        const data = await res.json();
+
+        setPastOrders(data);
+        localStorage.setItem("past_orders", JSON.stringify(data));
+      } catch (err) {
+        console.log("Error fetching orders:", err);
+      }
+    };
+    fetchOrders();
   }, []);
 
   return (
@@ -61,7 +72,7 @@ function Cart() {
           )}
         </div>
 
-        {/* ✅ Tabs (minimal styling so it blends in) */}
+        {/* Tabs  */}
         <div className="flex justify-center gap-4 mb-10">
           <button
             onClick={() => setActiveTab("cart")}
@@ -87,7 +98,7 @@ function Cart() {
         </div>
 
         <div className="max-w-6xl mx-auto px-4 lg:px-8 pb-16">
-          {/* ───────── CART TAB (YOUR ORIGINAL UI) ───────── */}
+          {/* ───────── CART TAB ───────── */}
           {activeTab === "cart" && (
             <div className="lg:grid lg:grid-cols-[2fr_1fr] gap-10">
               <div>
@@ -168,9 +179,11 @@ function Cart() {
 
                       <div className="px-5 py-4 flex justify-between">
                         <div>
-                          <p>{o.items} item(s)</p>
+                          <p>{o.items_count} item(s)</p>
                           <p className="text-xs opacity-50">
-                            {new Date(o.date).toLocaleDateString()}
+                            {o.date
+                              ? new Date(o.date).toLocaleDateString()
+                              : ""}
                           </p>
                         </div>
 

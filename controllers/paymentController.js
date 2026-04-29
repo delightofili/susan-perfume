@@ -11,14 +11,17 @@ export const handleWebhook = async (req, res) => {
       .update(req.body) // raw body
       .digest("hex");
 
-    if (hash !== req.headers["x-paystack-signature"]) {
+    const signature = req.headers["x-paystack-signature"];
+
+    if (hash !== signature) {
       console.error("Invalid Paystack signature");
       return res.sendStatus(401);
     }
 
+    //  Parse event data
     const event = JSON.parse(req.body.toString());
 
-    // 2️⃣ Only handle successful payments
+    // Only handle successful payments
     if (event.event !== "charge.success") {
       return res.sendStatus(200);
     }
@@ -26,7 +29,9 @@ export const handleWebhook = async (req, res) => {
     const ref = event.data.reference;
     const amountPaid = event.data.amount / 100;
 
-    // 3️⃣ Get order
+    console.log("💰 Payment received:", reference);
+
+    // Get order from database
     const { data: order, error } = await supabase
       .from("orders")
       .select("*")
@@ -38,22 +43,22 @@ export const handleWebhook = async (req, res) => {
       return res.sendStatus(404);
     }
 
-    // 4️⃣ Prevent duplicate processing
+    //to Prevent duplicate processing
     if (order.status === "Paid") {
-      console.log("Already processed:", ref);
+      console.log("⚠️ Already processed:", ref);
       return res.sendStatus(200);
     }
 
-    // 5️⃣ Validate amount
-    if (order.total !== amountPaid) {
-      console.error("Amount mismatch:", {
+    // Validate amount
+    if (Number(order.total) !== Number(amountPaid)) {
+      console.error("❌ Amount mismatch:", {
         expected: order.total,
         paid: amountPaid,
       });
       return res.sendStatus(400);
     }
 
-    // 6️⃣ Reduce stock (if items array exists)
+    // Reduce stock (if items array exists)
     if (Array.isArray(order.items)) {
       for (const item of order.items) {
         const { error: stockError } = await supabase.rpc("decrement_stock", {
@@ -67,17 +72,24 @@ export const handleWebhook = async (req, res) => {
       }
     }
 
-    // 7️⃣ Mark order as paid
-    await supabase
+    //  Update order status
+    const { error: updateError } = await supabase
       .from("orders")
-      .update({ status: "Paid" })
-      .eq("reference", ref);
+      .update({
+        status: "Paid",
+      })
+      .eq("reference", reference);
 
-    console.log(`Order ${ref} successfully processed`);
+    if (updateError) {
+      console.error("❌ Failed to update order:", updateError);
+      return res.sendStatus(500);
+    }
+
+    console.log(`✅ Order ${reference} marked as PAID`);
 
     return res.sendStatus(200);
   } catch (err) {
-    console.error("Webhook error:", err);
+    console.error("🔥 Webhook error:", err);
     return res.sendStatus(500);
   }
 };

@@ -1,5 +1,3 @@
-// src/components/CartList.jsx
-
 import { useCart } from "../hook/useCart";
 import { RiDeleteBin6Line } from "react-icons/ri";
 
@@ -52,9 +50,15 @@ function CartList({ cartItems }) {
                 {/* Image */}
                 <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-gradient-to-br from-[#fce4f3] to-[#fff8f0] dark:from-[#1a0a10] dark:to-[#0a0f1a] border border-[#e91e8c]/15 dark:border-[#c9a84c]/15">
                   {item.image ? (
-                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-2xl">🧴</div>
+                    <div className="w-full h-full flex items-center justify-center text-2xl">
+                      🧴
+                    </div>
                   )}
                 </div>
 
@@ -79,7 +83,9 @@ function CartList({ cartItems }) {
                       <button
                         className="px-3 py-1.5 text-[#e91e8c] dark:text-[#c9a84c] hover:bg-[#e91e8c]/10 transition text-sm font-bold"
                         onClick={() => handleDecrease(item.id)}
-                      >−</button>
+                      >
+                        −
+                      </button>
                       <span className="px-3 py-1.5 text-[#1a0a10] dark:text-white font-bold text-sm min-w-8 text-center border-x border-[#e91e8c]/15 dark:border-[#c9a84c]/20">
                         {quantity}
                       </span>
@@ -87,7 +93,9 @@ function CartList({ cartItems }) {
                         className="px-3 py-1.5 text-[#e91e8c] dark:text-[#c9a84c] hover:bg-[#e91e8c]/10 transition text-sm font-bold"
                         onClick={() => handleIncrease(item.id)}
                         disabled={quantity >= (item.stock || 99)}
-                      >+</button>
+                      >
+                        +
+                      </button>
                     </div>
 
                     <p className="font-inter font-bold text-sm text-[#1a0a10] dark:text-[#f5e6a8]">
@@ -103,9 +111,15 @@ function CartList({ cartItems }) {
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0 bg-gradient-to-br from-[#fce4f3] to-[#fff8f0] dark:from-[#1a0a10] dark:to-[#0a0f1a] border border-[#e91e8c]/15 dark:border-[#c9a84c]/15">
                     {item.image ? (
-                      <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-xl">🧴</div>
+                      <div className="w-full h-full flex items-center justify-center text-xl">
+                        🧴
+                      </div>
                     )}
                   </div>
                   <div>
@@ -129,7 +143,9 @@ function CartList({ cartItems }) {
                     <button
                       className="px-3 py-2 text-[#e91e8c] dark:text-[#c9a84c] hover:bg-[#e91e8c]/10 dark:hover:bg-[#c9a84c]/10 transition font-bold"
                       onClick={() => handleDecrease(item.id)}
-                    >−</button>
+                    >
+                      −
+                    </button>
                     <span className="px-4 py-2 text-[#1a0a10] dark:text-white font-bold min-w-8 text-center border-x border-[#e91e8c]/15 dark:border-[#c9a84c]/20 text-sm">
                       {quantity}
                     </span>
@@ -137,7 +153,9 @@ function CartList({ cartItems }) {
                       className="px-3 py-2 text-[#e91e8c] dark:text-[#c9a84c] hover:bg-[#e91e8c]/10 dark:hover:bg-[#c9a84c]/10 transition font-bold"
                       onClick={() => handleIncrease(item.id)}
                       disabled={quantity >= (item.stock || 99)}
-                    >+</button>
+                    >
+                      +
+                    </button>
                   </div>
                 </div>
 

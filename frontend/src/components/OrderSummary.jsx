@@ -1,11 +1,11 @@
-// src/components/OrderSummary.jsx
-
 import { useCart } from "../hook/useCart";
 import GoldDividerDot from "./GoldDividerDot";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
+import { useNavigate } from "react-router";
 
 function OrderSummary() {
+  const navigate = useNavigate();
   const { totalItems, totalPrice, cart } = useCart();
   const [promoCode, setPromoCode] = useState("");
   const [promoApplied, setPromoApplied] = useState(false);
@@ -27,8 +27,6 @@ function OrderSummary() {
   };
 
   if (cart.length === 0) return null;
-
-  const navigate = useNavigate();
 
   return (
     <div className="sticky top-4 rounded-2xl overflow-hidden border border-[#e91e8c]/20 dark:border-[#c9a84c]/20 bg-white/70 dark:bg-black/60 backdrop-blur-sm mt-6 lg:mt-0">
@@ -135,7 +133,6 @@ function OrderSummary() {
                      rounded-xl
                      hover:opacity-90 hover:shadow-lg hover:shadow-[#c9a84c]/20
                      transition-all duration-200 cursor-pointer"
-
           onClick={() => navigate("/checkout")}
         >
           Proceed to Checkout

@@ -86,8 +86,8 @@ function Checkout() {
         );
       }, 400);
     } catch (err) {
-      console.error(err);
-      setError("Order failed.");
+      console.error("Full Error", err);
+      setError(err.message || "Order failed.");
     }
 
     setLoading(false);

@@ -21,6 +21,7 @@ const PORT = process.env.PORT || 3001;
 // CORS
 app.use(cors());
 
+//raw body for paystack
 app.post(
   "/api/paystack/webhook",
   express.raw({ type: "application/json" }),
