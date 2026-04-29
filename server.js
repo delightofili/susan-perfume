@@ -15,6 +15,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const distPath = path.join(__dirname, "frontend", "dist");
 
+console.log(
+  "FILES:",
+  fs.existsSync(distPath) ? fs.readdirSync(distPath) : "NOT FOUND",
+);
+
 const app = express();
 const PORT = process.env.PORT || 3001;
 
@@ -58,3 +63,4 @@ console.log(
   "FILES:",
   fs.existsSync(distPath) ? fs.readdirSync(distPath) : "NOT FOUND",
 );
+console.log(`Server running on port ${PORT}`);
