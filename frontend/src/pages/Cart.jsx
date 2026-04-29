@@ -9,9 +9,8 @@ import StatusBadge from "../admin/components/StatusBadge";
 function Cart() {
   const { totalItems, cart, loading, error } = useCart();
 
-  const [activeTab, setActiveTab] = useState("cart");
   const [pastOrders, setPastOrders] = useState([]);
-
+  const [activeTab, setActiveTab] = useState("cart");
 
   useEffect(() => {
     const saved = localStorage.getItem("past_orders");
@@ -23,19 +22,23 @@ function Cart() {
   return (
     <section className="min-h-screen w-full relative">
       {/* backgroundsss */}
-      <div className="absolute inset-0 opacity-0 dark:opacity-100 transition-opacity duration-500
+      <div
+        className="absolute inset-0 opacity-0 dark:opacity-100 transition-opacity duration-500
         bg-[radial-gradient(ellipse_at_top_right,#1a0410_0%,#0a0f1a_60%)]"
       />
 
-      <div className="absolute inset-0 opacity-100 dark:opacity-0 transition-opacity duration-500
+      <div
+        className="absolute inset-0 opacity-100 dark:opacity-0 transition-opacity duration-500
         bg-[radial-gradient(ellipse_at_top_right,#fcd6eb_0%,#fdf2f8_45%,#fff8f0_100%)]"
       />
 
-      <div className="absolute -top-20 -right-20 w-[400px] h-[400px] rounded-full pointer-events-none
+      <div
+        className="absolute -top-20 -right-20 w-[400px] h-[400px] rounded-full pointer-events-none
         bg-[radial-gradient(circle,rgba(201,168,76,0.18)_0%,transparent_70%)]"
       />
 
-      <div className="absolute bottom-0 left-1/3 w-[280px] h-[280px] rounded-full pointer-events-none animate-orb-drift-reverse
+      <div
+        className="absolute bottom-0 left-1/3 w-[280px] h-[280px] rounded-full pointer-events-none animate-orb-drift-reverse
         bg-[radial-gradient(circle,rgba(233,30,140,0.15)_0%,transparent_70%)]"
       />
 
@@ -62,27 +65,28 @@ function Cart() {
         <div className="flex justify-center gap-4 mb-10">
           <button
             onClick={() => setActiveTab("cart")}
-            className={`px-5 py-2 text-sm border rounded-full transition ${activeTab === "cart"
-              ? "bg-pink-blush text-white"
-              : "text-pink-blush border-pink-blush/40"
-              }`}
+            className={`px-5 py-2 text-sm border rounded-full transition ${
+              activeTab === "cart"
+                ? "bg-pink-blush text-white"
+                : "text-pink-blush border-pink-blush/40"
+            }`}
           >
             Cart ({totalItems})
           </button>
 
           <button
             onClick={() => setActiveTab("orders")}
-            className={`px-5 py-2 text-sm border rounded-full transition ${activeTab === "orders"
-              ? "bg-pink-blush text-white"
-              : "text-pink-blush border-pink-blush/40"
-              }`}
+            className={`px-5 py-2 text-sm border rounded-full transition ${
+              activeTab === "orders"
+                ? "bg-pink-blush text-white"
+                : "text-pink-blush border-pink-blush/40"
+            }`}
           >
             Orders ({pastOrders.length})
           </button>
         </div>
 
         <div className="max-w-6xl mx-auto px-4 lg:px-8 pb-16">
-
           {/* ───────── CART TAB (YOUR ORIGINAL UI) ───────── */}
           {activeTab === "cart" && (
             <div className="lg:grid lg:grid-cols-[2fr_1fr] gap-10">
@@ -135,9 +139,7 @@ function Cart() {
             <>
               {pastOrders.length === 0 ? (
                 <div className="text-center py-16">
-                  <p className="text-xl text-warm-cream/60">
-                    No orders yet
-                  </p>
+                  <p className="text-xl text-warm-cream/60">No orders yet</p>
 
                   <Link
                     to="/shop"
@@ -192,7 +194,6 @@ function Cart() {
               )}
             </>
           )}
-
         </div>
       </div>
     </section>

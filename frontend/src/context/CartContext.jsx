@@ -28,7 +28,7 @@ const reducer = (state, action) => {
     case "SET_CART":
       return { ...state, cart: action.payload, loading: false };
 
-    case "ADD_ITEM": 
+    case "ADD_ITEM":
       return { ...state, cart: [...state.cart, action.payload] };
 
     case "REMOVE_ITEM":
@@ -47,8 +47,8 @@ const reducer = (state, action) => {
         ),
       };
 
-      case "CLEAR_CART":
-        return {...state, cart:[], loading:false, error:null};
+    case "CLEAR_CART":
+      return { ...state, cart: [], loading: false, error: null };
 
     case "SET_LOADING":
       return { ...state, loading: true };
@@ -161,22 +161,22 @@ export const CartProvider = ({ children }) => {
   };
 
   const clearCart = async () => {
-    try{
+    try {
       const cartId = getOrCreateCartId();
-        //delete from supabase
-      const {error} = await supabase
-      .from("cart")
-      .delete()
-      .eq("cart_id", cartId);
+      //delete from supabase
+      const { error } = await supabase
+        .from("cart")
+        .delete()
+        .eq("cart_id", cartId);
 
-      if(error) throw error;
-          //reset local state
-      dispatch({type: "CLEAR_CART"});
-    }catch(err){
+      if (error) throw error;
+      //reset local state
+      dispatch({ type: "CLEAR_CART" });
+    } catch (err) {
       console.error("CLEAR CART ERROR:", err);
-      dispatch({type: "SET_ERROR", payload: err.message});
+      dispatch({ type: "SET_ERROR", payload: err.message });
     }
-  }
+  };
 
   const totalItems = state.cart.reduce((sum, i) => sum + i.quantity, 0);
   const totalPrice = state.cart.reduce(

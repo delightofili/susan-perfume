@@ -23,99 +23,38 @@ function Checkout() {
     phone: "",
     address: "",
   });
-
   const handleChange = (e) =>
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
-  const discountAmount = totalPrice * 0.15;
-  const finalTotal = totalPrice - discountAmount;
+  const finalTotal = totalPrice - totalPrice * 0.15;
 
-  // Empty cart guard
   if (!cart || cart.length === 0) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-6">
-        <p className="text-6xl">🛒</p>
-        <h2>Your cart is empty</h2>
-        <button onClick={() => navigate("/shop")}>Browse Perfumes</button>
-      </div>
-    );
+    return <p>Your cart is empty</p>;
   }
 
-  // -----------------------------
-  // 🟢 WHATSAPP ORDER
-  // -----------------------------
-  const handlePlaceOrder = async () => {
-    if (!form.customer.trim()) return setError("Enter your full name.");
-    if (!form.phone.trim()) return setError("Enter your phone number.");
-    if (!form.address.trim()) return setError("Enter your address.");
+  // ✅ Save order helper
+  const createOrder = async (reference, payment_method, status) => {
+    const { error } = await supabase.from("orders").insert([
+      {
+        customer: form.customer,
+        email: form.email || null,
+        phone: form.phone,
+        address: form.address,
+        reference,
+        items: cart,
+        item_count: cart.length,
+        total: finalTotal,
+        status,
+        payment_method,
+        date: new Date().toISOString(),
+      },
+    ]);
 
-    setLoading(true);
-    setError("");
-
-    try {
-      const reference = generateReference();
-
-      await supabase.from("orders").insert([
-        {
-          customer: form.customer.trim(),
-          email: form.email.trim() || null,
-          phone: form.phone.trim(),
-          address: form.address.trim(),
-          reference,
-          items: cart, // ✅ store full cart
-          total: finalTotal,
-          status: "Pending",
-          payment_method: "whatsapp",
-          date: new Date().toISOString(),
-        },
-      ]);
-
-      // Build WhatsApp message
-      const itemsList = cart
-        .map(
-          (i) =>
-            `• ${i.name} x${i.quantity} — ₦${(i.price * i.quantity).toLocaleString()}`,
-        )
-        .join("\n");
-
-      const message = `
-🧴 *New Order — Susan's Luxury Perfume*
-
-Ref: ${reference}
-Customer: ${form.customer}
-Phone: ${form.phone}
-${form.email ? `Email: ${form.email}` : ""}
-Address: ${form.address}
-
-Items:
-${itemsList}
-
-Total: ₦${finalTotal.toLocaleString()}
-      `.trim();
-
-      await clearCart();
-
-      navigate("/order-confirmation", {
-        state: { reference },
-      });
-
-      setTimeout(() => {
-        window.open(
-          `https://wa.me/2349066188842?text=${encodeURIComponent(message)}`,
-          "_blank",
-        );
-      }, 400);
-    } catch (err) {
-      console.error(err);
-      setError("Order failed.");
-      setLoading(false);
-    }
+    if (error) throw error;
   };
 
-  // -----------------------------
-  // 🔵 PAYSTACK PAYMENT
-  // -----------------------------
-  const handlePayNow = async () => {
+  // 🟢 WhatsApp
+  const handlePlaceOrder = async () => {
     if (!form.customer || !form.phone || !form.address) {
       return setError("Fill all required fields.");
     }
@@ -126,21 +65,46 @@ Total: ₦${finalTotal.toLocaleString()}
     try {
       const reference = generateReference();
 
-      // Save order first
-      await supabase.from("orders").insert([
-        {
-          customer: form.customer,
-          email: form.email || null,
-          phone: form.phone,
-          address: form.address,
-          reference,
-          items: cart,
-          total: finalTotal,
-          status: "Pending Payment",
-          payment_method: "paystack",
-          date: new Date().toISOString(),
-        },
-      ]);
+      await createOrder(reference, "whatsapp", "Pending");
+
+      const orderData = {
+        reference,
+        customer: form.customer,
+        phone: form.phone,
+        total: finalTotal,
+        items: cart.length,
+      };
+
+      clearCart();
+
+      navigate("/order-confirmation", { state: orderData });
+
+      setTimeout(() => {
+        window.open(
+          `https://wa.me/2349066188842?text=Order Ref: ${reference}`,
+          "_blank",
+        );
+      }, 400);
+    } catch (err) {
+      console.error(err);
+      setError("Order failed.");
+    }
+
+    setLoading(false);
+  };
+
+  // 🔵 Paystack
+  const handlePayNow = async () => {
+    if (!form.customer || !form.phone || !form.address) {
+      return setError("Fill all required fields.");
+    }
+
+    setLoading(true);
+
+    try {
+      const reference = generateReference();
+
+      await createOrder(reference, "paystack", "Pending Payment");
 
       const paystack = new PaystackPop();
 
@@ -152,20 +116,24 @@ Total: ₦${finalTotal.toLocaleString()}
         ref: reference,
 
         onSuccess: () => {
-          // webhook will handle verification
-
           clearCart();
 
           navigate("/order-confirmation", {
-            state: { reference },
+            state: {
+              reference,
+              customer: form.customer,
+              phone: form.phone,
+              total: finalTotal,
+              items: cart.length,
+            },
           });
 
           setLoading(false);
         },
 
         onCancel: () => {
-          setLoading(false);
           setError("Payment cancelled.");
+          setLoading(false);
         },
       });
     } catch (err) {

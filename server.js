@@ -12,8 +12,8 @@ import { handleWebhook } from "./controllers/paymentController.js";
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const distPath = join(__dirname, "frontend", "dist");
+const __dirname = path.dirname(__filename);
+const distPath = path.join(__dirname, "frontend", "dist");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -21,7 +21,6 @@ const PORT = process.env.PORT || 3001;
 // CORS
 app.use(cors());
 
-// 🔴 Webhook MUST use raw body (before json parser)
 app.post(
   "/api/paystack/webhook",
   express.raw({ type: "application/json" }),

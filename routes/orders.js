@@ -1,4 +1,3 @@
-
 import express from "express";
 import supabase from "../supabaseClient.js";
 
@@ -25,6 +24,19 @@ router.get("/:id", async (req, res) => {
 
   if (error) return res.status(404).json({ error: "Order not found" });
   res.status(200).json(data);
+});
+
+// GET by reference
+router.get("/reference/:ref", async (req, res) => {
+  const { data, error } = await supabase
+    .from("orders")
+    .select("*")
+    .eq("reference", req.params.ref)
+    .single();
+
+  if (error) return res.status(404).json({ error: "Not found" });
+
+  res.json(data);
 });
 
 // POST to create order......
