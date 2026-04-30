@@ -45,12 +45,6 @@ function Checkout() {
     if (error) throw error;
   };
 
-  const saveLocalOrder = (order) => {
-    const existing = JSON.parse(localStorage.getItem("my_orders") || "[]");
-
-    localStorage.setItem("my_orders", JSON.stringify([order, ...existing]));
-  };
-
   const handleChange = (e) =>
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
@@ -82,8 +76,6 @@ function Checkout() {
         items: cart.length,
         date: new Date().toLocaleString(),
       };
-
-      saveLocalOrder(orderData);
 
       clearCart();
 
@@ -134,8 +126,6 @@ function Checkout() {
             items: cart.length,
             date: new Date().toISOString(),
           };
-
-          saveLocalOrder(orderData);
 
           clearCart();
 

@@ -51,8 +51,9 @@ app.use(express.static(distPath));
 
 // React catch-all fallback — serves index.html for ALL non-API routes
 // Express v5 requires named wildcards: /{*splat} instead of *
-app.get("/", (req, res) => {
-  res.sendFile("index.html", { root: distPath });
+
+app.get("/{*splat}", (req, res) => {
+  res.sendFile(path.join(distPath, "index.html"));
 });
 
 console.log("DIST PATH:", distPath);

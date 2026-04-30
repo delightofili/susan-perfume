@@ -12,25 +12,29 @@ function Cart() {
 
   const [activeTab, setActiveTab] = useState("cart");
 
+  /*   const [pastOrders, setPastOrders] = useState(() => {
+    return JSON.parse(localStorage.getItem("my_orders") || "[]");
+  }); */
+
   const [pastOrders, setPastOrders] = useState([]);
-  const [loadingOrders, setLoadingOrders] = useState(false);
+  /* 
+  useEffect(() => {
+    const handler = () => {
+      setPastOrders(JSON.parse(localStorage.getItem("my_orders") || "[]"));
+    };
+
+    window.addEventListener("storage", handler);
+    return () => window.removeEventListener("storage", handler);
+  }, []); */
 
   useEffect(() => {
     const fetchOrders = async () => {
-      setLoadingOrders(true);
-
       const { data, error } = await supabase
         .from("orders")
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (error) {
-        console.log("Orders error:", error.message);
-      } else {
-        setPastOrders(data || []);
-      }
-
-      setLoadingOrders(false);
+      if (!error) setPastOrders(data || []);
     };
 
     fetchOrders();
@@ -154,11 +158,6 @@ function Cart() {
           {/* ───────── ORDERS TAB (NEW FEATURE) ───────── */}
           {activeTab === "orders" && (
             <>
-              {loadingOrders && (
-                <p className="text-center text-sm text-red">
-                  Loading orders...
-                </p>
-              )}
               {pastOrders.length === 0 ? (
                 <div className="text-center py-16">
                   <p className="text-xl text-warm-cream/60">No orders yet</p>

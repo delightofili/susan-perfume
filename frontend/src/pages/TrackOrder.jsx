@@ -24,7 +24,7 @@ function TrackOrder() {
   const [searched, setSearched] = useState(false);
 
   const doSearch = async (refOverride) => {
-    const ref = (refOverride || reference).trim().replace(/\s+/g, "");
+    const ref = (refOverride || reference).trim();
     if (!ref) {
       setError("Please enter your order reference.");
       return;
