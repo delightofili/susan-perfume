@@ -23,14 +23,6 @@ function Checkout() {
     phone: "",
     address: "",
   });
-  const handleChange = (e) =>
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-
-  const finalTotal = totalPrice - totalPrice * 0.15;
-
-  if (!cart || cart.length === 0) {
-    return <p>Your cart is empty</p>;
-  }
 
   // ✅ Save order helper
   const createOrder = async (reference, payment_method, status) => {
@@ -53,6 +45,21 @@ function Checkout() {
     if (error) throw error;
   };
 
+  const saveLocalOrder = (order) => {
+    const existing = JSON.parse(localStorage.getItem("my_orders") || "[]");
+
+    localStorage.setItem("my_orders", JSON.stringify([order, ...existing]));
+  };
+
+  const handleChange = (e) =>
+    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+
+  const finalTotal = totalPrice - totalPrice * 0.15;
+
+  if (!cart || cart.length === 0) {
+    return <p>Your cart is empty</p>;
+  }
+
   // 🟢 WhatsApp
   const handlePlaceOrder = async () => {
     if (!form.customer || !form.phone || !form.address) {
@@ -73,7 +80,10 @@ function Checkout() {
         phone: form.phone,
         total: finalTotal,
         items: cart.length,
+        date: new Date().toLocaleString(),
       };
+
+      saveLocalOrder(orderData);
 
       clearCart();
 
@@ -116,16 +126,21 @@ function Checkout() {
         ref: reference,
 
         onSuccess: () => {
+          const orderData = {
+            reference,
+            customer: form.customer,
+            phone: form.phone,
+            total: finalTotal,
+            items: cart.length,
+            date: new Date().toISOString(),
+          };
+
+          saveLocalOrder(orderData);
+
           clearCart();
 
           navigate("/order-confirmation", {
-            state: {
-              reference,
-              customer: form.customer,
-              phone: form.phone,
-              total: finalTotal,
-              items: cart.length,
-            },
+            state: orderData,
           });
 
           setLoading(false);

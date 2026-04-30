@@ -31,7 +31,7 @@ function Cart() {
   }, []);
 
   return (
-    <section className="min-h-screen w-full relative">
+    <section className="min-h-screen w-full relative overflow-hidden">
       {/* backgroundsss */}
       <div
         className="absolute inset-0 opacity-0 dark:opacity-100 transition-opacity duration-500
