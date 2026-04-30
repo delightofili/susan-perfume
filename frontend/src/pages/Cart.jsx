@@ -5,24 +5,35 @@ import OrderSummary from "../components/OrderSummary";
 import { useCart } from "../hook/useCart";
 import { Link } from "react-router";
 import StatusBadge from "../admin/components/StatusBadge";
+import supabase from "../api/supabaseClient";
 
 function Cart() {
   const { totalItems, cart, loading, error } = useCart();
 
   const [activeTab, setActiveTab] = useState("cart");
 
-  const [pastOrders, setPastOrders] = useState(() => {
-    return JSON.parse(localStorage.getItem("my_orders") || "[]");
-  });
+  const [pastOrders, setPastOrders] = useState([]);
+  const [loadingOrders, setLoadingOrders] = useState(false);
 
   useEffect(() => {
-    const handler = () => {
-      setPastOrders(JSON.parse(localStorage.getItem("my_orders") || "[]"));
+    const fetchOrders = async () => {
+      setLoadingOrders(true);
+
+      const { data, error } = await supabase
+        .from("orders")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.log("Orders error:", error.message);
+      } else {
+        setPastOrders(data || []);
+      }
+
+      setLoadingOrders(false);
     };
 
-    window.addEventListener("storage", handler);
-
-    return () => window.removeEventListener("storage", handler);
+    fetchOrders();
   }, []);
 
   return (
@@ -143,6 +154,11 @@ function Cart() {
           {/* ───────── ORDERS TAB (NEW FEATURE) ───────── */}
           {activeTab === "orders" && (
             <>
+              {loadingOrders && (
+                <p className="text-center text-sm text-red">
+                  Loading orders...
+                </p>
+              )}
               {pastOrders.length === 0 ? (
                 <div className="text-center py-16">
                   <p className="text-xl text-warm-cream/60">No orders yet</p>
@@ -174,7 +190,7 @@ function Cart() {
 
                       <div className="px-5 py-4 flex justify-between">
                         <div>
-                          <p>{o.items} item(s)</p>
+                          <p>{o.item_count} item(s)</p>
                           <p className="text-xs opacity-50">
                             {o.date
                               ? new Date(o.date).toLocaleDateString()
