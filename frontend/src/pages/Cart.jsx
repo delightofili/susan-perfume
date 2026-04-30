@@ -9,25 +9,20 @@ import StatusBadge from "../admin/components/StatusBadge";
 function Cart() {
   const { totalItems, cart, loading, error } = useCart();
 
-  const [pastOrders, setPastOrders] = useState([]);
   const [activeTab, setActiveTab] = useState("cart");
 
+  const [pastOrders, setPastOrders] = useState(() => {
+    return JSON.parse(localStorage.getItem("my_orders") || "[]");
+  });
+
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const res = await fetch(
-          "https://susan-perfume.onrender.com/api/orders",
-        );
-
-        const data = await res.json();
-
-        setPastOrders(data);
-        localStorage.setItem("past_orders", JSON.stringify(data));
-      } catch (err) {
-        console.log("Error fetching orders:", err);
-      }
+    const handler = () => {
+      setPastOrders(JSON.parse(localStorage.getItem("my_orders") || "[]"));
     };
-    fetchOrders();
+
+    window.addEventListener("storage", handler);
+
+    return () => window.removeEventListener("storage", handler);
   }, []);
 
   return (
@@ -179,7 +174,7 @@ function Cart() {
 
                       <div className="px-5 py-4 flex justify-between">
                         <div>
-                          <p>{o.items_count} item(s)</p>
+                          <p>{o.items} item(s)</p>
                           <p className="text-xs opacity-50">
                             {o.date
                               ? new Date(o.date).toLocaleDateString()
