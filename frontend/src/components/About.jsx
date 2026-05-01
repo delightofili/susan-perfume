@@ -45,7 +45,7 @@ function About() {
           }
         });
       },
-      { threshold: 0.12 }
+      { threshold: 0.12 },
     );
     elements.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
@@ -82,8 +82,7 @@ function About() {
               data-reveal-left="2"
               className="font-playfair text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-white mb-6"
             >
-              Welcome to{" "}
-              <span className="gold-text">Susan Luxury Perfume</span>
+              Welcome to <span className="gold-text">Susan Luxury Perfume</span>
             </h2>
 
             <p
@@ -99,9 +98,9 @@ function About() {
             {/* Stats row */}
             <div data-reveal-left="4" className="flex gap-10 mb-10">
               {[
-                ["12+", "Years crafting"],
+                ["5+", "Years crafting"],
                 ["80+", "Fragrances"],
-                ["50K+", "Happy clients"],
+                ["50+", "Happy clients"],
               ].map(([num, label]) => (
                 <div key={label}>
                   <p className="font-playfair text-[#c9a84c] text-3xl font-light">
@@ -113,17 +112,6 @@ function About() {
                 </div>
               ))}
             </div>
-
-            <Link
-              data-reveal-left="5"
-              to="/about"
-              className="inline-block bg-(image:--luxury-gold-gradient) gold-hover rounded-sm
-                text-primary-charcoal-black px-7 py-3.5
-                font-bold font-inter text-sm tracking-widest uppercase
-                transition hover:cursor-pointer hover:scale-105 active:scale-95"
-            >
-              Learn More
-            </Link>
           </div>
 
           {/* RIGHT — Layered Visual Showcase */}
@@ -132,14 +120,15 @@ function About() {
             className="lg:basis-1/2 w-full flex items-center justify-center"
           >
             <div className="relative w-[340px] h-[460px] sm:w-[390px] sm:h-[510px] lg:w-[460px] lg:h-[580px]">
-
               {/* ── Layer 1 — back-most, rotated left, gold zigzag ── */}
               <div
                 className="absolute inset-0 pointer-events-none"
                 style={{
                   transform: "rotate(-9deg) translate(-22px, 18px)",
-                  background: "linear-gradient(140deg, rgba(201,168,76,0.22) 0%, rgba(201,168,76,0.06) 55%, transparent 100%)",
-                  clipPath: "polygon(0% 7%, 7% 0%, 93% 0%, 100% 7%, 100% 87%, 93% 100%, 7% 100%, 0% 87%)",
+                  background:
+                    "linear-gradient(140deg, rgba(201,168,76,0.22) 0%, rgba(201,168,76,0.06) 55%, transparent 100%)",
+                  clipPath:
+                    "polygon(0% 7%, 7% 0%, 93% 0%, 100% 7%, 100% 87%, 93% 100%, 7% 100%, 0% 87%)",
                   borderRadius: "2.5rem",
                 }}
               />
@@ -149,8 +138,10 @@ function About() {
                 className="absolute inset-0 pointer-events-none"
                 style={{
                   transform: "rotate(6deg) translate(18px, 12px)",
-                  background: "linear-gradient(220deg, rgba(233,30,140,0.28) 0%, rgba(233,30,140,0.08) 50%, transparent 100%)",
-                  clipPath: "polygon(5% 0%, 100% 0%, 100% 95%, 95% 100%, 0% 100%, 0% 5%)",
+                  background:
+                    "linear-gradient(220deg, rgba(233,30,140,0.28) 0%, rgba(233,30,140,0.08) 50%, transparent 100%)",
+                  clipPath:
+                    "polygon(5% 0%, 100% 0%, 100% 95%, 95% 100%, 0% 100%, 0% 5%)",
                   borderRadius: "2rem",
                 }}
               />
@@ -161,7 +152,8 @@ function About() {
                 style={{
                   transform: "rotate(-3deg) translate(-8px, 6px) scale(0.96)",
                   border: "1.5px solid rgba(201,168,76,0.25)",
-                  clipPath: "polygon(3% 0%, 97% 0%, 100% 3%, 100% 97%, 97% 100%, 3% 100%, 0% 97%, 0% 3%)",
+                  clipPath:
+                    "polygon(3% 0%, 97% 0%, 100% 3%, 100% 97%, 97% 100%, 3% 100%, 0% 97%, 0% 3%)",
                   borderRadius: "1.8rem",
                 }}
               />
@@ -171,27 +163,56 @@ function About() {
                 className="absolute inset-0 overflow-hidden"
                 style={{
                   borderRadius: "2rem",
-                  clipPath: "polygon(0% 5%, 5% 0%, 95% 0%, 100% 5%, 100% 95%, 95% 100%, 5% 100%, 0% 95%)",
-                  background: "linear-gradient(160deg, #1a0410 0%, #0d0818 45%, #0a0f1a 100%)",
+                  clipPath:
+                    "polygon(0% 5%, 5% 0%, 95% 0%, 100% 5%, 100% 95%, 95% 100%, 5% 100%, 0% 95%)",
+                  background:
+                    "linear-gradient(160deg, #1a0410 0%, #0d0818 45%, #0a0f1a 100%)",
                   border: "1px solid rgba(201,168,76,0.15)",
                 }}
               >
                 {/* Inner grid background — decorative quadrant blocks */}
                 <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-1 p-1 opacity-80">
-                  <div style={{ background: "linear-gradient(135deg, rgba(233,30,140,0.18) 0%, transparent 100%)", borderRadius: "1.4rem 0.4rem 0.4rem 0.4rem" }} />
-                  <div style={{ background: "linear-gradient(225deg, rgba(201,168,76,0.16) 0%, transparent 100%)", borderRadius: "0.4rem 1.4rem 0.4rem 0.4rem" }} />
-                  <div style={{ background: "linear-gradient(45deg, rgba(201,168,76,0.12) 0%, transparent 100%)", borderRadius: "0.4rem 0.4rem 0.4rem 1.4rem" }} />
-                  <div style={{ background: "linear-gradient(315deg, rgba(233,30,140,0.14) 0%, transparent 100%)", borderRadius: "0.4rem 0.4rem 1.4rem 0.4rem" }} />
+                  <div
+                    style={{
+                      background:
+                        "linear-gradient(135deg, rgba(233,30,140,0.18) 0%, transparent 100%)",
+                      borderRadius: "1.4rem 0.4rem 0.4rem 0.4rem",
+                    }}
+                  />
+                  <div
+                    style={{
+                      background:
+                        "linear-gradient(225deg, rgba(201,168,76,0.16) 0%, transparent 100%)",
+                      borderRadius: "0.4rem 1.4rem 0.4rem 0.4rem",
+                    }}
+                  />
+                  <div
+                    style={{
+                      background:
+                        "linear-gradient(45deg, rgba(201,168,76,0.12) 0%, transparent 100%)",
+                      borderRadius: "0.4rem 0.4rem 0.4rem 1.4rem",
+                    }}
+                  />
+                  <div
+                    style={{
+                      background:
+                        "linear-gradient(315deg, rgba(233,30,140,0.14) 0%, transparent 100%)",
+                      borderRadius: "0.4rem 0.4rem 1.4rem 0.4rem",
+                    }}
+                  />
                 </div>
 
                 {/* Diagonal shimmer line */}
                 <div
                   className="absolute pointer-events-none"
                   style={{
-                    top: "-20%", left: "-10%",
-                    width: "60%", height: "200%",
+                    top: "-20%",
+                    left: "-10%",
+                    width: "60%",
+                    height: "200%",
                     transform: "rotate(25deg)",
-                    background: "linear-gradient(90deg, transparent, rgba(201,168,76,0.06), transparent)",
+                    background:
+                      "linear-gradient(90deg, transparent, rgba(201,168,76,0.06), transparent)",
                   }}
                 />
 
@@ -199,40 +220,55 @@ function About() {
                 {/* Top-left */}
                 <div className="absolute top-5 left-5 z-20">
                   <div className="flex flex-col gap-0.5 backdrop-blur-sm bg-white/5 border border-[#c9a84c]/20 rounded-xl px-3 py-2">
-                    <span className="font-cinzel text-[#c9a84c] text-[8px] tracking-[2px] uppercase">Bestseller</span>
-                    <span className="font-playfair text-white text-sm font-semibold">Rose Noir</span>
+                    <span className="font-cinzel text-[#c9a84c] text-[8px] tracking-[2px] uppercase">
+                      Bestseller
+                    </span>
+                    <span className="font-playfair text-white text-sm font-semibold">
+                      Rose Noir
+                    </span>
                   </div>
                 </div>
                 {/* Top-right */}
                 <div className="absolute top-5 right-5 z-20">
                   <div className="flex flex-col gap-0.5 backdrop-blur-sm bg-white/5 border border-[#e91e8c]/20 rounded-xl px-3 py-2 items-end">
-                    <span className="font-cinzel text-[#e91e8c]/80 text-[8px] tracking-[2px] uppercase">New Arrival</span>
-                    <span className="font-playfair text-white text-sm font-semibold">Amber Dusk</span>
+                    <span className="font-cinzel text-[#e91e8c]/80 text-[8px] tracking-[2px] uppercase">
+                      New Arrival
+                    </span>
+                    <span className="font-playfair text-white text-sm font-semibold">
+                      Amber Dusk
+                    </span>
                   </div>
                 </div>
                 {/* Bottom-left */}
                 <div className="absolute bottom-5 left-5 z-20">
                   <div className="flex flex-col gap-0.5 backdrop-blur-sm bg-white/5 border border-[#e91e8c]/20 rounded-xl px-3 py-2">
-                    <span className="font-cinzel text-[#e91e8c]/80 text-[8px] tracking-[2px] uppercase">Limited</span>
-                    <span className="font-playfair text-white text-sm font-semibold">Mystic Oud</span>
+                    <span className="font-cinzel text-[#e91e8c]/80 text-[8px] tracking-[2px] uppercase">
+                      Limited
+                    </span>
+                    <span className="font-playfair text-white text-sm font-semibold">
+                      Mystic Oud
+                    </span>
                   </div>
                 </div>
                 {/* Bottom-right */}
                 <div className="absolute bottom-5 right-5 z-20">
                   <div className="flex flex-col gap-0.5 backdrop-blur-sm bg-white/5 border border-[#c9a84c]/20 rounded-xl px-3 py-2 items-end">
-                    <span className="font-cinzel text-[#c9a84c] text-[8px] tracking-[2px] uppercase">Signature</span>
-                    <span className="font-playfair text-white text-sm font-semibold">Velvet Bloom</span>
+                    <span className="font-cinzel text-[#c9a84c] text-[8px] tracking-[2px] uppercase">
+                      Signature
+                    </span>
+                    <span className="font-playfair text-white text-sm font-semibold">
+                      Velvet Bloom
+                    </span>
                   </div>
                 </div>
 
                 {/* Centre glow ring behind bottle */}
-                <div
-                  className="absolute inset-0 flex items-center justify-center pointer-events-none z-10"
-                >
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
                   <div
                     className="w-52 h-52 rounded-full"
                     style={{
-                      background: "radial-gradient(circle, rgba(201,168,76,0.18) 0%, rgba(233,30,140,0.10) 45%, transparent 72%)",
+                      background:
+                        "radial-gradient(circle, rgba(201,168,76,0.18) 0%, rgba(233,30,140,0.10) 45%, transparent 72%)",
                       filter: "blur(8px)",
                     }}
                   />
@@ -242,7 +278,8 @@ function About() {
                 <div
                   className="absolute inset-0 pointer-events-none z-10"
                   style={{
-                    background: "radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(201,168,76,0.07) 80%, transparent 100%)",
+                    background:
+                      "radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(201,168,76,0.07) 80%, transparent 100%)",
                   }}
                 />
               </div>
@@ -255,17 +292,26 @@ function About() {
               {/* ── Floating glow accents outside the card ── */}
               <div
                 className="absolute -bottom-8 -right-8 w-36 h-36 rounded-full pointer-events-none animate-orb-drift-reverse"
-                style={{ background: "radial-gradient(circle, rgba(233,30,140,0.30) 0%, transparent 70%)" }}
+                style={{
+                  background:
+                    "radial-gradient(circle, rgba(233,30,140,0.30) 0%, transparent 70%)",
+                }}
               />
               <div
                 className="absolute -top-6 -left-6 w-24 h-24 rounded-full pointer-events-none animate-float-slow"
-                style={{ background: "radial-gradient(circle, rgba(201,168,76,0.28) 0%, transparent 70%)" }}
+                style={{
+                  background:
+                    "radial-gradient(circle, rgba(201,168,76,0.28) 0%, transparent 70%)",
+                }}
               />
 
               {/* ── Gold divider line accent top ── */}
               <div
                 className="absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-[2px] rounded-full pointer-events-none"
-                style={{ background: "linear-gradient(to right, transparent, #c9a84c, transparent)" }}
+                style={{
+                  background:
+                    "linear-gradient(to right, transparent, #c9a84c, transparent)",
+                }}
               />
             </div>
           </div>

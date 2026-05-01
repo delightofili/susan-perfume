@@ -21,10 +21,7 @@ import Checkout from "./pages/Checkout";
 import TrackOrder from "./pages/TrackOrder";
 
 import ScrollToTop from "../utils/ScrollToTop";
-import ProductsSection from "./admin/components/ProductsSection";
-import OrdersSection from "./admin/components/OrdersSection";
-import Settings from "./admin/components/Settings";
-import DashboardHome from "./admin/components/DashboardHome";
+import Contact from "./components/Contact";
 
 function App() {
   useEffect(() => {
@@ -52,6 +49,7 @@ function App() {
             <Route path="/shop/:id" element={<Shop />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
 
             <Route path="/checkout" element={<Checkout />} />
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
@@ -70,13 +68,12 @@ function App() {
               </ProtectedRoute>
             }
           >
-            <Route index element={<Navigate to="dashboard" replace />} />
-
+            {/* Redirect /admin → /admin/dashboard */}
+            <Route index element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="dashboardHome" element={<DashboardHome />} />
-            <Route path="products" element={<ProductsSection />} />
-            <Route path="orders" element={<OrdersSection />} />
-            <Route path="settings" element={<Settings />} />
+            <Route path="products" element={<AdminDashboard />} />
+            <Route path="orders" element={<AdminDashboard />} />
+            <Route path="settings" element={<AdminDashboard />} />
           </Route>
 
           <Route path="*" element={<div>404</div>} />

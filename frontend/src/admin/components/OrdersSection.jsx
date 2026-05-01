@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import StatusBadge from "./StatusBadge";
 import { getOrders } from "../../api/index.js";
 
-const BASE_URL = import.meta.env.VITE_API_URL;
+import supabase from "../../api/supabaseClient.js";
 
 function OrdersSection() {
   const [orders, setOrders] = useState([]);
@@ -26,16 +26,29 @@ function OrdersSection() {
   // ── Update order status ──────────────────────────
   const handleStatusChange = async (orderId, newStatus) => {
     setUpdatingId(orderId);
-    try {
-      const res = await fetch(`${BASE_URL}/orders/${orderId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: newStatus }),
-      });
-      if (!res.ok) throw new Error("Failed to update");
-      const updated = await res.json();
 
-      setOrders((prev) => prev.map((o) => (o.id === orderId ? updated : o)));
+    console.log("Updating order:", orderId, newStatus); // log FIRST
+
+    try {
+      const { data, error } = await supabase
+        .from("orders")
+        .update({ status: newStatus })
+        .eq("id", Number(orderId))
+        .select();
+
+      if (error) {
+        console.error("Supabase error:", error);
+        return;
+      }
+
+      console.log("Update response:", data);
+
+      if (!data || data.length === 0) {
+        console.error("⚠️ No rows updated. This is your real problem.");
+        return;
+      }
+
+      setOrders((prev) => prev.map((o) => (o.id === orderId ? data[0] : o)));
     } catch (err) {
       console.error("Status update failed:", err);
     } finally {

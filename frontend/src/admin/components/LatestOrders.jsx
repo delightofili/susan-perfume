@@ -1,16 +1,12 @@
-// src/admin/components/LatestOrders.jsx
-// Connected to real Supabase data via Express API
-
-import { useEffect, useState } from "react";
-import { getOrders } from "../../api/index.js";
+/* import { getOrders } from "../../api/index.js"; */
 import StatusBadge from "./StatusBadge";
 import { Link } from "react-router";
 
-function LatestOrders() {
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
+function LatestOrders({ initialOrders }) {
+  const orders = initialOrders || [];
+  const loading = !initialOrders;
 
-  useEffect(() => {
+  /*  useEffect(() => {
     getOrders()
       .then((data) => {
         // Show only latest 5
@@ -21,7 +17,7 @@ function LatestOrders() {
         console.error(err);
         setLoading(false);
       });
-  }, []);
+  }, []); */
 
   if (loading) {
     return (
@@ -79,16 +75,16 @@ function LatestOrders() {
               <td className="px-6 py-4 text-[#f5e6a8]/50 text-sm">
                 {order.date
                   ? new Date(order.date).toLocaleDateString("en-NG", {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  })
-                  : order.created_at
-                    ? new Date(order.created_at).toLocaleDateString("en-NG", {
                       day: "numeric",
                       month: "short",
                       year: "numeric",
                     })
+                  : order.created_at
+                    ? new Date(order.created_at).toLocaleDateString("en-NG", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })
                     : "—"}
               </td>
               <td className="px-6 py-4">

@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MdFilterList } from "react-icons/md";
 import { MdFilterListOff } from "react-icons/md";
-import { Link, NavLink, Outlet, useNavigate } from "react-router";
+import { Link, NavLink, useNavigate } from "react-router";
 import { TbLayoutGridFilled } from "react-icons/tb";
 import { GiBeachBag } from "react-icons/gi";
 import { TbCurrencyNaira } from "react-icons/tb";
 import singlePerf from "../../../public/images/singlePerf.png";
-
+import { useLocation } from "react-router";
+import { RiCustomerService2Line } from "react-icons/ri";
 import { IoIosSettings } from "react-icons/io";
-
+import { SiSimpleanalytics } from "react-icons/si";
 import { useAuth } from "../hook/useAuth";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
 import { IoMdArrowDropup } from "react-icons/io";
@@ -18,12 +19,34 @@ import LatestOrders from "../components/LatestOrders";
 import OrdersSection from "../components/OrdersSection";
 import Settings from "../components/Settings";
 import ProductsSection from "../components/ProductsSection";
+import { getOrders } from "../../api/index.js";
 
 import shopBg from "../../../public/images/shop-bg.png";
 
 function AdminDashboard() {
-  const [navIsOpen, setNavIsOpen] = useState(false);
+  const [orders, setOrders] = useState([]);
+  const [loadingStats, setLoadingStats] = useState(true);
+  const totalRevenue = orders.reduce((sum, o) => sum + Number(o.total || 0), 0);
 
+  const totalOrders = orders.length;
+
+  const totalCustomers = new Set(
+    orders.map((o) => o.email || o.customer).filter(Boolean),
+  ).size;
+
+  const totalProducts = 68;
+
+  const sortedOrders = [...orders].sort(
+    (a, b) => new Date(a.created_at) - new Date(b.created_at),
+  );
+
+  const data = sortedOrders.slice(-7).map((o) => ({
+    value: Number(o.total || 0),
+  }));
+  console.log(orders);
+
+  const [navIsOpen, setNavIsOpen] = useState(false);
+  const location = useLocation();
   const { logoutAdmin } = useAuth();
 
   const navigate = useNavigate();
@@ -32,6 +55,29 @@ function AdminDashboard() {
     logoutAdmin();
     navigate("/admin/login");
   };
+
+  useEffect(() => {
+    getOrders()
+      .then((data) => {
+        setOrders(data || []);
+        setLoadingStats(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoadingStats(false);
+      });
+  }, []);
+
+  const last7 = orders.slice(-7);
+  const prev7 = orders.slice(-14, -7);
+
+  const last7Total = last7.reduce((sum, o) => sum + Number(o.total || 0), 0);
+  const prev7Total = prev7.reduce((sum, o) => sum + Number(o.total || 0), 0);
+
+  const revenueGrowth =
+    prev7Total === 0 ? 100 : ((last7Total - prev7Total) / prev7Total) * 100;
+
+  const isGrowthPositive = revenueGrowth >= 0;
 
   return (
     <section className="min-h-screen h-full bg-linear-to-br from-slate-900 via-primary-black to-slate-900">
@@ -92,7 +138,7 @@ function AdminDashboard() {
           {/* Nav Links */}
           <nav className="p-4 space-y-1 flex-1 overflow-y-auto">
             <NavLink
-              to="/admin/dashboardHome"
+              to="/admin/dashboard"
               className={({ isActive }) =>
                 `group flex items-center gap-3 p-3 rounded-xl font-semibold transition-all duration-200 ${
                   isActive
@@ -157,7 +203,7 @@ function AdminDashboard() {
             </NavLink>
           </nav>
           <div className=" mb-4 shrink-0">
-            <div class="h-px w-full bg-linear-to-r from-transparent via-solid-gold/50 to-transparent my-2"></div>
+            <div className="h-px w-full bg-linear-to-r from-transparent via-solid-gold/50 to-transparent my-2"></div>
             <div className="flex items-center gap-2 py-3 px-6 ">
               <div
                 src=""
@@ -191,7 +237,194 @@ function AdminDashboard() {
 
         {/* Main Content */}
         <main className="p-6 overflow-auto ">
-          <Outlet />
+          {location.pathname === "/admin/dashboard" && (
+            <section className="relative">
+              <nav className="mb-4 ">
+                <div className="text-white"></div>
+                <div></div>
+              </nav>
+              <section className="flex flex-col ">
+                <h1 className="text-3xl md:text-3xl font-playfair text-[#f5e6a8]">
+                  Dashboard Overview
+                </h1>
+                <div className="grid grid-cols-2 gap-3 lg:gap-6 p-2 lgp-8 my-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-[48px_1fr_80px] py-6 px-4 gap-4 shadow  shadow-[#c9a84c] rounded-2xl bg-white/5 ">
+                    <div className="w-10 h-10 rounded-md bg-solid-gold/10 border border-solid-gold/20 flex items-center justify-center text-[#c9a84c] text-sm md:row-span-2 ">
+                      $
+                    </div>
+                    <div className="order-3 lg:order-0">
+                      <p className="text-[#f5e6a8]/70 font-inter">
+                        Total Sales
+                      </p>
+                      <h2 className="text-[#f5e6a8] font-playfair md:text-2xl text-xl">
+                        {loadingStats
+                          ? "Loading..."
+                          : `₦${totalRevenue.toLocaleString()}`}
+                      </h2>
+                    </div>
+
+                    <div className="flex flex-col order-2 lg:order-0">
+                      <p className="flex  items-center text-green-400 text-xs md:text-sm mb-1">
+                        <span>
+                          {isGrowthPositive ? (
+                            <IoMdArrowDropup className="h-6 w-6" />
+                          ) : (
+                            <IoMdArrowDropDown className="h-6 w-6" />
+                          )}
+                        </span>{" "}
+                        {revenueGrowth.toFixed(1)}%
+                      </p>
+                      <div className="w-full h-12 md:w-16 md:h-8">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart data={data}>
+                            <Line
+                              type="monotone"
+                              dataKey="value"
+                              stroke="#c9a84c"
+                              strokeWidth={1.5}
+                              dot={false}
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 lg:grid-cols-[48px_1fr_80px] py-6 px-4 gap-4 shadow  shadow-[#c9a84c] rounded-2xl bg-white/5 ">
+                    <div className="w-10 h-10 rounded-md bg-solid-gold/10 border border-solid-gold/20 flex items-center justify-center text-[#c9a84c] text-sm md:row-span-2 ">
+                      $
+                    </div>
+                    <div className="order-3 lg:order-0">
+                      <p className="text-[#f5e6a8]/70 font-inter">Orders</p>
+                      <h2 className="text-[#f5e6a8] font-playfair md:text-2xl text-xl">
+                        {loadingStats ? "..." : totalOrders}
+                      </h2>
+                    </div>
+
+                    <div className="flex flex-col order-2 lg:order-0">
+                      <p className="flex  items-center text-green-400 text-xs md:text-sm mb-1">
+                        <span>
+                          {isGrowthPositive ? (
+                            <IoMdArrowDropup className="h-6 w-6" />
+                          ) : (
+                            <IoMdArrowDropDown className="h-6 w-6" />
+                          )}
+                        </span>{" "}
+                        {revenueGrowth.toFixed(1)}%
+                      </p>
+                      <div className="w-full h-12 md:w-16 md:h-8">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart data={data}>
+                            <Line
+                              type="monotone"
+                              dataKey="value"
+                              stroke="#c9a84c"
+                              strokeWidth={1.5}
+                              dot={false}
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 lg:grid-cols-[48px_1fr_80px] py-6 px-4 gap-4 shadow shadow-[#c9a84c] rounded-2xl bg-white/5 ">
+                    <div className="w-10 h-10 rounded-md bg-solid-gold/10 border border-solid-gold/20 flex items-center justify-center text-[#c9a84c] text-sm lg:row-span-2 ">
+                      $
+                    </div>
+                    <div className="order-3 lg:order-0">
+                      <p className="text-[#f5e6a8]/70 font-inter">Customers</p>
+                      <h2 className="text-[#f5e6a8] font-playfair md:text-2xl text-xl">
+                        {loadingStats ? "..." : totalCustomers}
+                      </h2>
+                    </div>
+
+                    <div className="flex flex-col order-2 md:order-0">
+                      <p className="flex  items-center text-green-400 text-xs md:text-sm mb-1">
+                        <span>
+                          {isGrowthPositive ? (
+                            <IoMdArrowDropup className="h-6 w-6" />
+                          ) : (
+                            <IoMdArrowDropDown className="h-6 w-6" />
+                          )}
+                        </span>{" "}
+                        {revenueGrowth.toFixed(1)}%
+                      </p>
+                      <div className="w-full h-12 md:w-16 md:h-8">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart data={data}>
+                            <Line
+                              type="monotone"
+                              dataKey="value"
+                              stroke="#c9a84c"
+                              strokeWidth={1.5}
+                              dot={false}
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 lg:grid-cols-[48px_1fr_80px] py-6 px-4 gap-4 shadow  shadow-[#c9a84c] rounded-2xl bg-white/5 ">
+                    <div className="w-10 h-10 rounded-md bg-solid-gold/10 border border-solid-gold/20 flex items-center justify-center text-[#c9a84c] text-sm lg:row-span-2 ">
+                      $
+                    </div>
+                    <div className="order-3 lg:order-0">
+                      <p className="text-[#f5e6a8]/70 font-inter">Products</p>
+                      <h2 className="text-[#f5e6a8] font-playfair md:text-2xl text-xl">
+                        {totalProducts}
+                      </h2>
+                    </div>
+
+                    <div className="flex flex-col order-2 lg:order-0">
+                      <p className="flex  items-center text-green-400 text-xs md:text-sm mb-1">
+                        <span>
+                          {isGrowthPositive ? (
+                            <IoMdArrowDropup className="h-6 w-6" />
+                          ) : (
+                            <IoMdArrowDropDown className="h-6 w-6" />
+                          )}
+                        </span>{" "}
+                        {revenueGrowth.toFixed(1)}%
+                      </p>
+                      <div className="w-full h-12 md:w-16 md:h-8">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart data={data}>
+                            <Line
+                              type="monotone"
+                              dataKey="value"
+                              stroke="#c9a84c"
+                              strokeWidth={1.5}
+                              dot={false}
+                            />
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <h1 className="text-3xl md:text-4xl font-playfair text-[#f5e6a8]">
+                  Sales Analytics
+                </h1>
+                <SalesAnalyticsCard orders={orders} />
+                <div className="flex w-full items-center justify-between my-6">
+                  <h1 className="text-3xl md:text-4xl font-playfair text-[#f5e6a8]">
+                    Latest Orders
+                  </h1>
+                  <select className="bg-white/5 border border-[#c9a84c]/30 text-[#f5e6a8]/60 text-xs rounded-lg px-3 py-2 outline-none cursor-pointer">
+                    <option>View All</option>
+                    <option>View All</option>
+                    <option>Last 3 Months</option>
+                  </select>
+                </div>
+                <LatestOrders initialOrders={orders.slice(0, 5)} />
+              </section>
+            </section>
+          )}
+
+          {location.pathname === "/admin/products" && <ProductsSection />}
+
+          {location.pathname === "/admin/orders" && <OrdersSection />}
+
+          {location.pathname === "/admin/settings" && <Settings />}
         </main>
       </div>
     </section>

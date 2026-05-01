@@ -1,57 +1,127 @@
+import { useMemo, useState } from "react";
 import {
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   Tooltip,
   ResponsiveContainer,
-  Area,
-  AreaChart,
 } from "recharts";
 
-const salesData = [
-  { day: "Mon", value: 51000 },
-  { day: "Tue", value: 58000 },
-  { day: "Wed", value: 55000 },
-  { day: "Thu", value: 62000 },
-  { day: "Fri", value: 76500 },
-  { day: "Sat", value: 70000 },
-  { day: "Sun", value: 68000 },
-];
+// --- helper: format money
+const formatNaira = (value) => `₦${Number(value || 0).toLocaleString("en-NG")}`;
 
-// Custom tooltip matching your gold theme
+// --- tooltip
 const CustomTooltip = ({ active, payload }) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="bg-[#c9a84c] text-[#1a1008] text-xs font-bold px-3 py-1 rounded-lg">
-        ₦{payload[0].value.toLocaleString()}
-      </div>
-    );
-  }
-  return null;
+  if (!active || !payload?.length) return null;
+
+  return (
+    <div className="bg-[#c9a84c] text-[#1a1008] text-xs font-bold px-3 py-1 rounded-lg">
+      {formatNaira(payload[0].value)}
+    </div>
+  );
 };
 
-function SalesAnalyticsCard() {
+function SalesAnalyticsCard({ orders = [] }) {
+  const [range, setRange] = useState("7d");
+
+  // --- filter orders by range
+  const filteredOrders = useMemo(() => {
+    const now = new Date();
+    const days = range === "30d" ? 30 : 7;
+
+    return orders.filter((o) => {
+      const date = new Date(o.created_at || o.date);
+      const diff = (now - date) / (1000 * 60 * 60 * 24);
+      return diff <= days;
+    });
+  }, [orders, range]);
+
+  // --- previous period for growth %
+  const previousOrders = useMemo(() => {
+    const now = new Date();
+    const days = range === "30d" ? 30 : 7;
+
+    return orders.filter((o) => {
+      const date = new Date(o.created_at || o.date);
+      const diff = (now - date) / (1000 * 60 * 60 * 24);
+      return diff > days && diff <= days * 2;
+    });
+  }, [orders, range]);
+
+  // --- total revenue
+  const currentRevenue = filteredOrders.reduce(
+    (sum, o) => sum + Number(o.total || 0),
+    0,
+  );
+
+  const previousRevenue = previousOrders.reduce(
+    (sum, o) => sum + Number(o.total || 0),
+    0,
+  );
+
+  // --- % growth
+  const growth =
+    previousRevenue === 0
+      ? 100
+      : ((currentRevenue - previousRevenue) / previousRevenue) * 100;
+
+  // --- group by weekday
+  const dayMap = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+  const chartData = useMemo(() => {
+    const map = {};
+
+    dayMap.forEach((d) => (map[d] = 0));
+
+    filteredOrders.forEach((o) => {
+      const day = dayMap[new Date(o.created_at || o.date).getDay()];
+      map[day] += Number(o.total || 0);
+    });
+
+    return dayMap.map((day) => ({
+      day,
+      value: map[day],
+    }));
+  }, [filteredOrders]);
+
   return (
     <div className="border border-[#c9a84c] rounded-2xl bg-white/5 p-6 my-6">
-      {/* Header */}
+      {/* HEADER */}
       <div className="flex items-center justify-between mb-6">
-        {/* Dropdown */}
-        <select className="bg-white/5 border border-[#c9a84c]/30 text-[#f5e6a8]/60 text-xs rounded-lg px-3 py-2 outline-none cursor-pointer">
-          <option>Last 7 Days</option>
-          <option>Last 30 Days</option>
-          <option>Last 3 Months</option>
+        <div>
+          <p className="text-[#f5e6a8]/60 text-xs">Revenue</p>
+          <h2 className="text-[#f5e6a8] text-xl font-playfair">
+            {formatNaira(currentRevenue)}
+          </h2>
+
+          <p
+            className={`text-xs mt-1 ${
+              growth >= 0 ? "text-green-400" : "text-red-400"
+            }`}
+          >
+            {growth >= 0 ? "+" : ""}
+            {growth.toFixed(1)}% vs previous period
+          </p>
+        </div>
+
+        <select
+          value={range}
+          onChange={(e) => setRange(e.target.value)}
+          className="bg-white/5 border border-[#c9a84c]/30 text-[#f5e6a8]/60 text-xs rounded-lg px-3 py-2 outline-none cursor-pointer"
+        >
+          <option value="7d">Last 7 Days</option>
+          <option value="30d">Last 30 Days</option>
         </select>
       </div>
 
-      {/* Chart */}
-      <div className="w-full h-52">
+      {/* CHART */}
+      <div className="w-full h-56">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={salesData}>
-            {/* Gradient fill under the line */}
+          <AreaChart data={chartData}>
             <defs>
               <linearGradient id="goldGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#c9a84c" stopOpacity={0.3} />
+                <stop offset="5%" stopColor="#c9a84c" stopOpacity={0.4} />
                 <stop offset="95%" stopColor="#c9a84c" stopOpacity={0} />
               </linearGradient>
             </defs>
@@ -62,28 +132,24 @@ function SalesAnalyticsCard() {
               axisLine={false}
               tickLine={false}
             />
+
             <YAxis
               tick={{ fill: "rgba(245,230,168,0.4)", fontSize: 11 }}
               axisLine={false}
               tickLine={false}
               tickFormatter={(v) => `₦${v / 1000}K`}
             />
+
             <Tooltip content={<CustomTooltip />} />
 
-            {/* Area fill */}
             <Area
               type="monotone"
               dataKey="value"
               stroke="#c9a84c"
               strokeWidth={2}
               fill="url(#goldGradient)"
-              dot={{ fill: "#c9a84c", r: 3, strokeWidth: 0 }}
-              activeDot={{
-                fill: "#f5e6a8",
-                r: 5,
-                stroke: "#c9a84c",
-                strokeWidth: 2,
-              }}
+              dot={{ r: 3, fill: "#c9a84c" }}
+              activeDot={{ r: 5, fill: "#f5e6a8" }}
             />
           </AreaChart>
         </ResponsiveContainer>

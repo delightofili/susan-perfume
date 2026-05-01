@@ -51,9 +51,13 @@ export const deleteProduct = async (id) => {
 };
 
 export const getOrders = async () => {
-  const res = await fetch(`${BASE_URL}/orders`);
-  if (!res.ok) throw new Error("Failed to fetch orders");
-  return res.json();
+  const { data, error } = await supabase
+    .from("orders")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+  return data;
 };
 
 export const createOrder = async (orderData) => {

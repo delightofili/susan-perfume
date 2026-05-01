@@ -93,9 +93,11 @@ function TrackOrder() {
     };
   }, [order?.reference]);
 
+  const normalizedStatus = order?.status?.trim().toLowerCase();
+
   // Calculate progress index
-  const currentStep = STEPS.indexOf(
-    (step) => step.toLowerCase() === order?.status?.toLowerCase(),
+  const currentStep = STEPS.findIndex(
+    (step) => step.toLowerCase() === normalizedStatus,
   );
 
   return (
