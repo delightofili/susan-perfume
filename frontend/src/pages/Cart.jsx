@@ -27,11 +27,35 @@ function Cart() {
     return () => window.removeEventListener("storage", handler);
   }, []); */
 
+  const guestId = localStorage.getItem("guest_id") || crypto.randomUUID();
+  localStorage.setItem("guest_id", guestId);
+
+  const getItemCount = (order) => {
+    if (typeof order.item_count === "number") return order.item_count;
+
+    if (Array.isArray(order.items)) return order.items.length;
+
+    // handle JSON string from DB
+    if (typeof order.items === "string") {
+      try {
+        const parsed = JSON.parse(order.items);
+        return Array.isArray(parsed) ? parsed.length : 0;
+      } catch {
+        return 0;
+      }
+    }
+
+    return 0;
+  };
+
   useEffect(() => {
     const fetchOrders = async () => {
+      const guestId = localStorage.getItem("guest_id");
+
       const { data, error } = await supabase
         .from("orders")
         .select("*")
+        .eq("guest_id", guestId)
         .order("created_at", { ascending: false });
 
       if (!error) setPastOrders(data || []);
@@ -171,48 +195,51 @@ function Cart() {
                 </div>
               ) : (
                 <div className="flex flex-col gap-4 max-w-2xl mx-auto">
-                  {pastOrders.map((o) => (
-                    <div
-                      key={o.reference}
-                      className="rounded-2xl border border-[#c9a84c]/20 bg-white/60 dark:bg-white/[0.03] backdrop-blur-sm overflow-hidden"
-                    >
-                      <div className="px-5 py-4 flex justify-between">
-                        <div>
-                          <p className="text-xs opacity-50">Reference</p>
-                          <p className="font-bold text-pink-blush">
-                            {o.reference}
-                          </p>
+                  {pastOrders.map((o) => {
+                    console.log("ORDER", o);
+                    return (
+                      <div
+                        key={o.reference}
+                        className="rounded-2xl border border-[#c9a84c]/20 bg-white/60 dark:bg-white/[0.03] backdrop-blur-sm overflow-hidden"
+                      >
+                        <div className="px-5 py-4 flex justify-between">
+                          <div>
+                            <p className="text-xs opacity-50">Reference</p>
+                            <p className="font-bold text-pink-blush">
+                              {o.reference}
+                            </p>
+                          </div>
+
+                          <StatusBadge status={o.status || "Pending"} />
                         </div>
 
-                        <StatusBadge status={o.status || "Pending"} />
+                        <div className="px-5 py-4 flex justify-between">
+                          <div>
+                            <p>{getItemCount(o)} item(s)</p>
+                            <p className="text-xs opacity-50">
+                              {o.date
+                                ? new Date(o.date).toLocaleDateString()
+                                : ""}
+                            </p>
+                          </div>
+
+                          <div className="flex gap-3 items-center">
+                            <p className="font-bold text-pink-blush">
+                              ₦{Number(o.total).toLocaleString()}
+                            </p>
+
+                            <Link
+                              to="/track-order"
+                              state={{ reference: o.reference }}
+                              className="text-xs border px-3 py-1 rounded"
+                            >
+                              Track →
+                            </Link>
+                          </div>
+                        </div>
                       </div>
-
-                      <div className="px-5 py-4 flex justify-between">
-                        <div>
-                          <p>{o.item_count} item(s)</p>
-                          <p className="text-xs opacity-50">
-                            {o.date
-                              ? new Date(o.date).toLocaleDateString()
-                              : ""}
-                          </p>
-                        </div>
-
-                        <div className="flex gap-3 items-center">
-                          <p className="font-bold text-pink-blush">
-                            ₦{Number(o.total).toLocaleString()}
-                          </p>
-
-                          <Link
-                            to="/track-order"
-                            state={{ reference: o.reference }}
-                            className="text-xs border px-3 py-1 rounded"
-                          >
-                            Track →
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </>

@@ -17,14 +17,16 @@ const STEPS = [
 function TrackOrder() {
   const location = useLocation();
   const prefilled = location.state;
-  const [reference, setReference] = useState(prefilled?.reference || "");
+  const initialReference = prefilled?.reference || "";
+  const [reference, setReference] = useState(initialReference);
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [searched, setSearched] = useState(false);
 
-  const doSearch = async (refOverride) => {
-    const ref = (refOverride || reference).trim();
+  const doSearch = async (refValue) => {
+    const ref = (refValue || reference).trim();
+
     if (!ref) {
       setError("Please enter your order reference.");
       return;
@@ -40,7 +42,7 @@ function TrackOrder() {
         .from("orders")
         .select("*")
         .eq("reference", ref)
-        .single();
+        .maybeSingle();
 
       if (fetchError || !data) {
         setError("Order not found. Please check your reference number.");
@@ -55,14 +57,15 @@ function TrackOrder() {
   };
 
   // 1. Initial Search if we came from Checkout
-  useEffect(() => {
-    if (prefilled?.reference) return;
 
-    const timeout = setTimeout(() => {
-      doSearch(prefilled.reference);
+  useEffect(() => {
+    if (!initialReference) return;
+
+    const timer = setTimeout(() => {
+      doSearch(initialReference);
     }, 0);
 
-    return () => clearTimeout(timeout);
+    return () => clearTimeout(timer);
   }, []);
 
   // 2. Realtime Listener: Updates UI instantly if status changes in DB
@@ -91,7 +94,9 @@ function TrackOrder() {
   }, [order?.reference]);
 
   // Calculate progress index
-  const currentStep = STEPS.indexOf(order?.status);
+  const currentStep = STEPS.indexOf(
+    (step) => step.toLowerCase() === order?.status?.toLowerCase(),
+  );
 
   return (
     <section className="min-h-screen w-full relative pb-20">
@@ -169,7 +174,10 @@ function TrackOrder() {
                     value: "₦" + Number(order.total).toLocaleString(),
                     gold: true,
                   },
-                  { label: "Items", value: `${order.items} Product(s)` },
+                  {
+                    label: "Items",
+                    value: `${order.item_count || order.items?.length || 0} Product(s)`,
+                  },
                   {
                     label: "Order Date",
                     value: new Date(order.created_at).toLocaleDateString(

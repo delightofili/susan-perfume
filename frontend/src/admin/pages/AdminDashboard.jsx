@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { MdFilterList } from "react-icons/md";
 import { MdFilterListOff } from "react-icons/md";
-import { Link, NavLink, useNavigate } from "react-router";
+import { Link, NavLink, Outlet, useNavigate } from "react-router";
 import { TbLayoutGridFilled } from "react-icons/tb";
 import { GiBeachBag } from "react-icons/gi";
 import { TbCurrencyNaira } from "react-icons/tb";
 import singlePerf from "../../../public/images/singlePerf.png";
-import { useLocation } from "react-router";
-import { RiCustomerService2Line } from "react-icons/ri";
+
 import { IoIosSettings } from "react-icons/io";
-import { SiSimpleanalytics } from "react-icons/si";
+
 import { useAuth } from "../hook/useAuth";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
 import { IoMdArrowDropup } from "react-icons/io";
@@ -20,18 +19,11 @@ import OrdersSection from "../components/OrdersSection";
 import Settings from "../components/Settings";
 import ProductsSection from "../components/ProductsSection";
 
+import shopBg from "../../../public/images/shop-bg.png";
+
 function AdminDashboard() {
-  const data = [
-    { value: 30 },
-    { value: 45 },
-    { value: 38 },
-    { value: 60 },
-    { value: 55 },
-    { value: 75 },
-    { value: 85 },
-  ];
   const [navIsOpen, setNavIsOpen] = useState(false);
-  const location = useLocation();
+
   const { logoutAdmin } = useAuth();
 
   const navigate = useNavigate();
@@ -47,7 +39,7 @@ function AdminDashboard() {
       <div
         className="fixed inset-0 bg-cover bg-center"
         style={{
-          backgroundImage: "url(../../public/images/shop-bg.png)",
+          backgroundImage: `url(${shopBg})`,
         }}
       />
       <div className="fixed inset-0 w-full  bg-primary-black/80  backdrop-blur-md" />
@@ -100,7 +92,7 @@ function AdminDashboard() {
           {/* Nav Links */}
           <nav className="p-4 space-y-1 flex-1 overflow-y-auto">
             <NavLink
-              to="/admin/dashboard"
+              to="/admin/dashboardHome"
               className={({ isActive }) =>
                 `group flex items-center gap-3 p-3 rounded-xl font-semibold transition-all duration-200 ${
                   isActive
@@ -199,176 +191,7 @@ function AdminDashboard() {
 
         {/* Main Content */}
         <main className="p-6 overflow-auto ">
-          {location.pathname === "/admin/dashboard" && (
-            <section className="relative">
-              <nav className="mb-4 ">
-                <div className="text-white"></div>
-                <div></div>
-              </nav>
-              <main className="flex flex-col ">
-                <h1 className="text-3xl md:text-3xl font-playfair text-[#f5e6a8]">
-                  Dashboard Overview
-                </h1>
-                <div className="grid grid-cols-2 gap-3 lg:gap-6 p-2 lgp-8 my-6">
-                  <div className="grid grid-cols-1 lg:grid-cols-[48px_1fr_80px] py-6 px-4 gap-4 shadow  shadow-[#c9a84c] rounded-2xl bg-white/5 ">
-                    <div className="w-10 h-10 rounded-md bg-solid-gold/10 border border-solid-gold/20 flex items-center justify-center text-[#c9a84c] text-sm md:row-span-2 ">
-                      $
-                    </div>
-                    <div className="order-3 lg:order-0">
-                      <p className="text-[#f5e6a8]/70 font-inter">
-                        Total Sales
-                      </p>
-                      <h2 className="text-[#f5e6a8] font-playfair md:text-2xl text-xl">
-                        ₦430,000
-                      </h2>
-                    </div>
-
-                    <div className="flex flex-col order-2 lg:order-0">
-                      <p className="flex  items-center text-green-400 text-xs md:text-sm mb-1">
-                        <span>
-                          <IoMdArrowDropup className="h-6 w-6" />
-                        </span>{" "}
-                        15.8%
-                      </p>
-                      <div className="w-full h-12 md:w-16 md:h-8">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <LineChart data={data}>
-                            <Line
-                              type="monotone"
-                              dataKey="value"
-                              stroke="#c9a84c"
-                              strokeWidth={1.5}
-                              dot={false}
-                            />
-                          </LineChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 lg:grid-cols-[48px_1fr_80px] py-6 px-4 gap-4 shadow  shadow-[#c9a84c] rounded-2xl bg-white/5 ">
-                    <div className="w-10 h-10 rounded-md bg-solid-gold/10 border border-solid-gold/20 flex items-center justify-center text-[#c9a84c] text-sm md:row-span-2 ">
-                      $
-                    </div>
-                    <div className="order-3 lg:order-0">
-                      <p className="text-[#f5e6a8]/70 font-inter">Orders</p>
-                      <h2 className="text-[#f5e6a8] font-playfair md:text-2xl text-xl">
-                        824
-                      </h2>
-                    </div>
-
-                    <div className="flex flex-col order-2 lg:order-0">
-                      <p className="flex  items-center text-green-400 text-xs md:text-sm mb-1">
-                        <span>
-                          <IoMdArrowDropup className="h-6 w-6" />
-                        </span>{" "}
-                        15.8%
-                      </p>
-                      <div className="w-full h-12 md:w-16 md:h-8">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <LineChart data={data}>
-                            <Line
-                              type="monotone"
-                              dataKey="value"
-                              stroke="#c9a84c"
-                              strokeWidth={1.5}
-                              dot={false}
-                            />
-                          </LineChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 lg:grid-cols-[48px_1fr_80px] py-6 px-4 gap-4 shadow shadow-[#c9a84c] rounded-2xl bg-white/5 ">
-                    <div className="w-10 h-10 rounded-md bg-solid-gold/10 border border-solid-gold/20 flex items-center justify-center text-[#c9a84c] text-sm lg:row-span-2 ">
-                      $
-                    </div>
-                    <div className="order-3 lg:order-0">
-                      <p className="text-[#f5e6a8]/70 font-inter">Customers</p>
-                      <h2 className="text-[#f5e6a8] font-playfair md:text-2xl text-xl">
-                        1,207
-                      </h2>
-                    </div>
-
-                    <div className="flex flex-col order-2 md:order-0">
-                      <p className="flex  items-center text-green-400 text-xs md:text-sm mb-1">
-                        <span>
-                          <IoMdArrowDropup className="h-6 w-6" />
-                        </span>{" "}
-                        15.8%
-                      </p>
-                      <div className="w-full h-12 md:w-16 md:h-8">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <LineChart data={data}>
-                            <Line
-                              type="monotone"
-                              dataKey="value"
-                              stroke="#c9a84c"
-                              strokeWidth={1.5}
-                              dot={false}
-                            />
-                          </LineChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 lg:grid-cols-[48px_1fr_80px] py-6 px-4 gap-4 shadow  shadow-[#c9a84c] rounded-2xl bg-white/5 ">
-                    <div className="w-10 h-10 rounded-md bg-solid-gold/10 border border-solid-gold/20 flex items-center justify-center text-[#c9a84c] text-sm lg:row-span-2 ">
-                      $
-                    </div>
-                    <div className="order-3 lg:order-0">
-                      <p className="text-[#f5e6a8]/70 font-inter">Products</p>
-                      <h2 className="text-[#f5e6a8] font-playfair md:text-2xl text-xl">
-                        68
-                      </h2>
-                    </div>
-
-                    <div className="flex flex-col order-2 lg:order-0">
-                      <p className="flex  items-center text-green-400 text-xs md:text-sm mb-1">
-                        <span>
-                          <IoMdArrowDropup className="h-6 w-6" />
-                        </span>{" "}
-                        15.8%
-                      </p>
-                      <div className="w-full h-12 md:w-16 md:h-8">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <LineChart data={data}>
-                            <Line
-                              type="monotone"
-                              dataKey="value"
-                              stroke="#c9a84c"
-                              strokeWidth={1.5}
-                              dot={false}
-                            />
-                          </LineChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <h1 className="text-3xl md:text-4xl font-playfair text-[#f5e6a8]">
-                  Sales Analytics
-                </h1>
-                <SalesAnalyticsCard />
-                <div className="flex w-full items-center justify-between my-6">
-                  <h1 className="text-3xl md:text-4xl font-playfair text-[#f5e6a8]">
-                    Latest Orders
-                  </h1>
-                  <select className="bg-white/5 border border-[#c9a84c]/30 text-[#f5e6a8]/60 text-xs rounded-lg px-3 py-2 outline-none cursor-pointer">
-                    <option>View All</option>
-                    <option>View All</option>
-                    <option>Last 3 Months</option>
-                  </select>
-                </div>
-                <LatestOrders />
-              </main>
-            </section>
-          )}
-
-          {location.pathname === "/admin/products" && <ProductsSection />}
-
-          {location.pathname === "/admin/orders" && <OrdersSection />}
-
-          {location.pathname === "/admin/settings" && <Settings />}
+          <Outlet />
         </main>
       </div>
     </section>

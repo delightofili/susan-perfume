@@ -33,12 +33,16 @@ function Checkout() {
         phone: form.phone,
         address: form.address,
         reference,
-        items: cart,
+        items: cart.map((item) => ({
+          name: item.name,
+          quantity: item.quantity,
+        })),
         item_count: cart.length,
         total: finalTotal,
         status,
         payment_method,
         date: new Date().toISOString(),
+        guest_id: localStorage.getItem("guest_id"),
       },
     ]);
 
@@ -53,6 +57,7 @@ function Checkout() {
   if (!cart || cart.length === 0) {
     return <p>Your cart is empty</p>;
   }
+  const guestId = localStorage.getItem("guest_id");
 
   // 🟢 WhatsApp
   const handlePlaceOrder = async () => {
@@ -74,6 +79,7 @@ function Checkout() {
         phone: form.phone,
         total: finalTotal,
         items: cart.length,
+        guest_id: guestId,
         date: new Date().toLocaleString(),
       };
 
@@ -94,7 +100,6 @@ function Checkout() {
 
     setLoading(false);
   };
-
   // 🔵 Paystack
   const handlePayNow = async () => {
     if (!form.customer || !form.phone || !form.address) {
@@ -124,6 +129,7 @@ function Checkout() {
             phone: form.phone,
             total: finalTotal,
             items: cart.length,
+            guest_id: guestId,
             date: new Date().toISOString(),
           };
 

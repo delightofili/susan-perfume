@@ -116,7 +116,7 @@ function Bestseller() {
         {/* ── Scrollable Track ── */}
         <div
           ref={scrollRef}
-          className="flex gap-6 overflow-x-auto scrollbar-none px-6 md:px-16 snap-x snap-mandatory pb-8"
+          className="flex items-center gap-6 overflow-x-auto scrollbar-none px-6 md:px-16 snap-x snap-mandatory pb-8"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {loading ? (
@@ -151,7 +151,11 @@ function Bestseller() {
                     )
                   }
                   price={`₦${product.price.toLocaleString()}`}
-                  originalPrice={product.original_price ? `₦${Number(product.original_price).toLocaleString()}` : null}
+                  originalPrice={
+                    product.original_price
+                      ? `₦${Number(product.original_price).toLocaleString()}`
+                      : null
+                  }
                   size={product.size}
                   discount={product.discount}
                   category={product.category}

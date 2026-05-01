@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import StatusBadge from "./StatusBadge";
 import { getOrders } from "../../api/index.js";
@@ -35,14 +34,32 @@ function OrdersSection() {
       });
       if (!res.ok) throw new Error("Failed to update");
       const updated = await res.json();
-      setOrders((prev) =>
-        prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
-      );
+
+      setOrders((prev) => prev.map((o) => (o.id === orderId ? updated : o)));
     } catch (err) {
       console.error("Status update failed:", err);
     } finally {
       setUpdatingId(null);
     }
+  };
+
+  //---helper function
+
+  const getItemCount = (order) => {
+    if (typeof order.item_count === "number") return order.item_count;
+
+    if (Array.isArray(order.items)) return order.items.length;
+
+    if (typeof order.items === "string") {
+      try {
+        const parsed = JSON.parse(order.items);
+        return Array.isArray(parsed) ? parsed.length : 0;
+      } catch {
+        return 0;
+      }
+    }
+
+    return 0;
   };
 
   // ── Filter ──────────────────────────────────────
@@ -57,15 +74,24 @@ function OrdersSection() {
       );
     });
 
-  const statuses = ["Pending", "Processing", "Shipped", "Completed", "Refunded"];
+  const statuses = [
+    "Pending",
+    "Pending Payment",
+    "Paid",
+    "Processing",
+    "Shipped",
+    "Delivered",
+    "Refunded",
+  ];
 
   return (
     <div className="flex flex-col gap-6">
-
       {/* ── Header ── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white font-playfair">Orders</h1>
+          <h1 className="text-3xl font-bold text-white font-playfair">
+            Orders
+          </h1>
           <p className="font-inter text-white/20 mt-1 text-sm">
             {orders.length} orders total
           </p>
@@ -92,37 +118,89 @@ function OrdersSection() {
       {/* ── Stats ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {[
-          { label: "Total Orders", value: orders.length, color: "text-[#f5e6a8]" },
-          { label: "Completed", value: orders.filter((o) => o.status === "Completed").length, color: "text-green-400" },
-          { label: "Pending", value: orders.filter((o) => o.status === "Pending").length, color: "text-orange-400" },
+          {
+            label: "Total Orders",
+            value: orders.length,
+            color: "text-[#f5e6a8]",
+          },
+          {
+            label: "Delivered",
+            value: orders.filter((o) => o.status === "Delivered").length,
+            color: "text-green-400",
+          },
+          {
+            label: "Pending",
+            value: orders.filter((o) => o.status === "Pending").length,
+            color: "text-orange-400",
+          },
+          {
+            label: "Pending Payment",
+            value: orders.filter((o) => o.status === "Pending Payment").length,
+            color: "text-yellow-400",
+          },
+          {
+            label: "Processing",
+            value: orders.filter((o) => o.status === "Processing").length,
+            color: "text-blue-400",
+          },
+          {
+            label: "Shipped",
+            value: orders.filter((o) => o.status === "Shipped").length,
+            color: "text-purple-400",
+          },
           {
             label: "Revenue",
-            value: "₦" + (orders.reduce((sum, o) => sum + Number(o.total || 0), 0) / 1000).toFixed(0) + "k",
+            value:
+              "₦" +
+              (
+                orders.reduce((sum, o) => sum + Number(o.total || 0), 0) / 1000
+              ).toFixed(0) +
+              "k",
             color: "text-[#c9a84c]",
           },
         ].map((stat) => (
-          <div key={stat.label} className="py-4 px-4 rounded-2xl bg-white/5 shadow shadow-[#c9a84c]/30 border border-[#c9a84c]/10">
-            <p className="text-[#f5e6a8]/50 font-inter text-xs mb-1">{stat.label}</p>
-            <h2 className={`font-playfair text-2xl ${stat.color}`}>{stat.value}</h2>
+          <div
+            key={stat.label}
+            className="py-4 px-4 rounded-2xl bg-white/5 shadow shadow-[#c9a84c]/30 border border-[#c9a84c]/10"
+          >
+            <p className="text-[#f5e6a8]/50 font-inter text-xs mb-1">
+              {stat.label}
+            </p>
+            <h2 className={`font-playfair text-2xl ${stat.color}`}>
+              {stat.value}
+            </h2>
           </div>
         ))}
       </div>
 
       {/* ── Tabs ── */}
       <div className="flex gap-1 overflow-x-auto scrollbar-none border-b border-[#c9a84c]/15">
-        {["All", "Completed", "Pending", "Processing", "Shipped", "Refunded"].map((tab) => {
-          const count = tab === "All" ? orders.length : orders.filter((o) => o.status === tab).length;
+        {[
+          "All",
+          "Completed",
+          "Pending",
+          "Processing",
+          "Shipped",
+          "Refunded",
+        ].map((tab) => {
+          const count =
+            tab === "All"
+              ? orders.length
+              : orders.filter((o) => o.status === tab).length;
           return (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`flex items-center gap-2 px-4 py-3 text-xs font-inter whitespace-nowrap border-b-2 transition-all ${activeTab === tab
-                ? "border-[#c9a84c] text-[#c9a84c]"
-                : "border-transparent text-[#f5e6a8]/40 hover:text-[#f5e6a8]/70"
-                }`}
+              className={`flex items-center gap-2 px-4 py-3 text-xs font-inter whitespace-nowrap border-b-2 transition-all ${
+                activeTab === tab
+                  ? "border-[#c9a84c] text-[#c9a84c]"
+                  : "border-transparent text-[#f5e6a8]/40 hover:text-[#f5e6a8]/70"
+              }`}
             >
               {tab}
-              <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${activeTab === tab ? "bg-[#c9a84c]/20 text-[#c9a84c]" : "bg-white/5 text-white/30"}`}>
+              <span
+                className={`px-1.5 py-0.5 rounded-full text-[10px] ${activeTab === tab ? "bg-[#c9a84c]/20 text-[#c9a84c]" : "bg-white/5 text-white/30"}`}
+              >
                 {count}
               </span>
             </button>
@@ -142,8 +220,19 @@ function OrdersSection() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-[#c9a84c]/10">
-                  {["Order ID", "Customer", "Date", "Items", "Status", "Total", "Action"].map((h) => (
-                    <th key={h} className="text-left px-5 py-3 text-[10px] uppercase tracking-widest text-[#f5e6a8]/30 font-inter">
+                  {[
+                    "Order ID",
+                    "Customer",
+                    "Date",
+                    "Items",
+                    "Status",
+                    "Total",
+                    "Action",
+                  ].map((h) => (
+                    <th
+                      key={h}
+                      className="text-left px-5 py-3 text-[10px] uppercase tracking-widest text-[#f5e6a8]/30 font-inter"
+                    >
                       {h}
                     </th>
                   ))}
@@ -151,7 +240,10 @@ function OrdersSection() {
               </thead>
               <tbody>
                 {filtered.map((order, i) => (
-                  <tr key={order.id} className={`border-b border-[#c9a84c]/5 hover:bg-[#c9a84c]/3 transition-colors ${i % 2 === 0 ? "" : "bg-white/[0.01]"}`}>
+                  <tr
+                    key={order.id}
+                    className={`border-b border-[#c9a84c]/5 hover:bg-[#c9a84c]/3 transition-colors ${i % 2 === 0 ? "" : "bg-white/[0.01]"}`}
+                  >
                     <td className="px-5 py-4 text-[#f5e6a8]/40 font-inter text-xs">
                       #{order.id}
                     </td>
@@ -161,29 +253,41 @@ function OrdersSection() {
                           {order.customer?.[0] || "?"}
                         </div>
                         <div>
-                          <p className="text-[#f5e6a8] text-sm font-inter">{order.customer}</p>
-                          <p className="text-[#f5e6a8]/30 text-xs font-inter">{order.email}</p>
+                          <p className="text-[#f5e6a8] text-sm font-inter">
+                            {order.customer}
+                          </p>
+                          <p className="text-[#f5e6a8]/30 text-xs font-inter">
+                            {order.email}
+                          </p>
                         </div>
                       </div>
                     </td>
                     <td className="px-5 py-4 text-[#f5e6a8]/40 font-inter text-xs">
                       {order.created_at
-                        ? new Date(order.created_at).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })
+                        ? new Date(order.created_at).toLocaleDateString(
+                            "en-NG",
+                            { day: "numeric", month: "short", year: "numeric" },
+                          )
                         : "—"}
                     </td>
                     <td className="px-5 py-4 text-[#f5e6a8]/40 font-inter text-xs">
-                      {order.items} {order.items === 1 ? "item" : "items"}
+                      {getItemCount(order)}{" "}
+                      {getItemCount(order) === 1 ? "item" : "items"}
                     </td>
                     <td className="px-5 py-4">
                       {/* Clickable status dropdown */}
                       <select
                         value={order.status}
                         disabled={updatingId === order.id}
-                        onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                        onChange={(e) =>
+                          handleStatusChange(order.id, e.target.value)
+                        }
                         className="bg-transparent border-none outline-none cursor-pointer text-xs font-inter"
                       >
                         {statuses.map((s) => (
-                          <option key={s} value={s} className="bg-[#0a0f1a]">{s}</option>
+                          <option key={s} value={s} className="bg-[#0a0f1a]">
+                            {s}
+                          </option>
                         ))}
                       </select>
                     </td>
@@ -214,9 +318,14 @@ function OrdersSection() {
           {/* ── Mobile Cards ── */}
           <div className="flex flex-col gap-3 md:hidden">
             {filtered.map((order) => (
-              <div key={order.id} className="rounded-2xl bg-white/5 border border-[#c9a84c]/15 p-4 flex flex-col gap-3">
+              <div
+                key={order.id}
+                className="rounded-2xl bg-white/5 border border-[#c9a84c]/15 p-4 flex flex-col gap-3"
+              >
                 <div className="flex items-center justify-between">
-                  <span className="text-[#f5e6a8]/30 font-inter text-xs">#{order.id}</span>
+                  <span className="text-[#f5e6a8]/30 font-inter text-xs">
+                    #{order.id}
+                  </span>
                   <StatusBadge status={order.status} />
                 </div>
                 <div className="flex items-center justify-between">
@@ -225,9 +334,15 @@ function OrdersSection() {
                       {order.customer?.[0] || "?"}
                     </div>
                     <div>
-                      <p className="text-[#f5e6a8] text-sm font-inter">{order.customer}</p>
+                      <p className="text-[#f5e6a8] text-sm font-inter">
+                        {order.customer}
+                      </p>
                       <p className="text-[#f5e6a8]/30 text-xs font-inter">
-                        {order.created_at ? new Date(order.created_at).toLocaleDateString("en-NG") : "—"}
+                        {order.created_at
+                          ? new Date(order.created_at).toLocaleDateString(
+                              "en-NG",
+                            )
+                          : "—"}
                       </p>
                     </div>
                   </div>
@@ -243,7 +358,9 @@ function OrdersSection() {
                   className="bg-white/5 border border-[#c9a84c]/20 text-[#f5e6a8]/60 text-xs rounded-lg px-3 py-2 outline-none cursor-pointer font-inter w-full"
                 >
                   {statuses.map((s) => (
-                    <option key={s} value={s} className="bg-[#0a0f1a]">{s}</option>
+                    <option key={s} value={s} className="bg-[#0a0f1a]">
+                      {s}
+                    </option>
                   ))}
                 </select>
               </div>
