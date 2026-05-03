@@ -73,18 +73,18 @@ function PerfumeCard({
   return (
     <div
       onClick={handleCardClick}
-      className="group relative flex flex-col rounded-2xl overflow-hidden cursor-pointer
+      className="group relative flex flex-col rounded-xl overflow-hidden cursor-pointer
                  bg-white dark:bg-[#0d0818]
-                 border border-[#e91e8c]/12 dark:border-[#c9a84c]/12
-                 hover:border-[#e91e8c]/50 dark:hover:border-[#c9a84c]/40
-                 shadow-sm hover:shadow-2xl hover:shadow-[#e91e8c]/12 dark:hover:shadow-[#c9a84c]/8
-                 hover:-translate-y-2
-                 transition-all duration-400 h-full"
+                 border border-[#e91e8c]/10 dark:border-[#c9a84c]/10
+                 hover:border-[#e91e8c]/35 dark:hover:border-[#c9a84c]/35
+                 shadow-sm hover:shadow-xl hover:shadow-[#e91e8c]/8 dark:hover:shadow-[#c9a84c]/6
+                 hover:-translate-y-1
+                 transition-all duration-300 h-full"
     >
       {/* ══════════════════════════════════════
           IMAGE AREA
       ══════════════════════════════════════ */}
-      <div className="relative overflow-hidden h-[230px] md:h-[255px]">
+      <div className="relative overflow-hidden h-[170px] md:h-[200px]">
 
         {/* Layered background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#fce4f3] via-[#fff4fb] to-[#fff8f0]
@@ -186,25 +186,25 @@ function PerfumeCard({
           CARD BODY
       ══════════════════════════════════════ */}
       <div
-        className="relative flex flex-col flex-1 px-4 pt-4 pb-4 gap-1"
+        className="relative flex flex-col flex-1 px-3 pt-3 pb-3 gap-1"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Subtle top separator line */}
         <div className="absolute top-0 inset-x-4 h-px bg-gradient-to-r from-transparent via-[#e91e8c]/20 dark:via-[#c9a84c]/15 to-transparent" />
 
         {/* Name */}
-        <p className="font-playfair text-[#1a0a10] dark:text-white text-[1.05rem] font-semibold leading-snug mt-1">
+        <p className="font-playfair text-[#1a0a10] dark:text-white text-[0.9rem] font-semibold leading-snug mt-1 line-clamp-2">
           {name}
         </p>
 
         {/* Scent descriptor — small decorative text */}
-        <p className="font-inter text-[10px] tracking-[1.5px] uppercase text-[#e91e8c]/50 dark:text-[#c9a84c]/45">
+        <p className="font-inter text-[9px] tracking-[1.5px] uppercase text-[#c2185b]/40 dark:text-[#c9a84c]/40">
           ✦ Luxury Fragrance
         </p>
 
         {/* Price row */}
-        <div className="flex items-baseline gap-2 mt-2">
-          <span className="font-inter text-[#e91e8c] dark:text-[#c9a84c] font-extrabold text-[1.1rem] leading-none">
+        <div className="flex items-baseline gap-2 mt-1.5">
+          <span className="font-inter text-[#c2185b] dark:text-[#c9a84c] font-extrabold text-[0.95rem] leading-none">
             {displayPrice}
           </span>
           {originalPrice && (
@@ -223,16 +223,15 @@ function PerfumeCard({
         <div className="mt-3">
           {!inCart ? (
             <button
-              className="w-full py-2.5 font-cinzel text-[10px] tracking-[2.5px] uppercase rounded-xl
+              className="w-full py-2 font-cinzel text-[9px] tracking-[2px] uppercase rounded-lg
                          relative overflow-hidden group/btn
-                         bg-[#e91e8c] dark:bg-transparent
+                         bg-[#c2185b] dark:bg-transparent
                          text-white dark:text-[#c9a84c]
-                         border border-[#e91e8c] dark:border-[#c9a84c]/40
-                         hover:border-[#c2185b]
+                         border border-[#c2185b] dark:border-[#c9a84c]/40
+                         hover:border-[#a01549]
                          dark:hover:bg-[#c9a84c] dark:hover:text-[#0a0f1a] dark:hover:border-[#c9a84c]
                          transition-all duration-300 hover:scale-[1.02] active:scale-95
-                         shadow-md shadow-[#e91e8c]/20 dark:shadow-none
-                         animate-pink-glow dark:animate-none"
+                         shadow-sm shadow-[#c2185b]/15 dark:shadow-none"
               onClick={handleAddToCart}
             >
               {/* Shimmer sweep on hover — light mode */}

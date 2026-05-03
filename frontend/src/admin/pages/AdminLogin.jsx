@@ -8,6 +8,7 @@ function AdminLogin() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const { loginAdmin } = useAuth();
   const navigate = useNavigate();
@@ -16,7 +17,6 @@ function AdminLogin() {
     e.preventDefault();
     setError("");
     setLoading(true);
-
     try {
       await loginAdmin(email, password);
       navigate("/admin/dashboard");
@@ -29,103 +29,180 @@ function AdminLogin() {
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden px-4">
-      {/* ── BACKGROUNDS ── */}
-      <div
-        className="absolute inset-0 transition-opacity duration-500
-        bg-[radial-gradient(ellipse_at_top_right,#f8c8da_0%,#fdf0f5_45%,#fff8f0_100%)]
-        dark:opacity-0"
+
+      {/* ── LIGHT MODE BACKGROUND ── */}
+      <div className="absolute inset-0 dark:opacity-0 transition-opacity duration-700"
+        style={{ background: "radial-gradient(ellipse at 20% 80%, rgba(233,30,140,0.13) 0%, transparent 55%), radial-gradient(ellipse at 80% 10%, rgba(201,168,76,0.10) 0%, transparent 50%), linear-gradient(135deg, #fdf0f7 0%, #fffaf5 50%, #f9f0ff 100%)" }}
       />
 
-      <div
-        className="absolute inset-0 opacity-0 dark:opacity-100 transition-opacity duration-500
-        bg-[radial-gradient(ellipse_at_top_right,#1a0410_0%,#0a0f1a_60%)]"
+      {/* ── DARK MODE BACKGROUND ── */}
+      <div className="absolute inset-0 opacity-0 dark:opacity-100 transition-opacity duration-700"
+        style={{ background: "radial-gradient(ellipse at 20% 80%, rgba(201,168,76,0.12) 0%, transparent 55%), radial-gradient(ellipse at 80% 10%, rgba(233,30,140,0.08) 0%, transparent 50%), linear-gradient(135deg, #050812 0%, #0a0f1a 50%, #090511 100%)" }}
       />
 
-      {/* ORBS */}
-      <div
-        className="absolute -top-24 -right-24 w-[420px] h-[420px] rounded-full pointer-events-none
-        bg-[radial-gradient(circle,rgba(201,168,76,0.18)_0%,transparent_70%)]"
+      {/* ── ANIMATED ORBS ── */}
+      <div className="absolute top-[-80px] right-[-80px] w-[380px] h-[380px] rounded-full pointer-events-none animate-orb-drift"
+        style={{ background: "radial-gradient(circle, rgba(233,30,140,0.15) 0%, transparent 70%)" }}
+      />
+      <div className="absolute bottom-[-60px] left-[-60px] w-[320px] h-[320px] rounded-full pointer-events-none animate-orb-drift-reverse"
+        style={{ background: "radial-gradient(circle, rgba(201,168,76,0.12) 0%, transparent 70%)" }}
+      />
+      <div className="absolute top-1/2 left-[-100px] w-[200px] h-[200px] rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(233,30,140,0.08) 0%, transparent 70%)" }}
       />
 
-      <div
-        className="absolute bottom-0 left-1/4 w-[300px] h-[300px] rounded-full pointer-events-none
-        bg-[radial-gradient(circle,rgba(194,24,91,0.10)_0%,transparent_70%)]"
-      />
-
-      {/* THEME TOGGLE */}
-      <div className="absolute top-6 right-6 md:top-10 md:right-10 z-50">
+      {/* ── THEME TOGGLE ── */}
+      <div className="absolute top-6 right-6 z-50">
         <ThemeToggle />
       </div>
 
-      {/* ── FORM CARD ── */}
-      <form
-        onSubmit={handleSubmit}
-        className="z-10 w-full max-w-md mx-auto rounded-2xl p-6 sm:p-8
-        bg-pink-blush/80 dark:bg-primary-black/40
-        backdrop-blur-xl shadow-2xl flex flex-col items-center"
-      >
-        {/* LOGO */}
-        <img
-          src="/images/singlePerf.png"
-          alt="Logo"
-          className="h-20 sm:h-24 w-auto mb-4"
+      {/* ── BRANDING TOP ── */}
+      <div className="absolute top-8 left-8 z-50 flex items-center gap-2">
+        <div className="w-2 h-2 rounded-full bg-[#e91e8c] dark:bg-[#c9a84c] animate-pulse" />
+        <span className="font-cinzel text-xs tracking-[3px] uppercase text-[#e91e8c] dark:text-[#c9a84c] opacity-70">
+          Susan Luxury
+        </span>
+      </div>
+
+      {/* ── MAIN CARD ── */}
+      <div className="z-10 w-full max-w-[420px] mx-auto">
+        {/* Decorative top bar */}
+        <div className="h-1 w-full rounded-t-2xl"
+          style={{ background: "linear-gradient(to right, #e91e8c, #ff6ec7, #c9a84c)" }}
         />
 
-        {/* TITLE */}
-        <h2 className="text-3xl sm:text-4xl font-playfair text-primary-charcoal-black dark:text-[#f5e6a8]">
-          Admin Login
-        </h2>
-
-        <p className="text-sm sm:text-base mt-2 mb-6 opacity-60 font-inter text-primary-charcoal-black dark:text-[#f5e6a8]">
-          Sign in to your dashboard
-        </p>
-
-        {/* ERROR */}
-        {error && (
-          <p className="text-red-500 text-sm mb-4 text-center">{error}</p>
-        )}
-
-        {/* INPUT BOX */}
-        <div
-          className="w-full space-y-4 p-5 rounded-xl shadow-lg
-          bg-gray-300/30 dark:bg-primary-black/40"
+        <form
+          onSubmit={handleSubmit}
+          className="w-full rounded-b-2xl px-8 py-10 flex flex-col gap-6
+            bg-white/80 dark:bg-[#0d0818]/70
+            backdrop-blur-2xl
+            border border-[#e91e8c]/10 dark:border-[#c9a84c]/15
+            shadow-2xl shadow-[#e91e8c]/8 dark:shadow-[#c9a84c]/5"
         >
-          <input
-            type="email"
-            placeholder="Admin Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 rounded-lg outline-none transition
-            border border-primary-black dark:border-solid-gold
-            text-primary-black dark:text-white/90
-            focus:ring-1 focus:ring-primary-black dark:focus:ring-solid-gold"
-          />
+          {/* Avatar / Icon */}
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg
+              bg-gradient-to-br from-[#e91e8c]/15 to-[#c9a84c]/15
+              dark:from-[#c9a84c]/15 dark:to-[#e91e8c]/10
+              border border-[#e91e8c]/20 dark:border-[#c9a84c]/20">
+              <span className="text-2xl">🔐</span>
+            </div>
+            <div className="text-center">
+              <h1 className="font-playfair text-2xl font-bold text-[#1a0a10] dark:text-[#f5e6a8]">
+                Admin Portal
+              </h1>
+              <p className="font-inter text-xs mt-1 text-[#1a0a10]/50 dark:text-[#f5e6a8]/40 tracking-wide">
+                Sign in to your dashboard
+              </p>
+            </div>
+          </div>
 
-          <input
-            type="password"
-            placeholder="Admin Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 rounded-lg outline-none transition
-            border border-primary-black dark:border-solid-gold
-            text-primary-black dark:text-white/90
-            focus:ring-1 focus:ring-primary-black dark:focus:ring-solid-gold"
-          />
+          {/* Error */}
+          {error && (
+            <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20">
+              <span className="text-red-500 text-sm">⚠</span>
+              <p className="text-red-600 dark:text-red-400 text-sm font-inter">{error}</p>
+            </div>
+          )}
 
-          {/* BUTTON */}
+          {/* Fields */}
+          <div className="flex flex-col gap-4">
+            {/* Email */}
+            <div className="flex flex-col gap-1.5">
+              <label className="font-inter text-[11px] tracking-[1.5px] uppercase font-semibold text-[#1a0a10]/50 dark:text-[#f5e6a8]/40">
+                Email Address
+              </label>
+              <div className="relative">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#e91e8c]/50 dark:text-[#c9a84c]/50 text-sm pointer-events-none">
+                  ✉
+                </span>
+                <input
+                  type="email"
+                  placeholder="admin@susan.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-full pl-9 pr-4 py-3 rounded-xl font-inter text-sm outline-none transition-all
+                    bg-[#fdf0f7]/60 dark:bg-white/5
+                    border border-[#e91e8c]/20 dark:border-[#c9a84c]/15
+                    text-[#1a0a10] dark:text-[#f5e6a8]
+                    placeholder:text-[#1a0a10]/25 dark:placeholder:text-white/20
+                    focus:border-[#e91e8c]/60 dark:focus:border-[#c9a84c]/50
+                    focus:bg-white dark:focus:bg-white/8
+                    focus:shadow-[0_0_0_3px_rgba(233,30,140,0.08)] dark:focus:shadow-[0_0_0_3px_rgba(201,168,76,0.08)]"
+                />
+              </div>
+            </div>
+
+            {/* Password */}
+            <div className="flex flex-col gap-1.5">
+              <label className="font-inter text-[11px] tracking-[1.5px] uppercase font-semibold text-[#1a0a10]/50 dark:text-[#f5e6a8]/40">
+                Password
+              </label>
+              <div className="relative">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#e91e8c]/50 dark:text-[#c9a84c]/50 text-sm pointer-events-none">
+                  🔑
+                </span>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full pl-9 pr-12 py-3 rounded-xl font-inter text-sm outline-none transition-all
+                    bg-[#fdf0f7]/60 dark:bg-white/5
+                    border border-[#e91e8c]/20 dark:border-[#c9a84c]/15
+                    text-[#1a0a10] dark:text-[#f5e6a8]
+                    placeholder:text-[#1a0a10]/25 dark:placeholder:text-white/20
+                    focus:border-[#e91e8c]/60 dark:focus:border-[#c9a84c]/50
+                    focus:bg-white dark:focus:bg-white/8
+                    focus:shadow-[0_0_0_3px_rgba(233,30,140,0.08)] dark:focus:shadow-[0_0_0_3px_rgba(201,168,76,0.08)]"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((p) => !p)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-[#e91e8c]/40 dark:text-[#c9a84c]/40 hover:text-[#e91e8c] dark:hover:text-[#c9a84c] transition-colors"
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-lg font-playfair text-lg
-            bg-(image:--luxury-gold-gradient)
-            dark:bg-(image:--luxury-gold-gradi)
-            text-primary-charcoal-black
-            hover:scale-[1.01] transition-all duration-200"
+            className="relative w-full py-3.5 rounded-xl font-cinzel text-sm tracking-[2px] uppercase font-bold
+              overflow-hidden transition-all duration-300
+              hover:scale-[1.02] active:scale-[0.98]
+              disabled:opacity-60 disabled:cursor-not-allowed
+              text-white dark:text-[#0a0804]"
+            style={{
+              background: loading
+                ? "rgba(233,30,140,0.5)"
+                : "linear-gradient(135deg, #e91e8c 0%, #c2185b 100%)",
+            }}
           >
-            {loading ? "Signing in..." : "Sign In"}
+            {/* Dark mode gradient override */}
+            <span
+              className="absolute inset-0 opacity-0 dark:opacity-100 rounded-xl"
+              style={{ background: "linear-gradient(135deg, #f5e6a8 0%, #c9a84c 50%, #a0832a 100%)" }}
+            />
+            <span className="relative z-10 flex items-center justify-center gap-2">
+              {loading && (
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin dark:border-[#0a0804]/30 dark:border-t-[#0a0804]" />
+              )}
+              {loading ? "Signing in..." : "Sign In"}
+            </span>
           </button>
-        </div>
-      </form>
+
+          {/* Footer */}
+          <p className="text-center font-inter text-[11px] text-[#1a0a10]/30 dark:text-white/20">
+            Restricted access · Susan Admin Panel
+          </p>
+        </form>
+      </div>
     </div>
   );
 }

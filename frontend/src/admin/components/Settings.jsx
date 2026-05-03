@@ -1,163 +1,198 @@
-// src/admin/components/Settings.jsx
-// Fully functional — profile saves to Supabase auth, notifications save to localStorage
-
 import { useContext, useState, useEffect } from "react";
 import ThemeContext from "../../context/ThemeContext";
 import ThemeToggle from "../../components/ThemeToggle";
 import supabase from "../../api/supabaseClient.js";
 
+// ── Shared styled input ──────────────────────────────────────────────
+function Field({ label, children }) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label className="text-[11px] font-inter uppercase tracking-widest font-semibold text-[#e91e8c]/60 dark:text-[#c9a84c]/60">
+        {label}
+      </label>
+      {children}
+    </div>
+  );
+}
+
+const inputCls =
+  "bg-white/70 dark:bg-black/30 border border-[#e91e8c]/20 dark:border-[#c9a84c]/15 rounded-xl px-4 py-2.5 text-sm text-[#1a0a10] dark:text-[#f5e6a8] font-inter outline-none focus:border-[#e91e8c]/60 dark:focus:border-[#c9a84c]/50 transition-all placeholder:text-[#1a0a10]/25 dark:placeholder:text-white/20";
+
+// ── Card wrapper ─────────────────────────────────────────────────────
+function Card({ children, className = "" }) {
+  return (
+    <div className={`rounded-2xl bg-white/60 dark:bg-white/5 border border-[#e91e8c]/15 dark:border-[#c9a84c]/15 overflow-hidden ${className}`}>
+      {children}
+    </div>
+  );
+}
+
+function CardHeader({ title, sub }) {
+  return (
+    <div className="px-6 py-4 border-b border-[#e91e8c]/10 dark:border-[#c9a84c]/10">
+      <h2 className="text-base font-playfair text-[#1a0a10] dark:text-[#f5e6a8]">{title}</h2>
+      {sub && <p className="text-xs text-[#1a0a10]/40 dark:text-[#f5e6a8]/30 font-inter mt-1">{sub}</p>}
+    </div>
+  );
+}
+
+function SaveBtn({ onClick, loading, label = "Save Changes" }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={loading}
+      className="text-xs font-inter font-bold text-white dark:text-[#0a0804] bg-[#e91e8c] dark:bg-[#c9a84c] rounded-xl px-5 py-2 hover:bg-[#c2185b] dark:hover:bg-[#b8942e] transition-all disabled:opacity-50 flex items-center gap-2"
+    >
+      {loading && <span className="w-3 h-3 border border-white/30 border-t-white rounded-full animate-spin" />}
+      {loading ? "Saving..." : label}
+    </button>
+  );
+}
+
+// ════════════════════════════════════════════════════════════════════
 function Settings() {
   const { isDark, toggleTheme } = useContext(ThemeContext);
-  const [activeSettingsTab, setActiveSettingsTab] = useState("Profile");
+  const [tab, setTab] = useState("Profile");
   const [saving, setSaving] = useState(false);
-  const [saveMsg, setSaveMsg] = useState("");
+  const [msg, setMsg] = useState("");
 
-  // ── Notifications — saved to localStorage ──────
-  const [notifications, setNotifications] = useState(() => {
-    const saved = localStorage.getItem("admin_notifications");
-    return saved
-      ? JSON.parse(saved)
-      : { newOrders: true, lowStock: true, reviews: false, refunds: true };
-  });
+  const flash = (m) => { setMsg(m); setTimeout(() => setMsg(""), 3000); };
 
-  const saveNotifications = () => {
-    localStorage.setItem("admin_notifications", JSON.stringify(notifications));
-    setSaveMsg("Notifications saved!");
-    setTimeout(() => setSaveMsg(""), 2000);
-  };
+  // ── guest id ──────────────────────────────────────────────────────
+  const guestId =
+    localStorage.getItem("guest_id") ||
+    (() => { const id = crypto.randomUUID(); localStorage.setItem("guest_id", id); return id; })();
 
-  // ── Profile ────────────────────────────────────
-  const [profileForm, setProfileForm] = useState({
-    firstName: "Susan",
-    lastName: "M.",
-    email: "",
-    phone: "",
-    bio: "",
-  });
+  // ── PROFILE ───────────────────────────────────────────────────────
+  const [profile, setProfile] = useState({ firstName: "Susan", lastName: "M.", email: "", phone: "", bio: "" });
 
-  // Load current user on mount
   useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) {
-        setProfileForm((prev) => ({
-          ...prev,
-          email: user.email || "",
-          firstName: user.user_metadata?.first_name || "Susan",
-          lastName: user.user_metadata?.last_name || "M.",
-          phone: user.user_metadata?.phone || "",
-          bio: user.user_metadata?.bio || "",
-        }));
-      }
+      if (!user) return;
+      setProfile({
+        firstName: user.user_metadata?.first_name || "Susan",
+        lastName: user.user_metadata?.last_name || "M.",
+        email: user.email || "",
+        phone: user.user_metadata?.phone || "",
+        bio: user.user_metadata?.bio || "",
+      });
     });
   }, []);
 
-  const handleSaveProfile = async () => {
+  const saveProfile = async () => {
     setSaving(true);
-    setSaveMsg("");
-    try {
-      const { error } = await supabase.auth.updateUser({
-        data: {
-          first_name: profileForm.firstName,
-          last_name: profileForm.lastName,
-          phone: profileForm.phone,
-          bio: profileForm.bio,
-        },
-      });
-      if (error) throw error;
-      setSaveMsg("Profile saved successfully!");
-    } catch (err) {
-      setSaveMsg("Error: " + err.message);
-    } finally {
-      setSaving(false);
-      setTimeout(() => setSaveMsg(""), 3000);
-    }
+    const { error } = await supabase.auth.updateUser({
+      data: { first_name: profile.firstName, last_name: profile.lastName, phone: profile.phone, bio: profile.bio },
+    });
+    // Also persist to profiles table if it exists
+    await supabase.from("profiles").upsert({ guest_id: guestId, ...profile }, { onConflict: "guest_id" });
+    flash(error ? "⚠ Error saving profile" : "✓ Profile saved!");
+    setSaving(false);
   };
 
-  // ── Password ────────────────────────────────────
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [passwordSuccess, setPasswordSuccess] = useState(false);
+  // ── NOTIFICATIONS ─────────────────────────────────────────────────
+  const [notif, setNotif] = useState({ newOrders: true, lowStock: true, reviews: false, refunds: true });
 
-  const handlePasswordUpdate = async () => {
-    setPasswordError("");
-    setPasswordSuccess(false);
-    if (!newPassword || !confirmPassword) {
-      setPasswordError("Please fill in all fields.");
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      setPasswordError("New passwords don't match.");
-      return;
-    }
-    if (newPassword.length < 6) {
-      setPasswordError("Password must be at least 6 characters.");
-      return;
-    }
-    const { error } = await supabase.auth.updateUser({ password: newPassword });
-    if (error) {
-      setPasswordError(error.message);
-    } else {
-      setPasswordSuccess(true);
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-      setTimeout(() => setPasswordSuccess(false), 3000);
-    }
+  useEffect(() => {
+    supabase.from("user_notifications").select("*").eq("guest_id", guestId).maybeSingle().then(({ data }) => {
+      if (data) setNotif({ newOrders: data.new_orders, lowStock: data.low_stock, reviews: data.reviews, refunds: data.refunds });
+    });
+  }, [guestId]);
+
+  const saveNotif = async () => {
+    const { error } = await supabase.from("user_notifications").upsert(
+      { guest_id: guestId, new_orders: notif.newOrders, low_stock: notif.lowStock, reviews: notif.reviews, refunds: notif.refunds },
+      { onConflict: "guest_id" }
+    );
+    flash(error ? "⚠ Error saving notifications" : "✓ Notifications saved!");
   };
 
-  // ── Store info — saved to localStorage ─────────
-  const [storeForm, setStoreForm] = useState(() => {
-    const saved = localStorage.getItem("admin_store_info");
-    return saved
-      ? JSON.parse(saved)
-      : { name: "", email: "", phone: "", address: "", currency: "NGN (₦)" };
-  });
+  // ── SECURITY ──────────────────────────────────────────────────────
+  const [pwForm, setPwForm] = useState({ newPw: "", confirmPw: "" });
+  const [pwErr, setPwErr] = useState("");
+  const [pwOk, setPwOk] = useState(false);
 
-  const handleSaveStore = () => {
-    localStorage.setItem("admin_store_info", JSON.stringify(storeForm));
-    setSaveMsg("Store info saved!");
-    setTimeout(() => setSaveMsg(""), 2000);
+  const savePw = async () => {
+    setPwErr(""); setPwOk(false);
+    if (!pwForm.newPw || !pwForm.confirmPw) return setPwErr("Fill in all fields.");
+    if (pwForm.newPw !== pwForm.confirmPw) return setPwErr("Passwords don't match.");
+    if (pwForm.newPw.length < 6) return setPwErr("Min 6 characters.");
+    const { error } = await supabase.auth.updateUser({ password: pwForm.newPw });
+    if (error) setPwErr(error.message);
+    else { setPwOk(true); setPwForm({ newPw: "", confirmPw: "" }); setTimeout(() => setPwOk(false), 3000); }
   };
 
-  // ── Danger zone ─────────────────────────────────
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  // ── STORE ─────────────────────────────────────────────────────────
+  const [store, setStore] = useState({ name: "", email: "", phone: "", address: "", currency: "NGN (₦)" });
+
+  useEffect(() => {
+    supabase.from("store_settings").select("*").eq("guest_id", guestId).maybeSingle().then(({ data }) => {
+      if (data) setStore(data);
+    });
+  }, [guestId]);
+
+  const saveStore = async () => {
+    const { error } = await supabase.from("store_settings").upsert({ guest_id: guestId, ...store }, { onConflict: "guest_id" });
+    flash(error ? "⚠ Error saving store info" : "✓ Store info saved!");
+  };
+
+  // ── DANGER ────────────────────────────────────────────────────────
+  const [confirm, setConfirm] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+
+  const runDelete = async (action) => {
+    setDeleting(true);
+    let err = null;
+    if (action === "orders") {
+      const { error } = await supabase.from("orders").delete().gte("id", 0);
+      err = error;
+    } else if (action === "reset") {
+      const { error: e1 } = await supabase.from("orders").delete().gte("id", 0);
+      const { error: e2 } = await supabase.from("products").delete().gte("id", 0);
+      err = e1 || e2;
+    }
+    setDeleting(false);
+    setConfirm(null);
+    flash(err ? "⚠ Error — check Supabase RLS policies" : "✓ Action completed");
+  };
+
+  // ── NAV TABS ──────────────────────────────────────────────────────
+  const tabs = [
+    { label: "Profile", icon: "👤" },
+    { label: "Appearance", icon: "🎨" },
+    { label: "Notifications", icon: "🔔" },
+    { label: "Security", icon: "🔒" },
+    { label: "Store", icon: "🏪" },
+    { label: "Danger Zone", icon: "⚠️" },
+  ];
 
   return (
     <div className="flex flex-col gap-6">
-      <h1 className="text-3xl font-bold text-white font-playfair">Settings</h1>
+      <h1 className="text-3xl font-bold font-playfair text-[#1a0a10] dark:text-[#f5e6a8]">Settings</h1>
 
-      {/* Save message */}
-      {saveMsg && (
-        <div className={`text-xs font-inter px-4 py-2 rounded-xl border ${saveMsg.startsWith("Error") ? "bg-red-500/10 border-red-500/20 text-red-400" : "bg-green-500/10 border-green-500/20 text-green-400"}`}>
-          {saveMsg.startsWith("Error") ? "⚠ " : "✓ "}{saveMsg}
+      {/* Flash message */}
+      {msg && (
+        <div className={`text-xs font-inter px-4 py-2.5 rounded-xl border flex items-center gap-2 ${msg.startsWith("⚠") ? "bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400" : "bg-green-50 dark:bg-green-500/10 border-green-200 dark:border-green-500/20 text-green-600 dark:text-green-400"}`}>
+          {msg}
         </div>
       )}
 
       <div className="flex flex-col md:flex-row gap-6">
         {/* ── Left nav ── */}
-        <div className="flex md:flex-col gap-1 scrollbar-none overflow-x-auto md:overflow-visible md:w-48 shrink-0">
-          {[
-            { label: "Profile", icon: "👤" },
-            { label: "Appearance", icon: "🎨" },
-            { label: "Notifications", icon: "🔔" },
-            { label: "Security", icon: "🔒" },
-            { label: "Store", icon: "🏪" },
-            { label: "Danger Zone", icon: "⚠️" },
-          ].map(({ label, icon }) => (
+        <div className="flex md:flex-col gap-1 scrollbar-none overflow-x-auto md:overflow-visible md:w-52 shrink-0">
+          {tabs.map(({ label, icon }) => (
             <button
               key={label}
-              onClick={() => { setActiveSettingsTab(label); setSaveMsg(""); }}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-inter whitespace-nowrap transition-all text-left ${activeSettingsTab === label
-                  ? "bg-[#c9a84c]/10 border border-[#c9a84c]/30 text-[#c9a84c]"
+              onClick={() => { setTab(label); setMsg(""); }}
+              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-inter whitespace-nowrap transition-all text-left ${
+                tab === label
+                  ? "bg-[#e91e8c]/10 dark:bg-[#c9a84c]/10 border border-[#e91e8c]/30 dark:border-[#c9a84c]/30 text-[#e91e8c] dark:text-[#c9a84c] font-semibold"
                   : label === "Danger Zone"
-                    ? "text-red-400/60 hover:bg-red-400/5 hover:text-red-400"
-                    : "text-[#f5e6a8]/40 hover:bg-white/5 hover:text-[#f5e6a8]/70"
-                }`}
+                  ? "text-red-500/60 hover:bg-red-50 dark:hover:bg-red-400/5 hover:text-red-500"
+                  : "text-[#1a0a10]/40 dark:text-[#f5e6a8]/40 hover:bg-[#e91e8c]/5 dark:hover:bg-white/5 hover:text-[#e91e8c] dark:hover:text-[#f5e6a8]/70"
+              }`}
             >
-              <span>{icon}</span>
-              {label}
+              <span>{icon}</span> {label}
             </button>
           ))}
         </div>
@@ -166,301 +201,237 @@ function Settings() {
         <div className="flex-1 flex flex-col gap-5">
 
           {/* ══ PROFILE ══ */}
-          {activeSettingsTab === "Profile" && (
-            <div className="rounded-2xl bg-white/5 border border-[#c9a84c]/15 overflow-hidden">
-              <div className="px-6 py-4 border-b border-[#c9a84c]/10">
-                <h2 className="text-base font-playfair text-[#f5e6a8]">Profile Information</h2>
-                <p className="text-xs text-[#f5e6a8]/30 font-inter mt-1">Updates your Supabase auth profile</p>
-              </div>
+          {tab === "Profile" && (
+            <Card>
+              <CardHeader title="Profile Information" sub="Updates your Supabase auth profile" />
               <div className="p-6 flex flex-col gap-5">
+                {/* Avatar row */}
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 rounded-full bg-[#c9a84c]/10 border-2 border-[#c9a84c]/40 flex items-center justify-center text-3xl text-[#c9a84c] font-playfair shrink-0">
-                    {profileForm.firstName[0]}
+                  <div className="w-14 h-14 rounded-full bg-[#e91e8c]/10 dark:bg-[#c9a84c]/10 border-2 border-[#e91e8c]/30 dark:border-[#c9a84c]/40 flex items-center justify-center text-2xl text-[#e91e8c] dark:text-[#c9a84c] font-playfair shrink-0">
+                    {(profile.firstName || "S")[0].toUpperCase()}
                   </div>
                   <div>
-                    <p className="text-xs text-[#f5e6a8]/40 font-inter">{profileForm.email}</p>
-                    <p className="text-[10px] text-[#f5e6a8]/20 font-inter mt-1">Supabase admin account</p>
+                    <p className="text-sm font-inter font-semibold text-[#1a0a10] dark:text-[#f5e6a8]">
+                      {profile.firstName} {profile.lastName}
+                    </p>
+                    <p className="text-xs text-[#1a0a10]/40 dark:text-[#f5e6a8]/30 font-inter">{profile.email}</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {[
-                    { label: "First Name", key: "firstName" },
-                    { label: "Last Name", key: "lastName" },
-                    { label: "Phone", key: "phone" },
-                  ].map(({ label, key }) => (
-                    <div key={key} className="flex flex-col gap-1.5">
-                      <label className="text-xs text-[#f5e6a8]/40 font-inter">{label}</label>
+                  {[{ label: "First Name", key: "firstName" }, { label: "Last Name", key: "lastName" }, { label: "Phone", key: "phone" }].map(({ label, key }) => (
+                    <Field key={key} label={label}>
                       <input
-                        value={profileForm[key]}
-                        onChange={(e) => setProfileForm((prev) => ({ ...prev, [key]: e.target.value }))}
-                        className="bg-black/30 border border-[#c9a84c]/15 rounded-xl px-4 py-2.5 text-sm text-[#f5e6a8] font-inter outline-none focus:border-[#c9a84c]/50 transition-all"
+                        value={profile[key]}
+                        onChange={(e) => setProfile((p) => ({ ...p, [key]: e.target.value }))}
+                        className={inputCls}
                       />
-                    </div>
+                    </Field>
                   ))}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-xs text-[#f5e6a8]/40 font-inter">Email</label>
-                    <input
-                      value={profileForm.email}
-                      disabled
-                      className="bg-black/30 border border-[#c9a84c]/15 rounded-xl px-4 py-2.5 text-sm text-[#f5e6a8]/40 font-inter outline-none cursor-not-allowed"
-                    />
-                  </div>
-                  <div className="flex flex-col gap-1.5 md:col-span-2">
-                    <label className="text-xs text-[#f5e6a8]/40 font-inter">Bio</label>
+                  <Field label="Email">
+                    <input value={profile.email} disabled className={inputCls + " opacity-50 cursor-not-allowed"} />
+                  </Field>
+                  <Field label="Bio">
                     <textarea
-                      value={profileForm.bio}
-                      onChange={(e) => setProfileForm((prev) => ({ ...prev, bio: e.target.value }))}
+                      value={profile.bio}
+                      onChange={(e) => setProfile((p) => ({ ...p, bio: e.target.value }))}
                       rows={3}
-                      className="bg-black/30 border border-[#c9a84c]/15 rounded-xl px-4 py-2.5 text-sm text-[#f5e6a8] font-inter outline-none focus:border-[#c9a84c]/50 transition-all resize-none"
+                      className={inputCls + " resize-none md:col-span-2"}
                     />
-                  </div>
+                  </Field>
                 </div>
               </div>
-              <div className="px-6 py-4 border-t border-[#c9a84c]/10 flex justify-end gap-3">
-                <button
-                  onClick={handleSaveProfile}
-                  disabled={saving}
-                  className="text-xs font-inter text-[#0a0804] bg-[#c9a84c] rounded-xl px-5 py-2 font-bold hover:bg-[#b8942e] transition-all disabled:opacity-50 flex items-center gap-2"
-                >
-                  {saving && <span className="w-3 h-3 border border-[#0a0804]/30 border-t-[#0a0804] rounded-full animate-spin" />}
-                  {saving ? "Saving..." : "Save Changes"}
-                </button>
+              <div className="px-6 py-4 border-t border-[#e91e8c]/10 dark:border-[#c9a84c]/10 flex justify-end">
+                <SaveBtn onClick={saveProfile} loading={saving} />
               </div>
-            </div>
+            </Card>
           )}
 
           {/* ══ APPEARANCE ══ */}
-          {activeSettingsTab === "Appearance" && (
-            <div className="rounded-2xl bg-white/5 border border-[#c9a84c]/15 overflow-hidden">
-              <div className="px-6 py-4 border-b border-[#c9a84c]/10">
-                <h2 className="text-base font-playfair text-[#f5e6a8]">Appearance</h2>
-                <p className="text-xs text-[#f5e6a8]/30 font-inter mt-1">Customize your dashboard look</p>
-              </div>
+          {tab === "Appearance" && (
+            <Card>
+              <CardHeader title="Appearance" sub="Customize your dashboard look" />
               <div className="p-6 flex flex-col gap-5">
-                <p className="text-xs text-[#f5e6a8]/40 font-inter uppercase tracking-widest">Theme Mode</p>
+                <p className="text-[11px] font-inter uppercase tracking-widest text-[#e91e8c]/60 dark:text-[#c9a84c]/60">Theme Mode</p>
                 <div className="grid grid-cols-2 gap-4">
-                  <button
-                    onClick={() => !isDark && toggleTheme()}
-                    className={`rounded-2xl border-2 p-4 text-left transition-all ${isDark ? "border-[#c9a84c] bg-[#c9a84c]/10" : "border-[#c9a84c]/15 hover:border-[#c9a84c]/35"}`}
-                  >
-                    <div className="w-full h-14 rounded-lg bg-[#070b14] mb-3 flex gap-1.5 p-2 overflow-hidden">
-                      <div className="w-8 h-full rounded bg-[#0a0f1a]" />
-                      <div className="flex-1 h-full rounded bg-[#0f1621]" />
-                    </div>
-                    <p className="text-sm font-inter text-[#f5e6a8]">🌙 Dark Mode</p>
-                    {isDark && <p className="text-[10px] text-[#c9a84c] font-inter mt-1">✓ Active</p>}
-                  </button>
-                  <button
-                    onClick={() => isDark && toggleTheme()}
-                    className={`rounded-2xl border-2 p-4 text-left transition-all ${!isDark ? "border-[#c9a84c] bg-[#c9a84c]/10" : "border-[#c9a84c]/15 hover:border-[#c9a84c]/35"}`}
-                  >
-                    <div className="w-full h-14 rounded-lg bg-[#f0ece0] mb-3 flex gap-1.5 p-2 overflow-hidden">
-                      <div className="w-8 h-full rounded bg-[#e0d9c8]" />
-                      <div className="flex-1 h-full rounded bg-[#faf7f2]" />
-                    </div>
-                    <p className="text-sm font-inter text-[#f5e6a8]">☀️ Light Mode</p>
-                    {!isDark && <p className="text-[10px] text-[#c9a84c] font-inter mt-1">✓ Active</p>}
-                  </button>
+                  {[
+                    { label: "🌙 Dark Mode", active: isDark, action: () => !isDark && toggleTheme(), preview: "bg-[#070b14]" },
+                    { label: "☀️ Light Mode", active: !isDark, action: () => isDark && toggleTheme(), preview: "bg-[#fdf0f7]" },
+                  ].map(({ label, active, action, preview }) => (
+                    <button
+                      key={label}
+                      onClick={action}
+                      className={`rounded-2xl border-2 p-4 text-left transition-all ${active ? "border-[#e91e8c] dark:border-[#c9a84c] bg-[#e91e8c]/8 dark:bg-[#c9a84c]/10" : "border-[#e91e8c]/15 dark:border-[#c9a84c]/15 hover:border-[#e91e8c]/35 dark:hover:border-[#c9a84c]/35"}`}
+                    >
+                      <div className={`w-full h-12 rounded-lg ${preview} mb-3`} />
+                      <p className="text-sm font-inter text-[#1a0a10] dark:text-[#f5e6a8]">{label}</p>
+                      {active && <p className="text-[10px] text-[#e91e8c] dark:text-[#c9a84c] font-inter mt-1">✓ Active</p>}
+                    </button>
+                  ))}
                 </div>
-                <div className="flex items-center justify-between py-3 px-4 rounded-xl bg-black/20 border border-[#c9a84c]/10">
+                <div className="flex items-center justify-between py-3 px-4 rounded-xl bg-[#e91e8c]/5 dark:bg-white/5 border border-[#e91e8c]/10 dark:border-[#c9a84c]/10">
                   <div>
-                    <p className="text-sm font-inter text-[#f5e6a8]">Quick Toggle</p>
-                    <p className="text-xs text-[#f5e6a8]/30 font-inter mt-0.5">Currently: {isDark ? "Dark" : "Light"}</p>
+                    <p className="text-sm font-inter text-[#1a0a10] dark:text-[#f5e6a8]">Quick Toggle</p>
+                    <p className="text-xs text-[#1a0a10]/40 dark:text-[#f5e6a8]/30 font-inter mt-0.5">Currently: {isDark ? "Dark" : "Light"}</p>
                   </div>
                   <ThemeToggle />
                 </div>
               </div>
-            </div>
+            </Card>
           )}
 
           {/* ══ NOTIFICATIONS ══ */}
-          {activeSettingsTab === "Notifications" && (
-            <div className="rounded-2xl bg-white/5 border border-[#c9a84c]/15 overflow-hidden">
-              <div className="px-6 py-4 border-b border-[#c9a84c]/10">
-                <h2 className="text-base font-playfair text-[#f5e6a8]">Notifications</h2>
-                <p className="text-xs text-[#f5e6a8]/30 font-inter mt-1">Saved to your browser</p>
-              </div>
-              <div className="p-6 flex flex-col divide-y divide-[#c9a84c]/8">
+          {tab === "Notifications" && (
+            <Card>
+              <CardHeader title="Notifications" sub="Saved to Supabase · Table: user_notifications" />
+              <div className="p-6 flex flex-col divide-y divide-[#e91e8c]/8 dark:divide-[#c9a84c]/8">
                 {[
-                  { key: "newOrders", label: "New Orders", desc: "Get notified when a new order comes in" },
-                  { key: "lowStock", label: "Low Stock Alerts", desc: "Alert when product stock falls below 5" },
+                  { key: "newOrders", label: "New Orders", desc: "Alert when a new order comes in" },
+                  { key: "lowStock", label: "Low Stock Alerts", desc: "Alert when stock falls below 5" },
                   { key: "reviews", label: "Customer Reviews", desc: "Notify when someone leaves a review" },
-                  { key: "refunds", label: "Refund Requests", desc: "Immediate alert for any refund request" },
+                  { key: "refunds", label: "Refund Requests", desc: "Immediate alert for refund requests" },
                 ].map(({ key, label, desc }) => (
                   <div key={key} className="flex items-center justify-between py-4">
                     <div>
-                      <p className="text-sm font-inter text-[#f5e6a8]">{label}</p>
-                      <p className="text-xs text-[#f5e6a8]/30 font-inter mt-0.5">{desc}</p>
+                      <p className="text-sm font-inter text-[#1a0a10] dark:text-[#f5e6a8]">{label}</p>
+                      <p className="text-xs text-[#1a0a10]/40 dark:text-[#f5e6a8]/30 font-inter mt-0.5">{desc}</p>
                     </div>
                     <button
-                      onClick={() => setNotifications((prev) => ({ ...prev, [key]: !prev[key] }))}
-                      className={`relative w-11 h-6 rounded-full border transition-all shrink-0 ${notifications[key] ? "bg-[#c9a84c]/15 border-[#c9a84c]/50" : "bg-white/5 border-white/10"}`}
+                      onClick={() => setNotif((p) => ({ ...p, [key]: !p[key] }))}
+                      className={`relative w-11 h-6 rounded-full border transition-all shrink-0 ${notif[key] ? "bg-[#e91e8c]/15 dark:bg-[#c9a84c]/15 border-[#e91e8c]/50 dark:border-[#c9a84c]/50" : "bg-white/5 border-[#1a0a10]/15 dark:border-white/10"}`}
                     >
-                      <div className={`absolute top-0.5 w-4 h-4 rounded-full transition-all duration-300 shadow-sm ${notifications[key] ? "left-[22px] bg-[#c9a84c]" : "left-0.5 bg-white/20"}`} />
+                      <div className={`absolute top-0.5 w-4 h-4 rounded-full transition-all duration-300 shadow-sm ${notif[key] ? "left-[22px] bg-[#e91e8c] dark:bg-[#c9a84c]" : "left-0.5 bg-[#1a0a10]/20 dark:bg-white/20"}`} />
                     </button>
                   </div>
                 ))}
               </div>
-              <div className="px-6 py-4 border-t border-[#c9a84c]/10 flex justify-end">
-                <button
-                  onClick={saveNotifications}
-                  className="text-xs font-inter text-[#0a0804] bg-[#c9a84c] rounded-xl px-5 py-2 font-bold hover:bg-[#b8942e] transition-all"
-                >
-                  Save Preferences
-                </button>
+              <div className="px-6 py-4 border-t border-[#e91e8c]/10 dark:border-[#c9a84c]/10 flex justify-end">
+                <SaveBtn onClick={saveNotif} label="Save Preferences" />
               </div>
-            </div>
+            </Card>
           )}
 
           {/* ══ SECURITY ══ */}
-          {activeSettingsTab === "Security" && (
+          {tab === "Security" && (
             <div className="flex flex-col gap-4">
-              <div className="rounded-2xl bg-white/5 border border-[#c9a84c]/15 overflow-hidden">
-                <div className="px-6 py-4 border-b border-[#c9a84c]/10">
-                  <h2 className="text-base font-playfair text-[#f5e6a8]">Change Password</h2>
-                  <p className="text-xs text-[#f5e6a8]/30 font-inter mt-1">Updates your Supabase auth password</p>
-                </div>
+              <Card>
+                <CardHeader title="Change Password" sub="Updates your Supabase auth password" />
                 <div className="p-6 flex flex-col gap-4">
-                  {[
-                    { label: "New Password", value: newPassword, setter: setNewPassword },
-                    { label: "Confirm Password", value: confirmPassword, setter: setConfirmPassword },
-                  ].map(({ label, value, setter }) => (
-                    <div key={label} className="flex flex-col gap-1.5">
-                      <label className="text-xs text-[#f5e6a8]/40 font-inter">{label}</label>
+                  {[{ label: "New Password", key: "newPw" }, { label: "Confirm Password", key: "confirmPw" }].map(({ label, key }) => (
+                    <Field key={key} label={label}>
                       <input
                         type="password"
-                        value={value}
-                        onChange={(e) => setter(e.target.value)}
+                        value={pwForm[key]}
+                        onChange={(e) => setPwForm((p) => ({ ...p, [key]: e.target.value }))}
                         placeholder="••••••••"
-                        className="bg-black/30 border border-[#c9a84c]/15 rounded-xl px-4 py-2.5 text-sm text-[#f5e6a8] font-inter outline-none focus:border-[#c9a84c]/50 transition-all placeholder:text-white/10"
+                        className={inputCls}
                       />
-                    </div>
+                    </Field>
                   ))}
-                  {passwordError && <p className="text-xs text-red-400 font-inter">⚠ {passwordError}</p>}
-                  {passwordSuccess && <p className="text-xs text-green-400 font-inter">✓ Password updated successfully</p>}
+                  {pwErr && <p className="text-xs text-red-500 font-inter">⚠ {pwErr}</p>}
+                  {pwOk && <p className="text-xs text-green-500 font-inter">✓ Password updated!</p>}
                 </div>
-                <div className="px-6 py-4 border-t border-[#c9a84c]/10 flex justify-end">
-                  <button
-                    onClick={handlePasswordUpdate}
-                    className="text-xs font-inter text-[#0a0804] bg-[#c9a84c] rounded-xl px-5 py-2 font-bold hover:bg-[#b8942e] transition-all"
-                  >
-                    Update Password
-                  </button>
+                <div className="px-6 py-4 border-t border-[#e91e8c]/10 dark:border-[#c9a84c]/10 flex justify-end">
+                  <SaveBtn onClick={savePw} label="Update Password" />
                 </div>
-              </div>
-
-              <div className="rounded-2xl bg-white/5 border border-[#c9a84c]/15 p-6">
-                <h2 className="text-base font-playfair text-[#f5e6a8] mb-4">Active Session</h2>
+              </Card>
+              <Card className="p-6">
+                <h2 className="text-base font-playfair text-[#1a0a10] dark:text-[#f5e6a8] mb-4">Active Session</h2>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-inter text-[#f5e6a8]">This device</p>
-                    <p className="text-xs text-[#f5e6a8]/30 font-inter mt-0.5">Chrome · Nigeria · Now</p>
+                    <p className="text-sm font-inter text-[#1a0a10] dark:text-[#f5e6a8]">This device</p>
+                    <p className="text-xs text-[#1a0a10]/40 dark:text-[#f5e6a8]/30 font-inter mt-0.5">Chrome · Nigeria · Now</p>
                   </div>
-                  <span className="flex items-center gap-1.5 text-xs text-green-400 font-inter">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                    Active
+                  <span className="flex items-center gap-1.5 text-xs text-green-500 font-inter">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" /> Active
                   </span>
                 </div>
-              </div>
+              </Card>
             </div>
           )}
 
           {/* ══ STORE ══ */}
-          {activeSettingsTab === "Store" && (
-            <div className="rounded-2xl bg-white/5 border border-[#c9a84c]/15 overflow-hidden">
-              <div className="px-6 py-4 border-b border-[#c9a84c]/10">
-                <h2 className="text-base font-playfair text-[#f5e6a8]">Store Information</h2>
-                <p className="text-xs text-[#f5e6a8]/30 font-inter mt-1">Saved to your browser for now</p>
-              </div>
-              <div className="p-6 flex flex-col gap-4">
+          {tab === "Store" && (
+            <Card>
+              <CardHeader title="Store Information" sub="Saved to Supabase · Table: store_settings" />
+              <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                 {[
-                  { label: "Store Name", key: "name", placeholder: "e.g. Susan Luxury Perfume" },
-                  { label: "Store Email", key: "email", placeholder: "store@example.com" },
+                  { label: "Store Name", key: "name", placeholder: "Susan Luxury Perfume" },
+                  { label: "Store Email", key: "email", placeholder: "store@susan.com" },
                   { label: "Phone Number", key: "phone", placeholder: "+234 000 0000" },
                   { label: "Store Address", key: "address", placeholder: "Lagos, Nigeria" },
                   { label: "Currency", key: "currency", placeholder: "NGN (₦)" },
                 ].map(({ label, key, placeholder }) => (
-                  <div key={key} className="flex flex-col gap-1.5">
-                    <label className="text-xs text-[#f5e6a8]/40 font-inter">{label}</label>
+                  <Field key={key} label={label}>
                     <input
-                      value={storeForm[key]}
-                      onChange={(e) => setStoreForm((prev) => ({ ...prev, [key]: e.target.value }))}
+                      value={store[key]}
+                      onChange={(e) => setStore((p) => ({ ...p, [key]: e.target.value }))}
                       placeholder={placeholder}
-                      className="bg-black/30 border border-[#c9a84c]/15 rounded-xl px-4 py-2.5 text-sm text-[#f5e6a8] font-inter outline-none focus:border-[#c9a84c]/50 transition-all placeholder:text-white/15"
+                      className={inputCls}
                     />
-                  </div>
+                  </Field>
                 ))}
               </div>
-              <div className="px-6 py-4 border-t border-[#c9a84c]/10 flex justify-end gap-3">
-                <button
-                  onClick={handleSaveStore}
-                  className="text-xs font-inter text-[#0a0804] bg-[#c9a84c] rounded-xl px-5 py-2 font-bold hover:bg-[#b8942e] transition-all"
-                >
-                  Save Changes
-                </button>
+              <div className="px-6 py-4 border-t border-[#e91e8c]/10 dark:border-[#c9a84c]/10 flex justify-end">
+                <SaveBtn onClick={saveStore} />
               </div>
-            </div>
+            </Card>
           )}
 
           {/* ══ DANGER ZONE ══ */}
-          {activeSettingsTab === "Danger Zone" && (
+          {tab === "Danger Zone" && (
             <div className="flex flex-col gap-4">
               {[
-                {
-                  title: "Clear Orders History",
-                  desc: "Permanently delete all order records. This cannot be undone.",
-                  btn: "Delete All Orders",
-                },
-                {
-                  title: "Reset Store Data",
-                  desc: "Wipe all products, orders and settings back to default.",
-                  btn: "Reset Everything",
-                },
-              ].map(({ title, desc, btn }) => (
-                <div key={title} className="rounded-2xl bg-red-950/20 border border-red-500/20 overflow-hidden">
-                  <div className="px-6 py-4 border-b border-red-500/10">
-                    <h2 className="text-base font-playfair text-red-400">⚠️ {title}</h2>
-                    <p className="text-xs text-[#f5e6a8]/30 font-inter mt-1">{desc}</p>
+                { action: "orders", title: "Clear Orders History", desc: "Permanently delete ALL order records from Supabase. Cannot be undone.", btn: "Delete All Orders" },
+                { action: "reset", title: "Reset Store Data", desc: "Wipe all products AND orders from Supabase back to zero.", btn: "Reset Everything" },
+              ].map(({ action, title, desc, btn }) => (
+                <div key={action} className="rounded-2xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-500/20 overflow-hidden">
+                  <div className="px-6 py-4 border-b border-red-100 dark:border-red-500/10">
+                    <h2 className="text-base font-playfair text-red-500">⚠️ {title}</h2>
+                    <p className="text-xs text-[#1a0a10]/40 dark:text-[#f5e6a8]/30 font-inter mt-1">{desc}</p>
                   </div>
                   <div className="px-6 py-4 flex items-center justify-between gap-4">
-                    <p className="text-xs text-red-400/60 font-inter">
-                      This action is <span className="font-bold">irreversible</span>.
-                    </p>
-                    {!showDeleteConfirm ? (
+                    <p className="text-xs text-red-500/60 font-inter">This action is <span className="font-bold">irreversible</span>.</p>
+                    {confirm !== action ? (
                       <button
-                        onClick={() => setShowDeleteConfirm(btn)}
-                        className="text-xs font-inter text-red-400 border border-red-400/30 rounded-xl px-4 py-2 hover:bg-red-400/10 transition-all whitespace-nowrap shrink-0"
+                        onClick={() => setConfirm(action)}
+                        className="text-xs font-inter text-red-500 border border-red-300 dark:border-red-500/30 rounded-xl px-4 py-2 hover:bg-red-100 dark:hover:bg-red-400/10 transition-all whitespace-nowrap shrink-0"
                       >
                         {btn}
                       </button>
-                    ) : showDeleteConfirm === btn ? (
+                    ) : (
                       <div className="flex items-center gap-2 shrink-0">
-                        <p className="text-xs text-red-400 font-inter">Are you sure?</p>
+                        <p className="text-xs text-red-500 font-inter">Are you sure?</p>
                         <button
-                          onClick={() => setShowDeleteConfirm(false)}
-                          className="text-xs font-inter text-white bg-red-500 rounded-xl px-3 py-2 hover:bg-red-600 transition-all"
+                          onClick={() => runDelete(action)}
+                          disabled={deleting}
+                          className="text-xs font-inter text-white bg-red-500 rounded-xl px-3 py-2 hover:bg-red-600 transition-all disabled:opacity-50"
                         >
-                          Yes, delete
+                          {deleting ? "Deleting..." : "Yes, delete"}
                         </button>
                         <button
-                          onClick={() => setShowDeleteConfirm(false)}
-                          className="text-xs font-inter text-[#f5e6a8]/40 border border-[#c9a84c]/15 rounded-xl px-3 py-2 hover:border-[#c9a84c]/30 transition-all"
+                          onClick={() => setConfirm(null)}
+                          className="text-xs font-inter text-[#1a0a10]/40 dark:text-[#f5e6a8]/40 border border-[#e91e8c]/15 dark:border-[#c9a84c]/15 rounded-xl px-3 py-2 hover:border-[#e91e8c]/30 dark:hover:border-[#c9a84c]/30 transition-all"
                         >
                           Cancel
                         </button>
                       </div>
-                    ) : (
-                      <button
-                        onClick={() => setShowDeleteConfirm(btn)}
-                        className="text-xs font-inter text-red-400 border border-red-400/30 rounded-xl px-4 py-2 hover:bg-red-400/10 transition-all whitespace-nowrap shrink-0"
-                      >
-                        {btn}
-                      </button>
                     )}
                   </div>
                 </div>
               ))}
+
+              {/* RLS Info card */}
+              <div className="rounded-2xl bg-[#e91e8c]/5 dark:bg-[#c9a84c]/5 border border-[#e91e8c]/15 dark:border-[#c9a84c]/15 p-5">
+                <p className="text-xs font-inter font-bold text-[#e91e8c] dark:text-[#c9a84c] mb-2">📋 Required Supabase Tables & RLS</p>
+                <div className="space-y-1.5 text-[11px] font-inter text-[#1a0a10]/60 dark:text-[#f5e6a8]/50">
+                  <p><span className="font-bold">profiles</span> — guest_id (text, PK), firstName (text), lastName (text), email (text), phone (text), bio (text)</p>
+                  <p><span className="font-bold">user_notifications</span> — guest_id (text, PK), new_orders (bool), low_stock (bool), reviews (bool), refunds (bool)</p>
+                  <p><span className="font-bold">store_settings</span> — guest_id (text, PK), name (text), email (text), phone (text), address (text), currency (text)</p>
+                  <p><span className="font-bold">orders</span> — needs DELETE RLS policy with expression: <code className="bg-black/10 dark:bg-white/10 px-1 rounded">true</code></p>
+                  <p className="text-[#e91e8c] dark:text-[#c9a84c] font-semibold mt-2">All 3 new tables: set RLS policy → Action: ALL → Expression: true</p>
+                </div>
+              </div>
             </div>
           )}
 

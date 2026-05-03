@@ -122,9 +122,9 @@ function Shop() {
 
         const matchesSize =
           activeSizes.length === 0 ||
-          (p.size &&
+          (p.size != null &&
             activeSizes.some((s) =>
-              p.size.toLowerCase().includes(s.toLowerCase()),
+              String(p.size).toLowerCase().includes(s.replace("ml", "").toLowerCase())
             ));
 
         const price = Number(p.price || 0);
@@ -338,7 +338,7 @@ function Shop() {
                 <div className="w-16 h-16 border-4 border-[#e91e8c]/30 border-t-[#e91e8c] rounded-full animate-spin" />
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4 lg:px-10">
+              <div className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-3 gap-3 p-3 lg:px-8">
                 {filteredProducts.length > 0 ? (
                   paginatedProducts.map((product) => (
                     <div key={product.id}>
