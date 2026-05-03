@@ -143,18 +143,27 @@ function Settings() {
   const runDelete = async (action) => {
     setDeleting(true);
     let err = null;
+
     if (action === "orders") {
-      const { error } = await supabase.from("orders").delete().gte("id", 0);
+      const { error } = await supabase.from("orders").delete().neq("id", -1);
       err = error;
     } else if (action === "reset") {
-      const { error: e1 } = await supabase.from("orders").delete().gte("id", 0);
-      const { error: e2 } = await supabase.from("products").delete().gte("id", 0);
+      const { error: e1 } = await supabase.from("orders").delete().neq("id", -1);
+      const { error: e2 } = await supabase.from("products").delete().neq("id", -1);
       err = e1 || e2;
     }
+
     setDeleting(false);
     setConfirm(null);
-    flash(err ? "⚠ Error — check Supabase RLS policies" : "✓ Action completed");
+
+    if (err) {
+      flash(`⚠ ${err.message || "Check Supabase RLS — see guide below"}`);
+    } else {
+      flash("✓ Deleted! Dashboard will refresh.");
+      window.dispatchEvent(new CustomEvent("admin:refresh"));
+    }
   };
+
 
   // ── NAV TABS ──────────────────────────────────────────────────────
   const tabs = [

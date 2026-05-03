@@ -107,7 +107,7 @@ function ProductsSection() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-[#c9a84c] font-playfair text-xl animate-pulse">
+        <div className="text-[#e91e8c] dark:text-[#c9a84c] font-playfair text-xl animate-pulse">
           Loading products...
         </div>
       </div>
@@ -119,32 +119,26 @@ function ProductsSection() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-white font-playfair">
+          <h1 className="text-3xl font-bold text-[#e91e8c] dark:text-white font-playfair">
             Product Management
           </h1>
-          <p className="font-inter text-white/20 mt-1 text-sm">
+          <p className="font-inter text-[#1a0a10]/50 dark:text-white/20 mt-1 text-sm">
             {products.length} products total
             {lowStockCount > 0 && (
-              <span className="text-yellow-400/70">
-                {" "}
-                · {lowStockCount} low stock
-              </span>
+              <span className="text-yellow-600 dark:text-yellow-400">{" "}· {lowStockCount} low stock</span>
             )}
             {outOfStockCount > 0 && (
-              <span className="text-red-400/70">
-                {" "}
-                · {outOfStockCount} out of stock
-              </span>
+              <span className="text-red-500 dark:text-red-400">{" "}· {outOfStockCount} out of stock</span>
             )}
           </p>
         </div>
 
         {/* Search */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 bg-white/5 border border-[#c9a84c]/20 rounded-xl px-3 py-2">
-            <span className="text-white/30 text-sm">🔍</span>
+          <div className="flex items-center gap-2 bg-white/80 dark:bg-white/5 border border-[#e91e8c]/20 dark:border-[#c9a84c]/20 rounded-xl px-3 py-2">
+            <span className="text-[#1a0a10]/40 dark:text-white/30 text-sm">🔍</span>
             <input
-              className="bg-transparent text-sm text-white/60 outline-none w-40"
+              className="bg-transparent text-sm text-[#1a0a10] dark:text-white/60 outline-none w-40 placeholder:text-[#1a0a10]/30 dark:placeholder:text-white/30"
               placeholder="Search products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -156,7 +150,7 @@ function ProductsSection() {
               setEditingProduct(null);
               setShowAddModal(true);
             }}
-            className="px-4 py-2 text-sm bg-[#c9a84c] text-black rounded-xl font-bold"
+            className="px-4 py-2 text-sm bg-[#e91e8c] dark:bg-[#c9a84c] text-white dark:text-black rounded-xl font-bold hover:bg-[#c2185b] dark:hover:bg-[#b8942e] transition-all"
           >
             + Add Product
           </button>
@@ -169,10 +163,10 @@ function ProductsSection() {
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}
-            className={`px-3 py-1 text-xs rounded-full border ${
+            className={`px-3 py-1 text-xs rounded-full border transition-all ${
               activeCategory === cat
-                ? "bg-[#c9a84c]/20 text-[#c9a84c]"
-                : "text-white/40"
+                ? "bg-[#e91e8c]/15 dark:bg-[#c9a84c]/20 text-[#e91e8c] dark:text-[#c9a84c] border-[#e91e8c]/30 dark:border-[#c9a84c]/40"
+                : "text-[#1a0a10]/50 dark:text-white/40 border-[#1a0a10]/15 dark:border-white/10 hover:border-[#e91e8c]/30 dark:hover:border-[#c9a84c]/30"
             }`}
           >
             {cat}
@@ -182,7 +176,7 @@ function ProductsSection() {
         <select
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
-          className="ml-auto bg-white/5 text-xs px-3 py-1 rounded"
+          className="ml-auto bg-white/80 dark:bg-white/5 text-xs text-[#1a0a10]/70 dark:text-white/60 border border-[#e91e8c]/15 dark:border-transparent px-3 py-1 rounded-lg outline-none cursor-pointer"
         >
           <option value="newest">Newest</option>
           <option value="price-asc">Price Low–High</option>

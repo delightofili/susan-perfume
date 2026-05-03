@@ -68,7 +68,8 @@ function AdminDashboard() {
     navigate("/admin/login");
   };
 
-  useEffect(() => {
+  const fetchOrders = () => {
+    setLoadingStats(true);
     getOrders()
       .then((data) => {
         setOrders(data || []);
@@ -78,6 +79,14 @@ function AdminDashboard() {
         console.error(err);
         setLoadingStats(false);
       });
+  };
+
+  useEffect(() => {
+    fetchOrders();
+    // Listen for refresh events fired by Settings Danger Zone
+    const onRefresh = () => fetchOrders();
+    window.addEventListener("admin:refresh", onRefresh);
+    return () => window.removeEventListener("admin:refresh", onRefresh);
   }, []);
 
   const last7 = orders.slice(-7);
@@ -205,7 +214,7 @@ function AdminDashboard() {
         )}
 
         {/* Main Content */}
-        <main className="p-6 overflow-auto ">
+        <main className="p-6 overflow-auto bg-white/30 dark:bg-transparent backdrop-blur-sm">
           {location.pathname === "/admin/dashboard" && (
             <section className="relative">
               <nav className="mb-4 ">
