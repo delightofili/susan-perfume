@@ -89,7 +89,7 @@ function Checkout() {
 
       setTimeout(() => {
         window.open(
-          `https://wa.me/2349066188842?text=Order Ref: ${reference}`,
+          `https://wa.me/2348100541423?text=Order Ref: ${reference}`,
           "_blank",
         );
       }, 400);

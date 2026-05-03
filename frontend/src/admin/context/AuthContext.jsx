@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
       email,
       password,
     });
-    if (error) throw error;
+    if (error) throw "Failed to Fetch, Check network connection";
     return data;
   };
 

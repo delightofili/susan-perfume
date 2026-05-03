@@ -22,6 +22,7 @@ import ProductsSection from "../components/ProductsSection";
 import { getOrders } from "../../api/index.js";
 
 import shopBg from "../../../public/images/shop-bg.png";
+import supabase from "../../supabase.js";
 
 function AdminDashboard() {
   const [orders, setOrders] = useState([]);
@@ -37,7 +38,8 @@ function AdminDashboard() {
   const totalProducts = 68;
 
   const sortedOrders = [...orders].sort(
-    (a, b) => new Date(a.created_at || a.date) - new Date(b.created_at || b.date),
+    (a, b) =>
+      new Date(a.created_at || a.date) - new Date(b.created_at || b.date),
   );
 
   const data = sortedOrders.slice(-7).map((o) => ({
@@ -52,9 +54,6 @@ function AdminDashboard() {
     value: i + 1, // Simulated dynamic customer count
   }));
 
-  const productData = [
-    { value: 65 }, { value: 65 }, { value: 66 }, { value: 68 }, { value: 68 }, { value: 68 }, { value: 68 }
-  ];
   console.log(orders);
 
   const [navIsOpen, setNavIsOpen] = useState(false);
@@ -82,9 +81,14 @@ function AdminDashboard() {
   };
 
   useEffect(() => {
-    fetchOrders();
-    // Listen for refresh events fired by Settings Danger Zone
-    const onRefresh = () => fetchOrders();
+    const load = async () => {
+      await fetchOrders();
+    };
+
+    load();
+
+    const onRefresh = () => load();
+
     window.addEventListener("admin:refresh", onRefresh);
     return () => window.removeEventListener("admin:refresh", onRefresh);
   }, []);
@@ -103,19 +107,58 @@ function AdminDashboard() {
   // Additional stats
   const last7OrdersCount = last7.length;
   const prev7OrdersCount = prev7.length;
-  const ordersGrowth = prev7OrdersCount === 0 ? 100 : ((last7OrdersCount - prev7OrdersCount) / prev7OrdersCount) * 100;
+  const ordersGrowth =
+    prev7OrdersCount === 0
+      ? 100
+      : ((last7OrdersCount - prev7OrdersCount) / prev7OrdersCount) * 100;
   const isOrdersGrowthPositive = ordersGrowth >= 0;
 
   const customersGrowth = 12.5; // Example dynamic growth
-  const productsGrowth = 4.2; // Example dynamic growth
 
+  // ── PROFILE ───────────────────────────────────────────────────────
+  const [profile, setProfile] = useState({
+    firstName: "Susan",
+    lastName: "M.",
+    email: "",
+    phone: "",
+    bio: "",
+  });
+
+  useEffect(() => {
+    const loadUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) return;
+
+      setProfile({
+        firstName: user.user_metadata?.first_name || "Susan",
+        lastName: user.user_metadata?.last_name || "M.",
+        email: user.email || "",
+        phone: user.user_metadata?.phone || "",
+        bio: user.user_metadata?.bio || "",
+      });
+    };
+
+    loadUser();
+  }, []);
   return (
     <section className="min-h-screen h-full">
       {/* Background — dark mode */}
-      <div className="fixed inset-0 bg-cover bg-center opacity-0 dark:opacity-100 transition-opacity duration-500" style={{ backgroundImage: `url(${shopBg})` }} />
+      <div
+        className="fixed inset-0 bg-cover bg-center opacity-0 dark:opacity-100 transition-opacity duration-500"
+        style={{ backgroundImage: `url(${shopBg})` }}
+      />
       <div className="fixed inset-0 w-full bg-primary-black/80 backdrop-blur-md opacity-0 dark:opacity-100 transition-opacity duration-500" />
       {/* Background — light mode */}
-      <div className="fixed inset-0 opacity-100 dark:opacity-0 transition-opacity duration-500" style={{ background: "radial-gradient(ellipse at top right, #fce4f3 0%, #fdf0f7 45%, #fff8f0 100%)" }} />
+      <div
+        className="fixed inset-0 opacity-100 dark:opacity-0 transition-opacity duration-500"
+        style={{
+          background:
+            "radial-gradient(ellipse at top right, #fce4f3 0%, #fdf0f7 45%, #fff8f0 100%)",
+        }}
+      />
 
       <div className="relative z-10 md:grid md:grid-cols-[260px_1fr] min-h-dvh">
         {/* Modern Top Header (Desktop/Mobile) */}
@@ -149,7 +192,11 @@ function AdminDashboard() {
           {/* Logo/Header */}
           <div>
             <div className="hidden md:flex items-center p-3">
-              <img src={singlePerf} alt="Logo" className="w-30 rounded-xl shadow-lg" />
+              <img
+                src={singlePerf}
+                alt="Logo"
+                className="w-30 rounded-xl shadow-lg"
+              />
               <h2 className="text-2xl -ml-7 text-[#e91e8c] dark:text-[#f5e6a8] font-playfair text-center">
                 Admin <br /> Dashboard
               </h2>
@@ -162,10 +209,34 @@ function AdminDashboard() {
           {/* Nav Links */}
           <nav className="p-4 space-y-1 flex-1 overflow-y-auto">
             {[
-              { to: "/admin/dashboard", label: "Dashboard", icon: <TbLayoutGridFilled className="h-5 w-5 group-hover:scale-110 transition-transform" /> },
-              { to: "/admin/products", label: "Products", icon: <GiBeachBag className="h-5 w-5 group-hover:scale-110 transition-transform" /> },
-              { to: "/admin/orders", label: "Orders", icon: <TbCurrencyNaira className="h-5 w-5 group-hover:scale-110 transition-transform" /> },
-              { to: "/admin/settings", label: "Settings", icon: <IoIosSettings className="h-5 w-5 group-hover:scale-110 transition-transform" /> },
+              {
+                to: "/admin/dashboard",
+                label: "Dashboard",
+                icon: (
+                  <TbLayoutGridFilled className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                ),
+              },
+              {
+                to: "/admin/products",
+                label: "Products",
+                icon: (
+                  <GiBeachBag className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                ),
+              },
+              {
+                to: "/admin/orders",
+                label: "Orders",
+                icon: (
+                  <TbCurrencyNaira className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                ),
+              },
+              {
+                to: "/admin/settings",
+                label: "Settings",
+                icon: (
+                  <IoIosSettings className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                ),
+              },
             ].map(({ to, label, icon }) => (
               <NavLink
                 key={to}
@@ -187,11 +258,17 @@ function AdminDashboard() {
             <div className="h-px w-full bg-gradient-to-r from-transparent via-[#e91e8c]/40 dark:via-solid-gold/50 to-transparent my-2" />
             <div className="flex items-center gap-2 py-3 px-6">
               <div className="h-10 w-10 rounded-full bg-[#e91e8c]/15 dark:bg-[#c9a84c]/20 border border-[#e91e8c]/30 dark:border-[#c9a84c]/30 flex items-center justify-center">
-                <p className="text-xl text-[#e91e8c] dark:text-[#c9a84c] font-playfair font-bold">S</p>
+                <p className="text-xl text-[#e91e8c] dark:text-[#c9a84c] font-playfair font-bold">
+                  S
+                </p>
               </div>
               <div>
-                <h1 className="text-[#1a0a10] dark:text-white font-inter font-semibold text-sm">Susan M.</h1>
-                <p className="text-[#1a0a10]/40 dark:text-white/30 text-xs font-inter">Admin</p>
+                <h1 className="text-[#1a0a10] dark:text-white font-inter font-semibold text-sm">
+                  {profile.firstName} {profile.lastName[0]}.
+                </h1>
+                <p className="text-[#1a0a10]/40 dark:text-white/30 text-xs font-inter">
+                  Admin
+                </p>
               </div>
             </div>
             <div className="px-6 mt-2 mb-2">
@@ -232,9 +309,13 @@ function AdminDashboard() {
                       ₦
                     </div>
                     <div className="order-3 lg:order-0">
-                      <p className="text-[#1a0a10]/60 dark:text-[#f5e6a8]/70 font-inter text-sm">Total Sales</p>
+                      <p className="text-[#1a0a10]/60 dark:text-[#f5e6a8]/70 font-inter text-sm">
+                        Total Sales
+                      </p>
                       <h2 className="text-[#1a0a10] dark:text-[#f5e6a8] font-playfair md:text-2xl text-xl">
-                        {loadingStats ? "Loading..." : `₦${totalRevenue.toLocaleString()}`}
+                        {loadingStats
+                          ? "Loading..."
+                          : `₦${totalRevenue.toLocaleString()}`}
                       </h2>
                     </div>
 
@@ -270,14 +351,18 @@ function AdminDashboard() {
                       #
                     </div>
                     <div className="order-3 lg:order-0">
-                      <p className="text-[#1a0a10]/60 dark:text-[#f5e6a8]/70 font-inter text-sm">Orders</p>
+                      <p className="text-[#1a0a10]/60 dark:text-[#f5e6a8]/70 font-inter text-sm">
+                        Orders
+                      </p>
                       <h2 className="text-[#1a0a10] dark:text-[#f5e6a8] font-playfair md:text-2xl text-xl">
                         {loadingStats ? "..." : totalOrders}
                       </h2>
                     </div>
 
                     <div className="flex flex-col order-2 lg:order-0">
-                      <p className={`flex items-center text-xs md:text-sm mb-1 ${isOrdersGrowthPositive ? 'text-green-400' : 'text-red-400'}`}>
+                      <p
+                        className={`flex items-center text-xs md:text-sm mb-1 ${isOrdersGrowthPositive ? "text-green-400" : "text-red-400"}`}
+                      >
                         <span>
                           {isOrdersGrowthPositive ? (
                             <IoMdArrowDropup className="h-6 w-6" />
@@ -308,7 +393,9 @@ function AdminDashboard() {
                       👤
                     </div>
                     <div className="order-3 lg:order-0">
-                      <p className="text-[#1a0a10]/60 dark:text-[#f5e6a8]/70 font-inter text-sm">Customers</p>
+                      <p className="text-[#1a0a10]/60 dark:text-[#f5e6a8]/70 font-inter text-sm">
+                        Customers
+                      </p>
                       <h2 className="text-[#1a0a10] dark:text-[#f5e6a8] font-playfair md:text-2xl text-xl">
                         {loadingStats ? "..." : totalCustomers}
                       </h2>

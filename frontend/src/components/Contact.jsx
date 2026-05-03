@@ -20,7 +20,7 @@ function Contact() {
 
     const text = `Hello Susan,%0A%0AMy name is ${form.name}.%0AEmail: ${form.email}%0A%0A${form.message}`;
 
-    window.open(`https://wa.me/2349066188842?text=${text}`, "_blank");
+    window.open(`https://wa.me/2348100541423?text=${text}`, "_blank");
   };
 
   return (
@@ -98,7 +98,7 @@ function Contact() {
             {/* Submit */}
             <button
               type="submit"
-              className="mt-2 py-4 font-cinzel text-xs tracking-[3px] uppercase bg-[image:--luxury-gold-gradient] text-[#1a0a10] font-bold rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-gold/20"
+              className="mt-2 py-4 font-cinzel text-xs tracking-[3px] uppercase bg-[image:--luxury-gold-gradient] text-[#1a0a10] dark:text-white font-bold rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-gold/20"
             >
               Send Message
             </button>
@@ -115,7 +115,7 @@ function Contact() {
 
           {/* WhatsApp Direct */}
           <a
-            href="https://wa.me/2349066188842"
+            href="https://wa.me/2348100541423"
             target="_blank"
             rel="noreferrer"
             className="flex items-center justify-center gap-2 py-4 rounded-xl bg-green-500/5 border border-green-500/20 text-green-600 dark:text-green-400 font-inter text-xs tracking-widest uppercase hover:bg-green-500/10 transition-all"

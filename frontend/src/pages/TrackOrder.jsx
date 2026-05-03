@@ -249,7 +249,7 @@ function TrackOrder() {
 
               {/* WhatsApp Action */}
               <a
-                href={`https://wa.me/2349066188842?text=Hello Susan, I am tracking my order ${order.reference}. Can I get an update?`}
+                href={`https://wa.me/2348100541423?text=Hello Susan, I am tracking my order ${order.reference}. Can I get an update?`}
                 target="_blank"
                 rel="noreferrer"
                 className="flex items-center justify-center gap-2 py-4 rounded-xl bg-green-500/5 border border-green-500/20 text-green-600 dark:text-green-400 font-inter text-xs tracking-widest uppercase hover:bg-green-500/10 transition-all mt-4"

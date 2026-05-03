@@ -105,7 +105,7 @@ function Footer() {
               <li className="flex items-center gap-3">
                 <FaPhoneAlt className="text-[#c9a84c] text-[13px] shrink-0" />
                 <a
-                  href="tel:+234959869594"
+                  href="tel:+2348100541423"
                   className="font-inter text-white/40 text-[13px] hover:text-[#c9a84c] transition-colors"
                 >
                   +234 959 869 594
@@ -114,7 +114,7 @@ function Footer() {
               <li className="flex items-center gap-3">
                 <FaWhatsapp className="text-[#c9a84c] text-[14px] shrink-0" />
                 <a
-                  href="https://wa.me/234959869594"
+                  href="https://wa.me/2348100541423"
                   className="font-inter text-white/40 text-[13px] hover:text-[#c9a84c] transition-colors"
                 >
                   Order via WhatsApp
