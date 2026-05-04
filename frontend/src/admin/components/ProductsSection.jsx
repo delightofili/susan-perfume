@@ -1,5 +1,3 @@
-// src/admin/components/ProductsSection.jsx
-
 import { useState, useEffect, useMemo } from "react";
 import ProductCard from "../components/ProductCard";
 import AddProductModal from "./AddProductModal";
@@ -125,10 +123,16 @@ function ProductsSection() {
           <p className="font-inter text-[#1a0a10]/50 dark:text-white/20 mt-1 text-sm">
             {products.length} products total
             {lowStockCount > 0 && (
-              <span className="text-yellow-600 dark:text-yellow-400">{" "}· {lowStockCount} low stock</span>
+              <span className="text-yellow-600 dark:text-yellow-400">
+                {" "}
+                · {lowStockCount} low stock
+              </span>
             )}
             {outOfStockCount > 0 && (
-              <span className="text-red-500 dark:text-red-400">{" "}· {outOfStockCount} out of stock</span>
+              <span className="text-red-500 dark:text-red-400">
+                {" "}
+                · {outOfStockCount} out of stock
+              </span>
             )}
           </p>
         </div>
@@ -136,7 +140,9 @@ function ProductsSection() {
         {/* Search */}
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 bg-white/80 dark:bg-white/5 border border-[#e91e8c]/20 dark:border-[#c9a84c]/20 rounded-xl px-3 py-2">
-            <span className="text-[#1a0a10]/40 dark:text-white/30 text-sm">🔍</span>
+            <span className="text-[#1a0a10]/40 dark:text-white/30 text-sm">
+              🔍
+            </span>
             <input
               className="bg-transparent text-sm text-[#1a0a10] dark:text-white/60 outline-none w-40 placeholder:text-[#1a0a10]/30 dark:placeholder:text-white/30"
               placeholder="Search products..."

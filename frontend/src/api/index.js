@@ -15,9 +15,12 @@ const getHeaders = async () => {
 
 // Public — no auth needed
 export const getProducts = async () => {
-  const res = await fetch(`${BASE_URL}/products`);
-  if (!res.ok) throw new Error("Failed to fetch products");
-  return res.json();
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data ?? [];
 };
 
 // Protected — needs token
