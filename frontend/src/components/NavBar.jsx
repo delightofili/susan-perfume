@@ -115,24 +115,24 @@ function NavBar() {
 
       {/* Mobile Drawer */}
       <div
-        className={`fixed top-0 right-0 z-70 w-72 md:hidden flex flex-col transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "translate-x-full"}`}
-        style={{
-          background: "#fff8fb",
-          borderLeft: "1px solid rgba(233, 30, 140, 0.15)",
-          minHeight: "100dvh",
-        }}
+        className={`fixed top-0 right-0 z-70 w-72 md:hidden flex flex-col transition-transform duration-300 ease-in-out
+  ${isOpen ? "translate-x-0" : "translate-x-full"}
+  bg-[#fff8fb] dark:bg-[#0a0804]
+  border-l border-[#e91e8c]/15 dark:border-[#c9a84c]/15
+  min-h-[100dvh]
+  `}
       >
         <div
           className="flex items-center justify-between px-6 py-5"
           style={{ borderBottom: "1px solid rgba(233, 30, 140, 0.12)" }}
         >
-          <span className="font-cinzel text-[18px] tracking-[3px] font-bold uppercase text-[#e91e8c]/70">
+          <span className="font-cinzel text-[18px] tracking-[3px] font-bold uppercase text-[#e91e8c]/70 dark:text-[#c9a84c]/70">
             Menu
           </span>
           <button
             onClick={() => setIsOpen(false)}
             aria-label="Close menu"
-            className="text-[#e91e8c] p-1 cursor-pointer"
+            className="text-[#e91e8c] dark:text-[#c9a84c] p-1 cursor-pointer"
           >
             <X size={22} />
           </button>
@@ -144,7 +144,7 @@ function NavBar() {
               <Link
                 to={to}
                 onClick={() => setIsOpen(false)}
-                className="block font-cinzel text-[13px] tracking-[2.5px] uppercase text-[#e91e8c] p-3 rounded-md border-b border-[#e91e8c]/10 transition-all hover:bg-[#e91e8c] hover:text-white"
+                className="block font-cinzel text-[13px] tracking-[2.5px] uppercase text-[#e91e8c] dark:text-[#c9a84c] p-3 rounded-md border-b border-[#e91e8c]/10 dark:border-[#c9a84c] transition-all hover:bg-[#e91e8c] dark:hover:bg-[#c9a84c] hover:text-white"
               >
                 {label}
               </Link>
@@ -153,8 +153,8 @@ function NavBar() {
         </ul>
 
         {/* Mobile Appearance Settings */}
-        <div className="p-5 border-t border-[#e91e8c]/12 sm:hidden">
-          <p className="font-cinzel text-[9px] tracking-[2px] uppercase text-[#e91e8c]/50 mb-3">
+        <div className="p-5 border-t border-[#e91e8c]/12 dark:border-[#c9a84c]/12 sm:hidden mb-6">
+          <p className="font-cinzel text-[9px] tracking-[2px] uppercase text-[#e91e8c]/50 dark:text-[#c9a84c]/50 mb-3">
             Appearance
           </p>
           <ThemeToggle />

@@ -32,6 +32,8 @@ export const AuthProvider = ({ children }) => {
       email,
       password,
     });
+    console.log("LOGIN DATA", data);
+    console.log("LOGIN ERROR", error);
     if (error) throw "Failed to Fetch, Check network connection";
     return data;
   };
