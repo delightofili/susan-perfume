@@ -153,19 +153,20 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
       />
 
       <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4 pt-10">
-        <div className="w-full max-w-lg bg-[#0a0f1a] border border-[#c9a84c]/20 rounded-2xl shadow-2xl shadow-black/60 overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-[#c9a84c]/10">
+        <div className="w-full max-w-lg dark:bg-[#0a0f1a] bg-warm-cream border dark:border-[#c9a84c]/20 border-pink-blush/20 rounded-2xl shadow-2xl shadow-black/60 overflow-hidden">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-pink-blush/10 dark:border-[#c9a84c]/10">
             <div>
-              <h2 className="text-lg font-playfair text-[#f5e6a8]">
+              <h2 className="text-lg font-playfair text-pink-blush dark:text-[#f5e6a8]">
                 {editingProduct ? "Edit Product" : "Add New Product"}
               </h2>
               <div className="p-6 flex flex-col gap-4 max-h-[65vh] overflow-y-auto">
                 {/*  BESTSELLER TOGGLE */}
-                <label className="flex items-center gap-3 text-sm text-[#f5e6a8]">
+                <label className="flex items-center gap-3 text-sm dark:text-[#f5e6a8] text-pink-blush">
                   <input
                     type="checkbox"
                     checked={form.isBestSeller}
                     onChange={handleToggle}
+                    className="w-5 h-5 rounded-md bg-white/30 dark:bg-black/30 border border-pink-blush/15 dark:border-[#c9a84c]/15 text-pink-blush dark:text-[#c9a84c] focus:ring-0"
                   />
                   Mark as Bestseller
                 </label>
@@ -173,13 +174,13 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
                 {error && <p className="text-red-400 text-xs">{error}</p>}
               </div>
 
-              <p className="text-xs text-[#f5e6a8]/30 font-inter mt-0.5">
+              <p className="text-xs dark:text-[#f5e6a8]/30 text-pink-blush/30 font-inter mt-0.5">
                 Fill in the details below
               </p>
             </div>
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-lg bg-white/5 border border-[#c9a84c]/15 flex items-center justify-center text-[#f5e6a8]/40 hover:text-[#f5e6a8] hover:border-[#c9a84c]/40 transition-all text-sm"
+              className="w-8 h-8 rounded-lg bg-white/5 border dark:border-[#c9a84c]/15 border-pink-blush/15 flex items-center justify-center text-pink-blush/40 dark:text-[#f5e6a8]/40 dark:hover:text-[#f5e6a8] hover:text-pink-400 dark:hover:border-[#c9a84c]/40 hover:border-pink-blush/40 transition-all text-sm"
             >
               ✕
             </button>
@@ -190,104 +191,141 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
 
             {/* Name */}
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs text-[#f5e6a8]/40 font-inter">
-                Product Name <span className="text-[#c9a84c]">*</span>
+              <label className="text-xs text-solid-pink/40 dark:text-[#f5e6a8]/40 font-inter">
+                Product Name{" "}
+                <span className="text-pink-blush dark:text-[#c9a84c]">*</span>
               </label>
               <input
                 name="name"
                 value={form.name}
                 onChange={handleChange}
                 placeholder="e.g. Oud Royale"
-                className="bg-black/30 border border-[#c9a84c]/15 rounded-xl px-4 py-2.5 text-sm text-[#f5e6a8] font-inter outline-none focus:border-[#c9a84c]/50 transition-all placeholder:text-white/15"
+                className="dark:bg-black/ bg-white/30 border dark:border-[#c9a84c]/15 border-pink-blush/15 rounded-xl px-4 py-2.5 text-sm dark:text-[#f5e6a8] text-pink-blush font-inter outline-none dark:focus:border-[#c9a84c]/50 focus:border-pink-blush/50  transition-all placeholder:text-white/15"
               />
             </div>
 
             {/* Price + Stock */}
             <div className="grid grid-cols-2 gap-4">
-              <input
-                name="price"
-                value={form.price}
-                onChange={handleChange}
-                type="number"
-                placeholder="45000"
-                className="bg-black/30 border border-[#c9a84c]/15 rounded-xl px-4 py-2.5 text-sm text-[#f5e6a8]"
-              />
-              <input
-                name="stock"
-                value={form.stock}
-                onChange={handleChange}
-                type="number"
-                placeholder="20"
-                className="bg-black/30 border border-[#c9a84c]/15 rounded-xl px-4 py-2.5 text-sm text-[#f5e6a8]"
-              />
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs text-solid-pink/40 dark:text-[#f5e6a8]/40 font-inter">
+                  Price{" "}
+                  <span className="text-pink-blush dark:text-[#c9a84c]">*</span>
+                </label>
+                <input
+                  name="price"
+                  value={form.price}
+                  onChange={handleChange}
+                  type="number"
+                  placeholder="enter price"
+                  className="dark:bg-black/30 bg-white/30 border border-pink-blush/15 dark:border-[#c9a84c]/15 rounded-xl px-4 py-2.5 text-sm text-pink-blush dark:text-[#f5e6a8]"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs text-solid-pink/40 dark:text-[#f5e6a8]/40 font-inter">
+                  Stock{" "}
+                  <span className="text-pink-blush dark:text-[#c9a84c]">*</span>
+                </label>
+
+                <input
+                  name="stock"
+                  value={form.stock}
+                  onChange={handleChange}
+                  type="number"
+                  placeholder="number of perf available (20)"
+                  className="dark:bg-black/30 bg-white/30 border border-pink-blush/15 dark:border-[#c9a84c]/15 rounded-xl px-4 py-2.5 text-sm text-pink-blush dark:text-[#f5e6a8]"
+                />
+              </div>
             </div>
 
             {/* size */}
 
             <div className="flex gap-4 w-full">
-              <input
-                name="size"
-                value={form.size}
-                onChange={handleChange}
-                type="number"
-                placeholder="50ml"
-                className="bg-black/30 border border-[#c9a84c]/15 rounded-xl px-4 py-2.5 text-sm text-[#f5e6a8]"
-              />
-              <span>Ml</span>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs text-solid-pink/40 dark:text-[#f5e6a8]/40 font-inter">
+                  enter size - 30/50/100 ml{" "}
+                  <span className="text-pink-blush dark:text-[#c9a84c]">*</span>
+                </label>
+                <input
+                  name="size"
+                  value={form.size}
+                  onChange={handleChange}
+                  type="number"
+                  placeholder="50ml"
+                  className="dark:bg-black/30 bg-white/30 border border-pink-blush/15 dark:border-[#c9a84c]/15 rounded-xl px-4 py-2.5 text-sm text-pink-blush dark:text-[#f5e6a8]"
+                />
+              </div>
             </div>
 
             {/* Category */}
-            <select
-              name="category"
-              value={form.category}
-              onChange={handleChange}
-              className="bg-black/30 border border-[#c9a84c]/15 rounded-xl px-4 py-2.5 text-sm text-[#f5e6a8]"
-            >
-              <option value="" disabled>
-                Select category
-              </option>
-              {["Floral", "Oud", "Amber", "Woody", "Fresh", "Oriental"].map(
-                (cat) => (
-                  <option key={cat}>{cat}</option>
-                ),
-              )}
-            </select>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs text-solid-pink/40 dark:text-[#f5e6a8]/40 font-inter">
+                select category of product{" "}
+                <span className="text-pink-blush dark:text-[#c9a84c]">*</span>
+              </label>
+              <select
+                name="category"
+                value={form.category}
+                onChange={handleChange}
+                className="dark:bg-black/30 bg-white/30 border dark:border-[#c9a84c]/15 border-pink-blush/15 rounded-xl px-4 py-2.5 text-sm dark:text-[#f5e6a8] text-pink-blush"
+              >
+                <option value="" disabled>
+                  Select category
+                </option>
+                {["Floral", "Oud", "Amber", "Woody", "Fresh", "Oriental"].map(
+                  (cat) => (
+                    <option key={cat}>{cat}</option>
+                  ),
+                )}
+              </select>
+            </div>
 
             {/* Image */}
-            <input
-              type="file"
-              accept="image/png, image/jpeg, image/webp"
-              onChange={handleImageUpload}
-              className="bg-black/30 border border-[#c9a84c]/15 rounded-xl px-4 py-2.5 text-sm text-[#f5e6a8]"
-            />
-
-            {form.image && (
-              <img
-                src={form.image}
-                className="h-20 w-20 object-cover rounded-xl"
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs text-solid-pink/40 dark:text-[#f5e6a8]/40 font-inter">
+                upload perfume image{" "}
+                <span className="text-pink-blush dark:text-[#c9a84c]">*</span>
+              </label>
+              <input
+                type="file"
+                accept="image/png, image/jpeg, image/webp"
+                onChange={handleImageUpload}
+                className="dark:bg-black/30 bg-white/30 border dark:border-[#c9a84c]/15 border-pink-blush/15 rounded-xl px-4 py-2.5 text-sm text-pink-blush dark:text-[#f5e6a8]"
               />
-            )}
+
+              {form.image && (
+                <img
+                  src={form.image}
+                  className="h-20 w-20 object-cover rounded-xl"
+                />
+              )}
+            </div>
 
             {/* Description */}
-            <textarea
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-              className="bg-black/30 border border-[#c9a84c]/15 rounded-xl px-4 py-2.5 text-sm text-[#f5e6a8]"
-            />
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs text-solid-pink/40 dark:text-[#f5e6a8]/40 font-inter">
+                upload perfume image{" "}
+                <span className="text-pink-blush dark:text-[#c9a84c]">*</span>
+              </label>
+              <textarea
+                name="description"
+                value={form.description}
+                onChange={handleChange}
+                className="dark:bg-black/30 bg-white/30 border dark:border-[#c9a84c]/15 border-pink-blush/15 rounded-xl px-4 py-2.5 text-sm text-pink-blush dark:text-[#f5e6a8]"
+              />
+            </div>
 
             {error && <p className="text-xs text-red-400">{error}</p>}
           </div>
 
           <div className="px-6 py-4 flex justify-end gap-3">
             <button
-              className="px-4 py-2 text-sm bg-[#c9a84c] text-black rounded-xl font-bold"
+              className="px-4 py-2 text-sm dark:bg-[#c9a84c] bg-pink-blush dark:text-black text-white rounded-xl font-bold"
               onClick={onClose}
             >
               Cancel
             </button>
             <button
-              className="px-4 py-2 text-sm bg-[#c9a84c] text-black rounded-xl font-bold"
+              className="px-4 py-2 text-sm dark:bg-[#c9a84c] bg-pink-blush dark:text-black text-white rounded-xl font-bold"
               onClick={handleSubmit}
               disabled={loading || uploading}
             >
