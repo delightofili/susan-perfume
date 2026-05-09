@@ -5,22 +5,22 @@ function SortBy({ onSortChange }) {
   const [selected, setSelected] = useState("Newest");
 
   const options = [
-    "Newest",
-    "Price: Low to High",
-    "Price: High to Low",
-    "Name: A to Z",
+    { label: "Newest", value: "" },
+    { label: "Price: Low to High", value: "price-asc" },
+    { label: "Price: High to Low", value: "price-desc" },
+    { label: "Name: A to Z", value: "name-asc" },
   ];
 
   function handleSelect(option) {
-    setSelected(option);
+    setSelected(option.label);
     setOpen(false);
-    onSortChange?.(option);
+    onSortChange?.(option.value);
   }
   return (
-    <div>
+    <div className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-soft-white dark:bg-primary-soft-black border darkborder-white/10 border-pink-blush dark:text-soft-white text-pink-blush hover:border-(--luxury-gold-solid) transition hover:cursor-pointer"
+        className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-soft-white dark:bg-primary-soft-black border dark:border-white/10 border-pink-blush dark:text-soft-white text-pink-blush hover:border-(--luxury-gold-solid) transition hover:cursor-pointer"
       >
         <span className="text-sm">{selected}</span>
         {open ? (
@@ -40,29 +40,28 @@ function SortBy({ onSortChange }) {
             dark:bg-primary-charcoal-black
             border-pink-blush
             border dark:border-white/10
-            shadow-[0_20px_60px_rgba(0,0,0,0.6)] 
+            shadow-xl
           "
         >
           {options.map((option, index) => (
-            <>
+            <div key={option.value}>
               <button
                 onClick={() => handleSelect(option)}
-                key={option}
                 className="w-full text-left px-4 py-3 text-sm
                 dark:text-soft-white
                 text-pink-blush
                 dark:hover:bg-white/5
                 hover:bg-pink-blush/10
                 dark:hover:text-(--luxury-gold-solid)
-                hover:text-(--pinky)
+                hover:text-[#e91e8c]
                 transition"
               >
-                {option}
+                {option.label}
               </button>
               {index !== options.length - 1 && (
-                <div className="h-px mx-4 bg-(--pinky) dark:bg-(--luxury-gold-gradient) opacity-30" />
+                <div className="h-px mx-4 bg-[#e91e8c] dark:bg-(--luxury-gold-gradient) opacity-30" />
               )}
-            </>
+            </div>
           ))}
         </div>
       )}

@@ -25,6 +25,12 @@ function ProductCard({ product, onDelete, onEdit }) {
           </span>
         )}
 
+        {product.discount > 0 && (
+          <span className="absolute top-8 right-2 text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/30">
+            {product.discount}% OFF
+          </span>
+        )}
+
         {/* Delete button */}
         <div className="absolute bottom-2 right-2 flex gap-1">
           <button

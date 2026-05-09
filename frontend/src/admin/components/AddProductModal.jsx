@@ -13,6 +13,7 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
     description: "",
     image: "",
     isBestSeller: false,
+    discount: 0,
   });
 
   const [loading, setLoading] = useState(false);
@@ -25,6 +26,7 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
       setForm({
         ...editingProduct,
         isBestSeller: editingProduct.isBestSeller || false,
+        discount: editingProduct.discount || 0,
       });
     } else {
       setForm({
@@ -36,6 +38,7 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
         description: "",
         image: "",
         isBestSeller: false,
+        discount: 0,
       });
     }
   }, [editingProduct]);
@@ -83,6 +86,7 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
         price: Number(form.price),
         stock: Number(form.stock),
         size: Number(form.size),
+        discount: Number(form.discount || 0),
         isBestSeller: form.isBestSeller,
       };
 
@@ -235,6 +239,23 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
                   className="dark:bg-black/30 bg-white/30 border border-pink-blush/15 dark:border-[#c9a84c]/15 rounded-xl px-4 py-2.5 text-sm text-pink-blush dark:text-[#f5e6a8]"
                 />
               </div>
+            </div>
+
+            {/* Discount */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs text-solid-pink/40 dark:text-[#f5e6a8]/40 font-inter">
+                Discount (%) (Optional)
+              </label>
+              <input
+                name="discount"
+                value={form.discount}
+                onChange={handleChange}
+                type="number"
+                min="0"
+                max="100"
+                placeholder="e.g. 15 for 15% off"
+                className="dark:bg-black/30 bg-white/30 border dark:border-[#c9a84c]/15 border-pink-blush/15 rounded-xl px-4 py-2.5 text-sm dark:text-[#f5e6a8] text-pink-blush"
+              />
             </div>
 
             {/* size */}

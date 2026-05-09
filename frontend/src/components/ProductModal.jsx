@@ -12,7 +12,14 @@ function ProductModal({ productId, onClose }) {
 
   const handleIncrease = () => {
     if (!currentItem) {
-      addItem(currentProduct);
+      const finalPrice = currentProduct.discount > 0 
+        ? currentProduct.price - (currentProduct.price * (currentProduct.discount / 100)) 
+        : currentProduct.price;
+        
+      addItem({
+        ...currentProduct,
+        price: finalPrice
+      });
     } else {
       updateQuantity(currentItem.id, quantity + 1);
     }
@@ -30,7 +37,11 @@ function ProductModal({ productId, onClose }) {
   useEffect(() => {
     if (productId) {
       fetchCurrentProduct(productId);
+      document.body.style.overflow = "hidden";
     }
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [productId]);
 
   if (!productId) return null;
@@ -97,9 +108,16 @@ function ProductModal({ productId, onClose }) {
             <h2 className="text-2xl font-serif font-bold text-neutral-900 dark:text-white leading-tight">
               {currentProduct.name}
             </h2>
-            <p className="text-xl font-semibold text-pink-600 dark:text-gold-500">
-              ₦{Number(currentProduct.price).toLocaleString()}
-            </p>
+            <div className="text-right">
+              <p className="text-xl font-semibold text-pink-600 dark:text-gold-500">
+                ₦{Number(currentProduct.discount > 0 ? currentProduct.price - (currentProduct.price * (currentProduct.discount / 100)) : currentProduct.price).toLocaleString()}
+              </p>
+              {currentProduct.discount > 0 && (
+                <p className="text-sm line-through text-neutral-400">
+                  ₦{Number(currentProduct.price).toLocaleString()}
+                </p>
+              )}
+            </div>
           </div>
 
           <p className="text-neutral-500 dark:text-neutral-400 text-sm leading-relaxed mb-8">
@@ -133,7 +151,16 @@ function ProductModal({ productId, onClose }) {
 
             {/* Main Action Button */}
             <button
-              onClick={() => addItem(currentProduct)}
+              onClick={() => {
+                const finalPrice = currentProduct.discount > 0 
+                  ? currentProduct.price - (currentProduct.price * (currentProduct.discount / 100)) 
+                  : currentProduct.price;
+                  
+                addItem({
+                  ...currentProduct,
+                  price: finalPrice
+                });
+              }}
               className="w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all active:scale-[0.98]
                 bg-pink-500 hover:bg-pink-600 text-white shadow-pink-200 
                 dark:bg-gold-500 dark:hover:bg-gold-600 dark:text-black dark:shadow-gold-900/20 shadow-lg"

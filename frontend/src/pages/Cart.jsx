@@ -155,16 +155,23 @@ function Cart() {
                 {cart.length > 0 ? (
                   <CartList cartItems={cart} />
                 ) : (
-                  <div className="bg-primary-black/20 rounded-2xl p-16 text-center">
-                    <p className="text-warm-cream/60 text-xl">
-                      No items in cart
+                  <div className="bg-primary-black/5 dark:bg-primary-black/20 rounded-2xl p-16 text-center border border-pink-blush/10 dark:border-[#c9a84c]/10">
+                    <p className="text-pink-blush/60 dark:text-warm-cream/60 text-xl mb-6">
+                      Your cart is empty
                     </p>
+
+                    <Link
+                      to="/shop"
+                      className="inline-block px-8 py-3 rounded-xl font-bold uppercase text-white bg-[#e91e8c] dark:text-[#0a0f1a] dark:bg-[#c9a84c] hover:scale-[1.02] transition-all"
+                    >
+                      Start Shopping
+                    </Link>
 
                     {/* small upgrade */}
                     {pastOrders.length > 0 && (
                       <button
                         onClick={() => setActiveTab("orders")}
-                        className="block mt-4 text-xs underline text-pink-blush"
+                        className="block mx-auto mt-6 text-sm underline text-pink-blush dark:text-[#c9a84c]"
                       >
                         View past orders →
                       </button>
@@ -202,40 +209,64 @@ function Cart() {
                         key={o.reference}
                         className="rounded-2xl border border-[#c9a84c]/20 bg-white/60 dark:bg-white/[0.03] backdrop-blur-sm overflow-hidden"
                       >
-                        <div className="px-5 py-4 flex justify-between">
+                        <div className="px-5 py-4 flex justify-between border-b border-[#c9a84c]/10">
                           <div>
                             <p className="text-xs opacity-50">Reference</p>
-                            <p className="font-bold text-pink-blush">
+                            <p className="font-bold text-pink-blush dark:text-[#c9a84c]">
                               {o.reference}
                             </p>
-                          </div>
-
-                          <StatusBadge status={o.status || "Pending"} />
-                        </div>
-
-                        <div className="px-5 py-4 flex justify-between">
-                          <div>
-                            <p>{getItemCount(o)} item(s)</p>
-                            <p className="text-xs opacity-50">
-                              {o.date
-                                ? new Date(o.date).toLocaleDateString()
-                                : ""}
+                            <p className="text-xs opacity-50 mt-1">
+                              {o.date ? new Date(o.date).toLocaleDateString() : ""}
                             </p>
                           </div>
-
-                          <div className="flex gap-3 items-center">
-                            <p className="font-bold text-pink-blush">
+                          <div className="flex flex-col items-end gap-2">
+                            <StatusBadge status={o.status || "Pending"} />
+                            <p className="font-bold text-pink-blush dark:text-[#c9a84c]">
                               ₦{Number(o.total).toLocaleString()}
                             </p>
-
-                            <Link
-                              to="/track-order"
-                              state={{ reference: o.reference }}
-                              className="text-xs border px-3 py-1 rounded"
-                            >
-                              Track →
-                            </Link>
                           </div>
+                        </div>
+
+                        <div className="px-5 py-4">
+                          <p className="text-xs font-bold uppercase tracking-wider mb-3 opacity-70">
+                            {getItemCount(o)} item(s)
+                          </p>
+                          
+                          <div className="flex flex-col gap-3">
+                            {(() => {
+                              let items = [];
+                              if (Array.isArray(o.items)) items = o.items;
+                              else if (typeof o.items === "string") {
+                                try { items = JSON.parse(o.items) || []; } catch {}
+                              }
+                              
+                              return items.map((item, idx) => (
+                                <div key={idx} className="flex items-center gap-3">
+                                  <div className="w-10 h-10 rounded-md bg-[#e91e8c]/5 dark:bg-black overflow-hidden flex-shrink-0 border border-[#e91e8c]/10 dark:border-[#c9a84c]/10">
+                                    {item.image ? (
+                                      <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                    ) : (
+                                      <div className="w-full h-full flex items-center justify-center text-sm">🧴</div>
+                                    )}
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="font-playfair text-sm dark:text-white truncate">{item.name}</p>
+                                    <p className="text-xs text-neutral-500 dark:text-neutral-400">Qty: {item.quantity}</p>
+                                  </div>
+                                </div>
+                              ));
+                            })()}
+                          </div>
+                        </div>
+
+                        <div className="px-5 py-3 bg-[#e91e8c]/5 dark:bg-black/20 flex justify-end">
+                          <Link
+                            to="/track-order"
+                            state={{ reference: o.reference }}
+                            className="text-xs font-bold text-[#e91e8c] dark:text-[#c9a84c] hover:underline"
+                          >
+                            Track Order →
+                          </Link>
                         </div>
                       </div>
                     );

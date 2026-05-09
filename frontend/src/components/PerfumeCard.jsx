@@ -76,9 +76,9 @@ function PerfumeCard({
       className="group relative flex flex-col rounded-xl overflow-hidden cursor-pointer
                  bg-white dark:bg-[#0d0818]
                  border border-[#e91e8c]/10 dark:border-[#c9a84c]/10
-                 hover:border-[#e91e8c]/35 dark:hover:border-[#c9a84c]/35
-                 shadow-sm hover:shadow-xl hover:shadow-[#e91e8c]/8 dark:hover:shadow-[#c9a84c]/6
-                 hover:-translate-y-1
+                 hover:border-[#e91e8c]/30 dark:hover:border-[#c9a84c]/30
+                 shadow-sm hover:shadow-lg hover:shadow-[#e91e8c]/5 dark:hover:shadow-[#c9a84c]/5
+                 hover:-translate-y-0.5
                  transition-all duration-300 h-full"
     >
       {/* ══════════════════════════════════════
@@ -109,7 +109,7 @@ function PerfumeCard({
         />
 
         {/* ── Actual image ── */}
-        <div className="absolute inset-0 z-10 transition-transform duration-500 group-hover:scale-107">
+        <div className="absolute inset-0 z-10 transition-transform duration-500 group-hover:scale-[1.03]">
           {image}
         </div>
 
@@ -118,7 +118,7 @@ function PerfumeCard({
           <div className="absolute top-0 left-0 z-20">
             <div
               className="font-inter font-extrabold text-[10px] tracking-[1px] uppercase
-                         text-white px-3 py-1.5 leading-none"
+                         text-white px-3 py-1.5 leading-none shadow-sm"
               style={{
                 background: "linear-gradient(135deg, #e91e8c 0%, #c2185b 100%)",
                 clipPath: "polygon(0 0, 100% 0, 88% 100%, 0 100%)",
@@ -136,7 +136,7 @@ function PerfumeCard({
             className="absolute top-3 right-3 z-20 min-w-[22px] h-[22px] px-1.5 rounded-full
                        bg-[#e91e8c] dark:bg-[#c9a84c] text-white dark:text-[#0a0f1a]
                        text-[10px] font-bold font-inter flex items-center justify-center
-                       shadow-lg shadow-[#e91e8c]/30 dark:shadow-[#c9a84c]/30"
+                       shadow-sm"
           >
             {quantity}
           </span>
@@ -148,8 +148,8 @@ function PerfumeCard({
             <span
               className="font-cinzel text-[8px] tracking-[2px] uppercase px-2.5 py-1 rounded-full
                          backdrop-blur-md border
-                         bg-white/60 dark:bg-black/40
-                         border-[#e91e8c]/25 dark:border-[#c9a84c]/25
+                         bg-white/70 dark:bg-black/50
+                         border-[#e91e8c]/20 dark:border-[#c9a84c]/20
                          text-[#e91e8c] dark:text-[#c9a84c]"
             >
               {category}
@@ -159,9 +159,9 @@ function PerfumeCard({
             <span
               className="font-inter text-[8px] tracking-[1px] uppercase px-2.5 py-1 rounded-full
                          backdrop-blur-md border
-                         bg-white/60 dark:bg-black/40
-                         border-[#e91e8c]/20 dark:border-[#c9a84c]/20
-                         text-[#7a4a5a] dark:text-white/50"
+                         bg-white/70 dark:bg-black/50
+                         border-[#e91e8c]/15 dark:border-[#c9a84c]/15
+                         text-[#7a4a5a] dark:text-white/60"
             >
               {size}ml
             </span>
@@ -175,7 +175,7 @@ function PerfumeCard({
         >
           <span
             className="font-cinzel text-[8px] tracking-[2px] uppercase px-2.5 py-1 rounded-full
-                       bg-[#e91e8c] dark:bg-[#c9a84c] text-white dark:text-[#0a0f1a] shadow"
+                       bg-[#e91e8c] dark:bg-[#c9a84c] text-white dark:text-[#0a0f1a] shadow-sm"
           >
             View →
           </span>
@@ -190,7 +190,7 @@ function PerfumeCard({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Subtle top separator line */}
-        <div className="absolute top-0 inset-x-4 h-px bg-gradient-to-r from-transparent via-[#e91e8c]/20 dark:via-[#c9a84c]/15 to-transparent" />
+        <div className="absolute top-0 inset-x-4 h-px bg-gradient-to-r from-transparent via-[#e91e8c]/10 dark:via-[#c9a84c]/10 to-transparent" />
 
         {/* Name */}
         <p className="font-playfair text-[#1a0a10] dark:text-white text-[0.9rem] font-semibold leading-snug mt-1 line-clamp-2">
@@ -228,25 +228,16 @@ function PerfumeCard({
                          bg-[#c2185b] dark:bg-transparent
                          text-white dark:text-[#c9a84c]
                          border border-[#c2185b] dark:border-[#c9a84c]/40
-                         hover:border-[#a01549]
-                         dark:hover:bg-[#c9a84c] dark:hover:text-[#0a0f1a] dark:hover:border-[#c9a84c]
-                         transition-all duration-300 hover:scale-[1.02] active:scale-95
-                         shadow-sm shadow-[#c2185b]/15 dark:shadow-none"
+                         hover:bg-[#a01549] dark:hover:bg-[#c9a84c] dark:hover:text-[#0a0f1a]
+                         transition-all duration-200 active:scale-95"
               onClick={handleAddToCart}
             >
-              {/* Shimmer sweep on hover — light mode */}
-              <span
-                className="absolute inset-0 translate-x-[-100%] group-hover/btn:translate-x-[100%]
-                           transition-transform duration-500
-                           bg-gradient-to-r from-transparent via-white/20 to-transparent
-                           pointer-events-none"
-              />
               <span className="relative z-10">Add to Cart</span>
             </button>
           ) : (
             <div
               className="flex items-center rounded-xl overflow-hidden
-                         border border-[#e91e8c]/30 dark:border-[#c9a84c]/30"
+                         border border-[#e91e8c]/20 dark:border-[#c9a84c]/20"
             >
               <button
                 className="flex-1 py-2.5 font-bold text-lg leading-none
@@ -285,7 +276,7 @@ function PerfumeCard({
 
       {/* Bottom accent line — animates in on hover */}
       <div
-        className="absolute bottom-0 inset-x-0 h-[3px] scale-x-0 group-hover:scale-x-100
+        className="absolute bottom-0 inset-x-0 h-[2px] scale-x-0 group-hover:scale-x-100
                    origin-left transition-transform duration-500 rounded-b-2xl"
         style={{
           background: "linear-gradient(to right, #e91e8c, #ff6ec7, #c9a84c)",

@@ -361,7 +361,8 @@ function Shop() {
                             </div>
                           )
                         }
-                        price={`₦${product.price.toLocaleString()}`}
+                        price={product.discount > 0 ? product.price - (product.price * (product.discount / 100)) : product.price}
+                        originalPrice={product.discount > 0 ? `₦${product.price.toLocaleString()}` : null}
                         size={product.size}
                         discount={product.discount}
                         category={product.category}

@@ -11,8 +11,8 @@ function OrderSummary() {
   const [promoApplied, setPromoApplied] = useState(false);
   const [promoError, setPromoError] = useState("");
 
-  // 15% discount
-  const discountPercent = 0.15;
+  // 15% promo discount
+  const discountPercent = promoApplied ? 0.15 : 0;
   const discountAmount = totalPrice * discountPercent;
   const finalTotal = totalPrice - discountAmount;
 
@@ -49,14 +49,16 @@ function OrderSummary() {
             </p>
           </div>
 
-          <div className="flex justify-between items-center">
-            <p className="font-inter text-sm text-[#1a0a10]/60 dark:text-warm-cream/60">
-              Discount (15%)
-            </p>
-            <p className="font-inter text-sm font-semibold text-green-600 dark:text-green-400">
-              − ₦{discountAmount.toLocaleString()}
-            </p>
-          </div>
+          {discountAmount > 0 && (
+            <div className="flex justify-between items-center">
+              <p className="font-inter text-sm text-[#1a0a10]/60 dark:text-warm-cream/60">
+                Promo Discount (15%)
+              </p>
+              <p className="font-inter text-sm font-semibold text-green-600 dark:text-green-400">
+                − ₦{discountAmount.toLocaleString()}
+              </p>
+            </div>
+          )}
 
           <div className="flex justify-between items-center">
             <p className="font-inter text-sm text-[#1a0a10]/60 dark:text-warm-cream/60">
