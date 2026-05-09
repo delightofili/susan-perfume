@@ -198,7 +198,7 @@ function ProductsSection() {
             key={product.id}
             product={product}
             onDelete={() => handleDelete(product.id)}
-            onEdit={(product) => {
+            onEdit={() => {
               setEditingProduct(product);
               setShowAddModal(true);
             }}

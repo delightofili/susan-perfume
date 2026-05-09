@@ -23,6 +23,7 @@ import { getOrders } from "../../api/index.js";
 
 import shopBg from "../../../public/images/shop-bg.png";
 import supabase from "../../supabase.js";
+import ThemeToggle from "../../components/ThemeToggle.jsx";
 
 function AdminDashboard() {
   const [orders, setOrders] = useState([]);
@@ -166,16 +167,19 @@ function AdminDashboard() {
           <h1 className="text-2xl font-bold font-playfair text-[#e91e8c] dark:text-[#c9a84c]">
             Admin Dashboard
           </h1>
-          <button
-            onClick={() => setNavIsOpen(!navIsOpen)}
-            className="md:hidden p-2 rounded-xl bg-[#e91e8c]/10 hover:bg-[#e91e8c]/20 dark:bg-solid-gold/10 dark:hover:bg-solid-gold/20 transition-all text-[#e91e8c] dark:text-solid-gold"
-          >
-            {navIsOpen ? (
-              <MdFilterListOff className="h-6 w-6" />
-            ) : (
-              <MdFilterList className="h-6 w-6" />
-            )}
-          </button>
+          <div className="flex items-center justify-center text-center gap-4">
+            <ThemeToggle />
+            <button
+              onClick={() => setNavIsOpen(!navIsOpen)}
+              className="md:hidden p-2 rounded-xl bg-[#e91e8c]/10 hover:bg-[#e91e8c]/20 dark:bg-solid-gold/10 dark:hover:bg-solid-gold/20 transition-all text-[#e91e8c] dark:text-solid-gold"
+            >
+              {navIsOpen ? (
+                <MdFilterListOff className="h-6 w-6" />
+              ) : (
+                <MdFilterList className="h-6 w-6" />
+              )}
+            </button>
+          </div>
         </header>
 
         {/* Sidebar Nav [calc(100dvh-2rem)]*/}
