@@ -324,11 +324,11 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
             {/* Description */}
             <div className="flex flex-col gap-1.5">
               <label className="text-xs text-solid-pink/40 dark:text-[#f5e6a8]/40 font-inter">
-                upload perfume image{" "}
+                Description{" "}
                 <span className="text-pink-blush dark:text-[#c9a84c]">*</span>
               </label>
               <textarea
-                name="description"
+                name="Describe your product here..."
                 value={form.description}
                 onChange={handleChange}
                 className="dark:bg-black/30 bg-white/30 border dark:border-[#c9a84c]/15 border-pink-blush/15 rounded-xl px-4 py-2.5 text-sm text-pink-blush dark:text-[#f5e6a8]"
