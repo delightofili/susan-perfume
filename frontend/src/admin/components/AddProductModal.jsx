@@ -160,12 +160,12 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
   return (
     <>
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-47"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-70"
         onClick={onClose}
       />
 
-      <div className="fixed inset-0 z-51 flex items-center justify-center p-2 sm:p-6 ">
-        <div className="w-full max-w-lg max-h-[90dvh]  dark:bg-[#0a0f1a] bg-warm-cream border dark:border-[#c9a84c]/20 border-pink-blush/20 rounded-2xl shadow-2xl shadow-black/60 overflow-hidden flex flex-col">
+      <div className="fixed inset-0 z-80 items-center justify-center p-2 sm:p-6 pt-20 sm:pt-10">
+        <div className="w-full max-w-lg max-h-[85dvh]  dark:bg-[#0a0f1a] bg-warm-cream border dark:border-[#c9a84c]/20 border-pink-blush/20 rounded-2xl shadow-2xl shadow-black/60 overflow-hidden flex flex-col">
           <div className="shrink-0 flex items-center justify-between px-6 py-4 border-b border-pink-blush/10 dark:border-[#c9a84c]/10">
             <div>
               <h2 className="text-lg font-playfair text-pink-blush dark:text-[#f5e6a8]">
