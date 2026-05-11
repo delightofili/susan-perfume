@@ -340,7 +340,7 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
                 value={form.description}
                 onChange={handleChange}
                 rows={3}
-                className="dark:bg-black/30 bg-white/30 border dark:border-[#c9a84c]/15 border-pink-blush/15 rounded-xl px-4 py-2.5 text-sm text-pink-blush dark:text-[#f5e6a8]"
+                className="dark:bg-black/30 bg-white/30 border dark:border-[#c9a84c]/15 border-pink-blush/15 rounded-xl px-4 py-2.5 text-sm text-pink-blush dark:text-[#f5e6a8] resize-none"
               />
             </div>
 
