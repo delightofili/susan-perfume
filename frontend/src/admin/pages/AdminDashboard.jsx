@@ -295,7 +295,7 @@ function AdminDashboard() {
         )}
 
         {/* Main Content */}
-        <main className="p-6 overflow-auto bg-white/30 dark:bg-transparent backdrop-blur-sm">
+        <main className="p-6  bg-white/30 dark:bg-transparent backdrop-blur-sm">
           {location.pathname === "/admin/dashboard" && (
             <section className="relative">
               <nav className="mb-4 ">
