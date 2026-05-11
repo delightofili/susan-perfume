@@ -427,13 +427,15 @@ function AdminDashboard() {
                       </div>
                     </div>
                   </div>
-                  <div className="grid grid-cols-1 lg:grid-cols-[48px_1fr_80px] py-6 px-4 gap-4 shadow  shadow-[#c9a84c] rounded-2xl bg-white/5 ">
-                    <div className="w-10 h-10 rounded-md bg-solid-gold/10 border border-solid-gold/20 flex items-center justify-center text-[#c9a84c] text-sm lg:row-span-2 ">
+                  <div className="grid grid-cols-1 lg:grid-cols-[48px_1fr_80px] py-6 px-4 gap-4 shadow shadow-[#e91e8c]/20 dark:shadow-[#c9a84c] rounded-2xl bg-white/70 dark:bg-white/5 border border-[#e91e8c]/10 dark:border-transparent">
+                    <div className="w-10 h-10 rounded-md bg-[#e91e8c]/10 dark:bg-solid-gold/10 border border-[#e91e8c]/20 dark:border-solid-gold/20 flex items-center justify-center text-[#e91e8c] dark:text-[#c9a84c] text-sm lg:row-span-2">
                       $
                     </div>
                     <div className="order-3 lg:order-0">
-                      <p className="text-[#f5e6a8]/70 font-inter">Products</p>
-                      <h2 className="text-[#f5e6a8] font-playfair md:text-2xl text-xl">
+                      <p className="text-[#1a0a10]/60 dark:text-[#f5e6a8]/70 font-inter text-sm">
+                        Products
+                      </p>
+                      <h2 className="text-[#1a0a10] dark:text-[#f5e6a8] font-playfair md:text-2xl text-xl">
                         {totalProducts}
                       </h2>
                     </div>
@@ -455,7 +457,7 @@ function AdminDashboard() {
                             <Line
                               type="monotone"
                               dataKey="value"
-                              stroke="#c9a84c"
+                              stroke="#e91e8c"
                               strokeWidth={1.5}
                               dot={false}
                             />

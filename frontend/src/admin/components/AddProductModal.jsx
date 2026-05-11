@@ -65,7 +65,7 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
       return;
     }
 
-    if (isNaN(form.size)) {
+    if (!form.size || isNaN(Number(form.size))) {
       setError("Size must be a number!");
       return;
     }
@@ -149,34 +149,28 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
     }
   };
 
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
+
   return (
     <>
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-47"
         onClick={onClose}
       />
 
-      <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4 pt-10">
-        <div className="w-full max-w-lg dark:bg-[#0a0f1a] bg-warm-cream border dark:border-[#c9a84c]/20 border-pink-blush/20 rounded-2xl shadow-2xl shadow-black/60 overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-pink-blush/10 dark:border-[#c9a84c]/10">
+      <div className="fixed inset-0 z-51 flex items-center justify-center p-2 sm:p-6 ">
+        <div className="w-full max-w-lg max-h-[90dvh]  dark:bg-[#0a0f1a] bg-warm-cream border dark:border-[#c9a84c]/20 border-pink-blush/20 rounded-2xl shadow-2xl shadow-black/60 overflow-hidden flex flex-col">
+          <div className="shrink-0 flex items-center justify-between px-6 py-4 border-b border-pink-blush/10 dark:border-[#c9a84c]/10">
             <div>
               <h2 className="text-lg font-playfair text-pink-blush dark:text-[#f5e6a8]">
                 {editingProduct ? "Edit Product" : "Add New Product"}
               </h2>
-              <div className="p-6 flex flex-col gap-4 max-h-[65vh] overflow-y-auto">
-                {/*  BESTSELLER TOGGLE */}
-                <label className="flex items-center gap-3 text-sm dark:text-[#f5e6a8] text-pink-blush">
-                  <input
-                    type="checkbox"
-                    checked={form.isBestSeller}
-                    onChange={handleToggle}
-                    className="w-5 h-5 rounded-md bg-white/30 dark:bg-black/30 border border-pink-blush/15 dark:border-[#c9a84c]/15 text-pink-blush dark:text-[#c9a84c] focus:ring-0"
-                  />
-                  Mark as Bestseller
-                </label>
-
-                {error && <p className="text-red-400 text-xs">{error}</p>}
-              </div>
 
               <p className="text-xs dark:text-[#f5e6a8]/30 text-pink-blush/30 font-inter mt-0.5">
                 Fill in the details below
@@ -190,8 +184,21 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
             </button>
           </div>
 
-          <div className="p-6 flex flex-col gap-4 max-h-[65vh] overflow-y-auto scrollbar-none">
+          <div className="flex-1 min-h-0 overflow-y-auto p-6 flex flex-col gap-4 scrollbar-none">
             {/* (ALL YOUR INPUTS — UNCHANGED) */}
+
+            {/*  BESTSELLER TOGGLE */}
+            <label className="flex items-center gap-3 text-sm dark:text-[#f5e6a8] text-pink-blush">
+              <input
+                type="checkbox"
+                checked={form.isBestSeller}
+                onChange={handleToggle}
+                className="w-5 h-5 rounded-md bg-white/30 dark:bg-black/30 border border-pink-blush/15 dark:border-[#c9a84c]/15 text-pink-blush dark:text-[#c9a84c] focus:ring-0"
+              />
+              Mark as Bestseller
+            </label>
+
+            {error && <p className="text-red-400 text-xs">{error}</p>}
 
             {/* Name */}
             <div className="flex flex-col gap-1.5">
@@ -204,7 +211,7 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
                 value={form.name}
                 onChange={handleChange}
                 placeholder="e.g. Oud Royale"
-                className="dark:bg-black/ bg-white/30 border dark:border-[#c9a84c]/15 border-pink-blush/15 rounded-xl px-4 py-2.5 text-sm dark:text-[#f5e6a8] text-pink-blush font-inter outline-none dark:focus:border-[#c9a84c]/50 focus:border-pink-blush/50  transition-all placeholder:text-white/15"
+                className="dark:bg-black/30 bg-white/30 border dark:border-[#c9a84c]/15 border-pink-blush/15 rounded-xl px-4 py-2.5 text-sm dark:text-[#f5e6a8] text-pink-blush font-inter outline-none dark:focus:border-[#c9a84c]/50 focus:border-pink-blush/50  transition-all placeholder:text-white/15"
               />
             </div>
 
@@ -328,7 +335,8 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
                 <span className="text-pink-blush dark:text-[#c9a84c]">*</span>
               </label>
               <textarea
-                name="Describe your product here..."
+                name="description"
+                placeholder="Describe your product here..."
                 value={form.description}
                 onChange={handleChange}
                 className="dark:bg-black/30 bg-white/30 border dark:border-[#c9a84c]/15 border-pink-blush/15 rounded-xl px-4 py-2.5 text-sm text-pink-blush dark:text-[#f5e6a8]"
@@ -338,7 +346,7 @@ function AddProductModal({ onClose, onAdd, editingProduct }) {
             {error && <p className="text-xs text-red-400">{error}</p>}
           </div>
 
-          <div className="px-6 py-4 flex justify-end gap-3">
+          <div className="shrink-0 px-6 py-4 flex justify-end gap-3">
             <button
               className="px-4 py-2 text-sm dark:bg-[#c9a84c] bg-pink-blush dark:text-black text-white rounded-xl font-bold"
               onClick={onClose}

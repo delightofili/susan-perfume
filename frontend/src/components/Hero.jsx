@@ -29,7 +29,6 @@ function useScrollReveal() {
   }, []);
 }
 
-
 const slides = [
   {
     id: 1,
@@ -394,7 +393,7 @@ function Hero() {
                 className="relative dark:bg-(image:--luxury-gold-gradient) bg-(image:--pinky) rounded-sm
                   dark:text-primary-charcoal-black px-8 py-3.5 text-pure-white
                   font-bold font-inter text-sm tracking-widest uppercase
-                  animate-pink-glow dark:animate-none gold-hover transition hover:cursor-pointer
+                  animate-pink-glow dark:animate-none  transition hover:cursor-pointer
                   hover:opacity-90 hover:scale-105 active:scale-95"
               >
                 Shop Now
