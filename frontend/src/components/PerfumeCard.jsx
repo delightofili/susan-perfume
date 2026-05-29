@@ -8,7 +8,6 @@ function PerfumeCard({
   name,
   price,
   discount,
-  originalPrice, 
   size,
   category,
   id,
@@ -22,12 +21,25 @@ function PerfumeCard({
   const quantity = cartItem?.quantity || 0;
   const inCart = quantity > 0;
 
+  const numericPrice = Number(price || 0);
+  const numericDiscount = Number(discount || 0);
+  const hasDiscount = numericDiscount > 0;
+
+  const discountedPrice = hasDiscount ? numericPrice - numericDiscount : numericPrice;
+
+  const displayPrice = `₦${discountedPrice.toLocaleString()}`;
+  const originalPriceFormatted = hasDiscount ? `₦${numericPrice.toLocaleString()}` : null;
+
+  // Calculate discount percentage dynamically for the badge
+  const discountPercent = hasDiscount ? Math.round((numericDiscount / numericPrice) * 100) : 0;
+  const discountLabel = discountPercent > 0 ? `${discountPercent}% OFF` : null;
+
   const handleAddToCart = async (e) => {
     e.stopPropagation();
     await addItem({
       id,
       name,
-      price: Number(String(price).replace(/[₦,]/g, "")),
+      price: discountedPrice,
       image: imageUrl || null,
       category,
       size,
@@ -56,19 +68,6 @@ function PerfumeCard({
     if (onClick) onClick();
     else navigate(`/shop/${id}`);
   };
-
-  const displayPrice =
-    typeof price === "number" ? `₦${price.toLocaleString()}` : price;
-
-  // Derive a numeric discount/badge label
-  const discountLabel =
-    discount != null && discount !== "" && Number(discount) > 0
-      ? typeof discount === "number"
-        ? `₦${discount.toLocaleString()} OFF`
-        : String(discount).includes("%")
-        ? `${discount} OFF`
-        : discount
-      : null;
 
   return (
     <div
@@ -207,9 +206,9 @@ function PerfumeCard({
           <span className="font-inter text-[#c2185b] dark:text-[#c9a84c] font-extrabold text-[0.95rem] leading-none">
             {displayPrice}
           </span>
-          {originalPrice && (
+          {originalPriceFormatted && (
             <span className="font-inter text-[#7a4a5a]/55 dark:text-white/30 text-[0.75rem] line-through leading-none">
-              {originalPrice}
+              {originalPriceFormatted}
             </span>
           )}
           {discountLabel && (

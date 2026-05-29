@@ -150,10 +150,9 @@ function Bestseller() {
                       </div>
                     )
                   }
-                  price={product.discount > 0 ? product.price - product.discount : product.price}
-                  originalPrice={product.discount > 0 ? `₦${product.price.toLocaleString()}` : null}
-                  size={product.size}
+                  price={product.price}
                   discount={product.discount}
+                  size={product.size}
                   category={product.category}
                   onClick={() => navigate(`/shop/${product.id}`)}
                 />
