@@ -27,7 +27,7 @@ function ProductCard({ product, onDelete, onEdit }) {
 
         {product.discount > 0 && (
           <span className="absolute top-8 right-2 text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/30">
-            {product.discount}% OFF
+            ₦{product.discount.toLocaleString()} OFF
           </span>
         )}
 
@@ -52,8 +52,13 @@ function ProductCard({ product, onDelete, onEdit }) {
         </p>
         <div className="flex items-end justify-between">
           <div>
-            <div className="font-playfair text-[#e91e8c] dark:text-[#c9a84c] text-sm font-semibold">
-              ₦{product.price.toLocaleString()}
+            <div className="font-playfair text-[#e91e8c] dark:text-[#c9a84c] text-sm font-semibold flex items-center gap-1.5 flex-wrap">
+              <span>₦{(product.price - (product.discount || 0)).toLocaleString()}</span>
+              {product.discount > 0 && (
+                <span className="text-[10px] text-[#1a0a10]/40 dark:text-[#f5e6a8]/40 line-through">
+                  ₦{product.price.toLocaleString()}
+                </span>
+              )}
             </div>
             <div className={`text-[10px] mt-0.5 ${product.stock <= 10 ? "text-yellow-600 dark:text-yellow-400" : "text-[#1a0a10]/30 dark:text-[#f5e6a8]/30"}`}>
               {product.stock === 0 ? "Out of stock" : `${product.stock} units left`}

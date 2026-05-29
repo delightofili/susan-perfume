@@ -60,11 +60,11 @@ function PerfumeCard({
   const displayPrice =
     typeof price === "number" ? `₦${price.toLocaleString()}` : price;
 
-  // Derive a numeric discount % if discount is something like "20%" or 20
+  // Derive a numeric discount/badge label
   const discountLabel =
-    discount != null && discount !== ""
+    discount != null && discount !== "" && Number(discount) > 0
       ? typeof discount === "number"
-        ? `${discount}% OFF`
+        ? `₦${discount.toLocaleString()} OFF`
         : String(discount).includes("%")
         ? `${discount} OFF`
         : discount

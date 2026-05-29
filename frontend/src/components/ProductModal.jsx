@@ -13,7 +13,7 @@ function ProductModal({ productId, onClose }) {
   const handleIncrease = () => {
     if (!currentItem) {
       const finalPrice = currentProduct.discount > 0 
-        ? currentProduct.price - (currentProduct.price * (currentProduct.discount / 100)) 
+        ? currentProduct.price - currentProduct.discount
         : currentProduct.price;
         
       addItem({
@@ -110,7 +110,7 @@ function ProductModal({ productId, onClose }) {
             </h2>
             <div className="text-right">
               <p className="text-xl font-semibold text-pink-600 dark:text-gold-500">
-                ₦{Number(currentProduct.discount > 0 ? currentProduct.price - (currentProduct.price * (currentProduct.discount / 100)) : currentProduct.price).toLocaleString()}
+                ₦{Number(currentProduct.discount > 0 ? currentProduct.price - currentProduct.discount : currentProduct.price).toLocaleString()}
               </p>
               {currentProduct.discount > 0 && (
                 <p className="text-sm line-through text-neutral-400">
@@ -153,7 +153,7 @@ function ProductModal({ productId, onClose }) {
             <button
               onClick={() => {
                 const finalPrice = currentProduct.discount > 0 
-                  ? currentProduct.price - (currentProduct.price * (currentProduct.discount / 100)) 
+                  ? currentProduct.price - currentProduct.discount 
                   : currentProduct.price;
                   
                 addItem({

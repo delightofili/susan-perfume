@@ -233,6 +233,25 @@
   animation: pink-pulse-glow 2.4s ease-in-out infinite;
 }
 
+@keyframes gold-pulse-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 0 10px var(--luxury-gold-glow),
+      0 4px 24px var(--luxury-gold-glow);
+  }
+
+  50% {
+    box-shadow:
+      0 0 28px var(--luxury-gold-glow),
+      0 8px 40px var(--luxury-gold-glow);
+  }
+}
+
+.animate-gold-glow {
+  animation: gold-pulse-glow 2.4s ease-in-out infinite;
+}
+
 /* ─────────────────────────────────────────────────────────
    SHIMMER SWEEP (card hover)
 ───────────────────────────────────────────────────────── */

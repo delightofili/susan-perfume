@@ -390,19 +390,21 @@ function Hero() {
             >
               <Link
                 to="/shop"
-                className="relative dark:bg-(image:--luxury-gold-gradient) bg-(image:--pinky) rounded-sm
-                  dark:text-primary-charcoal-black px-8 py-3.5 text-pure-white
-                  font-bold font-inter text-sm tracking-widest uppercase
-                  animate-pink-glow dark:animate-none  transition hover:cursor-pointer
-                  hover:opacity-90 hover:scale-105 active:scale-95"
+                className="relative group overflow-hidden px-8 py-3.5 rounded-full font-bold font-inter text-sm tracking-widest uppercase text-white dark:text-primary-charcoal-black hover:cursor-pointer transition-all duration-300 hover:scale-105 hover:-translate-y-0.5 active:scale-95 shadow-md shadow-pink-500/20 dark:shadow-amber-500/10 hover:shadow-[0_12px_28px_rgba(233,30,140,0.4)] dark:hover:shadow-[0_12px_28px_rgba(230,199,106,0.3)] animate-pink-glow dark:animate-gold-glow flex items-center justify-center"
               >
-                Shop Now
+                {/* Background gradient layer */}
+                <div className="absolute inset-0 bg-gradient-to-r from-[#e91e8c] via-[#d81b8a] to-[#ff6ec7] dark:from-[#f5e6a8] dark:via-[#ebc76a] to-[#bfa24a] transition-all duration-300" />
+                
+                {/* Shining shimmer sweep layer on hover */}
+                <div className="absolute inset-0 w-[50%] h-full bg-white/20 transform -skew-x-12 -translate-x-full group-hover:animate-[shimmer-sweep_0.75s_ease-out_forwards] pointer-events-none" />
+                
+                <span className="relative z-10">Shop Now</span>
               </Link>
               <Link
                 to="/about"
                 className="border-2 border-pink-blush text-pink-blush dark:border-[#c9a84c]/50 dark:text-[#c9a84c]
                   font-cinzel text-[11px] tracking-[2px] uppercase
-                  px-7 py-3.5 rounded-sm hover:bg-pink-blush hover:text-white dark:hover:bg-[#c9a84c]/10
+                  px-7 py-3.5 rounded-full hover:bg-pink-blush hover:text-white dark:hover:bg-[#c9a84c]/10
                   transition-all duration-300 hover:scale-105 active:scale-95"
               >
                 Our Story
